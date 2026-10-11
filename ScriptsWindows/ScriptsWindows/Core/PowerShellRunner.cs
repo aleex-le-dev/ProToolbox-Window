@@ -29,7 +29,7 @@ public class PowerShellRunner
     {
         var psi = new ProcessStartInfo(PsExe)
         {
-            Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{EscapeForArg(script)}\"",
+            Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; {EscapeForArg(script)}\"",
             RedirectStandardOutput = true,
             RedirectStandardError  = true,
             UseShellExecute        = false,

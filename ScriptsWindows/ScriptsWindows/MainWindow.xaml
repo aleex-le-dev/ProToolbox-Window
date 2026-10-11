@@ -52,12 +52,12 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Barre de recherche -->
+                <!-- Barre de recherche moderne avec watermark -->
                 <Border DockPanel.Dock="Top" Padding="12,10,12,10">
                     <Border Background="{DynamicResource BgCard}"
                             BorderBrush="{DynamicResource Border}"
                             BorderThickness="1"
-                            CornerRadius="{StaticResource RadiusSM}">
+                            CornerRadius="8">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -67,23 +67,42 @@
                                        Padding="8,6,4,6"
                                        VerticalAlignment="Center"
                                        FontSize="13" />
-                            <TextBox x:Name="SearchBox"
-                                     Grid.Column="1"
-                                     Background="Transparent"
-                                     BorderThickness="0"
-                                     Foreground="{DynamicResource TextPrimary}"
-                                     CaretBrush="{DynamicResource Accent}"
-                                     Padding="4,7,8,7"
-                                     FontFamily="{StaticResource FontMain}"
-                                     FontSize="13"
-                                     VerticalContentAlignment="Center"
-                                     TextChanged="SearchBox_TextChanged">
-                                <TextBox.Resources>
-                                    <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="0" />
-                                    </Style>
-                                </TextBox.Resources>
-                            </TextBox>
+                            <Grid Grid.Column="1">
+                                <!-- Watermark Text -->
+                                <TextBlock Text="Rechercher un outil..."
+                                           VerticalAlignment="Center"
+                                           Margin="4,0,0,0"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource TextMuted}"
+                                           IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="SearchBox"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Foreground="{DynamicResource TextPrimary}"
+                                         CaretBrush="{DynamicResource Accent}"
+                                         Padding="4,7,8,7"
+                                         FontFamily="{StaticResource FontMain}"
+                                         FontSize="12.5"
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="SearchBox_TextChanged">
+                                    <TextBox.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="0" />
+                                        </Style>
+                                    </TextBox.Resources>
+                                </TextBox>
+                            </Grid>
                         </Grid>
                     </Border>
                 </Border>
@@ -217,15 +236,22 @@
                                    Margin="0,3,0,0" />
                     </StackPanel>
                     
-                    <!-- Actions du Header : Icône Thème discrète -->
+                    <!-- Actions du Header : Icône Thème discrète Pill -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <!-- Icône de Thème discrète -->
                         <Button x:Name="BtnTheme"
                                 Click="BtnTheme_Click"
-                                Style="{StaticResource BtnSecondary}"
+                                Background="{DynamicResource BgCard}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
                                 Padding="8,6,8,6"
+                                Cursor="Hand"
                                 ToolTip="Changer de style / thème">
-                            <TextBlock x:Name="TxtThemeIcon" Text="💎" FontSize="13" />
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                            <TextBlock x:Name="TxtThemeIcon" Text="💎" FontSize="14" />
                         </Button>
                     </StackPanel>
                 </Grid>
@@ -254,19 +280,19 @@
                         Background="{DynamicResource BgSidebar}"
                         BorderBrush="{DynamicResource Border}"
                         BorderThickness="0,0,0,1"
-                        Padding="10,10,10,10">
+                        Padding="12,10,12,10">
                     <DockPanel>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="⬛ Console"
+                            <TextBlock Text=">_ Console"
                                        FontFamily="{StaticResource FontMono}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimary}" />
+                                       FontSize="11.5"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource Accent}" />
                             <!-- Indicateur d'exécution discret interne à la console -->
                             <TextBlock x:Name="RunningIndicator"
                                        Text=" ● En cours"
                                        FontFamily="{StaticResource FontMono}"
-                                       FontSize="11"
+                                       FontSize="10.5"
                                        Foreground="{DynamicResource Success}"
                                        VerticalAlignment="Center"
                                        Margin="6,0,0,0"
@@ -276,19 +302,37 @@
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button x:Name="BtnClearOutput"
                                     Content="🗑️"
-                                    Style="{StaticResource BtnSecondary}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Foreground="{DynamicResource TextSecondary}"
                                     Padding="6,3,6,3"
                                     FontSize="11"
                                     Margin="0,0,4,0"
+                                    Cursor="Hand"
                                     ToolTip="Effacer la console"
-                                    Click="BtnClearOutput_Click" />
+                                    Click="BtnClearOutput_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="5"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
                             <Button x:Name="BtnCloseOutput"
                                     Content="✕"
-                                    Style="{StaticResource BtnSecondary}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Foreground="{DynamicResource TextSecondary}"
                                     Padding="6,3,6,3"
                                     FontSize="11"
+                                    Cursor="Hand"
                                     ToolTip="Fermer la console"
-                                    Click="BtnCloseOutput_Click" />
+                                    Click="BtnCloseOutput_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="5"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
                         </StackPanel>
                     </DockPanel>
                 </Border>

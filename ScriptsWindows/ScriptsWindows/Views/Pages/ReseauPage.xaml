@@ -4,16 +4,9 @@
       Background="{StaticResource BgDeep}"
       Title="Gestion Réseau">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24,20,24,24">
-            <TextBlock Text="🌐 Gestion Réseau"
-                       FontFamily="{StaticResource FontMain}"
-                       FontSize="22" FontWeight="Bold"
-                       Foreground="{StaticResource TextPrimary}"
-                       Margin="0,0,0,8" />
-            <TextBlock Text="Configuration DNS, audit Wi-Fi, réinitialisation de pile réseau"
-                       Style="{StaticResource SubtitleText}" />
-            <!-- Les ToolCards seront générées ici -->
-            <WrapPanel x:Name="ToolsPanel" Margin="0,16,0,0" />
+        <StackPanel Margin="24,16,24,24">
+            <!-- Les ToolCards sont générées ici directement -->
+            <WrapPanel x:Name="ToolsPanel" Margin="0,4,0,0" />
         </StackPanel>
     </ScrollViewer>
 </Page>

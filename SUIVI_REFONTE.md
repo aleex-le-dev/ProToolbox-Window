@@ -19,14 +19,17 @@
 
 ## 🎨 Nouveautés de l'Interface
 
-### 1. Terminal latéral à droite (Symétrique, Masqué par défaut & Contrôles 100% Internes)
-- Disposition en 3 colonnes : **Sidebar gauche (240px) | Cartes d'outils (*) | Console d'exécution (240px)**.
-- **Header ultra-épuré** : aucun bouton console ni badge vert dans la barre supérieure. Le header reste 100% propre (uniquement le titre et l'icône discrète de thème).
-- **Contrôles 100% sur la console** :
-  - Bouton **`✕`** sur le volet pour fermer la console.
-  - Bouton **`🗑️`** sur le volet pour effacer les logs.
-  - Libellé **`● En cours`** affiché dans la barre de la console pendant l'exécution d'un outil.
-- **Ouverture automatique** : la console s'ouvre à droite dès qu'un outil ou un script est lancé.
+### 1. Modernisation UI/UX de Pointe (Inspirée de Linear, Raycast & Fluent 2)
+- **Élimination complète des doublons de titre** : suppression des en-têtes redondants qui doublaient le titre du header dans les 10 pages de catégories. La grille d'outils démarre directement avec un espacement aéré.
+- **Correction des caractères accentués (UTF-8)** : forçage de l'encodage `[Console]::OutputEncoding` et `$OutputEncoding` en UTF-8 dans [`PowerShellRunner.cs`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows/ScriptsWindows/Core/PowerShellRunner.cs), éliminant définitivement les caractères corrompus (ex: `Santé` au lieu de `Sant`).
+- **Cartes d'outils (`ToolCard`) style SaaS / Desktop moderne** :
+  - **Badge d'icône structuré** : l'icône de chaque outil est logée dans un carré arrondi (`CornerRadius="8"`) avec fond d'accent doux translucide.
+  - **Badge Admin translucide** : pilule discrète (`#1EF43F5E`) avec contour fin et typographie soignée.
+  - **Bouton d'action interactif** : libellé `▶ Exécuter` avec icône de lecture intégrée et rayon moderne.
+  - Rayons de courbure harmonisés à `12px` et ombres douces plus diffuses.
+- **Barre de recherche avec Watermark dynamique** : texte indicatif *"Rechercher un outil..."* automatique lorsque le champ est vide.
+- **Header épuré & Sélecteur Pill** : bouton de thème transformé en badge pilule élégant avec bordure fine et hover subtil.
+- **Console latérale style Dev Tools** : en-tête `>_ Console` en Cascadia Code avec boutons `🗑️` et `✕` sans bordures superflues.
 
 ### 2. Sélecteur de Thèmes Dynamique avec Transparence & Effets Néon
 - Gestionnaire de thèmes dédié : [`ThemeManager.cs`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows/ScriptsWindows/Core/ThemeManager.cs).
