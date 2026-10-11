@@ -113,6 +113,15 @@ if ($bat) {
 ", onOutput, ct);
     }
 
+    // Rapport complet batterie : statut direct + rapport HTML
+    public static async Task GetFullBatteryReport(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await GetBatteryStatus(onOutput, ct);
+        onOutput("");
+        onOutput("[i] Génération de l'historique complet d'usure et de cycles (HTML)...");
+        await GetBatteryReport(onOutput, ct);
+    }
+
     // ────────────────────────────────────────────────────────────────
     //  TEMPÉRATURE CPU/GPU  (sys_temp_report)
     // ────────────────────────────────────────────────────────────────

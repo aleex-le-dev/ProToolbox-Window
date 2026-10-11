@@ -69,28 +69,6 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "sys_battery_report",
-            Name = "Rapport Santé Batterie",
-            Description = "Génère et ouvre le rapport HTML complet de la batterie.",
-            Category = "DIAGNOSTIC",
-            Icon = "🔋",
-            Action = (log, ct) => DiagnosticService.GetBatteryReport(log, ct),
-            Tags = new[] { "batterie", "power", "autonomie", "pc portable" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sys_battery_status",
-            Name = "Statut Batterie en Direct",
-            Description = "Pourcentage de charge, tension et statut d'alimentation.",
-            Category = "DIAGNOSTIC",
-            Icon = "⚡",
-            Action = (log, ct) => DiagnosticService.GetBatteryStatus(log, ct),
-            Tags = new[] { "batterie", "charge", "live" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
             Id = "sys_temp_report",
             Name = "Température CPU / WMI",
             Description = "Interroge les zones thermiques ACPI et sondes disponibles.",
@@ -165,17 +143,6 @@ public static class ToolRegistry
             Action = (log, ct) => DiagnosticService.GetDefenderStatus(log, ct),
             Tags = new[] { "antivirus", "defender", "protection" }
         });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sys_disk_warnings",
-            Name = "Santé Disques & SMART",
-            Description = "Liste les alertes matérielles de disques et l'état de santé.",
-            Category = "DIAGNOSTIC",
-            Icon = "💽",
-            Action = (log, ct) => DiagnosticService.GetDiskWarnings(log, ct),
-            Tags = new[] { "smart", "disque", "hdd", "ssd", "nvme" }
-        });
     }
 
     private static void RegisterRepairTools()
@@ -227,12 +194,12 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "res_wu_reset",
-            Name = "Réinitialiser Windows Update",
-            Description = "Arrête les services WU, vide SoftwareDistribution et redémarre.",
+            Name = "Réparer Composants Windows Update",
+            Description = "Arrête les services WU, réinitialise Catroot2/SoftwareDistribution et relance pour corriger les erreurs de mise à jour.",
             Category = "REPARATION",
             Icon = "🔄",
             Action = (log, ct) => RepairService.ResetWindowsUpdate(log, ct),
-            Tags = new[] { "windows update", "wu", "softwaredistribution", "maj" }
+            Tags = new[] { "windows update", "wu", "softwaredistribution", "catroot2", "réparation" }
         });
 
         _allTools.Add(new ScriptTool
@@ -267,17 +234,6 @@ public static class ToolRegistry
             Action = (log, ct) => RepairService.CreateRestorePoint(log, ct),
             Tags = new[] { "restauration", "backup", "sauvegarde" }
         });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "res_network_dns",
-            Name = "Réparation Réseau & DNS",
-            Description = "Réinitialise Winsock et vide le cache DNS (netsh winsock reset + ipconfig /flushdns).",
-            Category = "REPARATION",
-            Icon = "🌐",
-            Action = (log, ct) => RepairService.RepairNetworkDns(log, ct),
-            Tags = new[] { "winsock", "dns", "flushdns", "réseau", "réparation" }
-        });
     }
 
     private static void RegisterCleaningTools()
@@ -296,23 +252,23 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "cl_wu",
-            Name = "Nettoyer Cache Windows Update",
-            Description = "Supprime les anciens fichiers de mise à jour téléchargés.",
+            Name = "Purger Téléchargements Windows Update",
+            Description = "Supprime les fichiers temporaires téléchargés dans SoftwareDistribution\\Download pour libérer plusieurs Go d'espace.",
             Category = "NETTOYAGE",
             Icon = "📦",
             Action = (log, ct) => CleaningService.CleanWindowsUpdate(log, ct),
-            Tags = new[] { "update", "softwaredistribution", "cache" }
+            Tags = new[] { "update", "softwaredistribution", "cache", "espace", "téléchargements" }
         });
 
         _allTools.Add(new ScriptTool
         {
-            Id = "cl_dns",
-            Name = "Vider le Cache DNS",
-            Description = "Exécute ipconfig /flushdns pour purger les résolutions DNS locales.",
+            Id = "cl_browsers_thumbnails",
+            Name = "Nettoyer Caches Navigateurs & Vignettes",
+            Description = "Supprime les caches volumineux de Chrome, Edge, Firefox, Brave et purge le cache des miniatures Windows.",
             Category = "NETTOYAGE",
-            Icon = "⚡",
-            Action = (log, ct) => CleaningService.FlushDns(log, ct),
-            Tags = new[] { "dns", "flushdns", "réseau" }
+            Icon = "🌐",
+            Action = (log, ct) => CleaningService.CleanBrowsers(log, ct),
+            Tags = new[] { "navigateur", "cache", "chrome", "edge", "firefox", "vignettes", "miniatures" }
         });
 
         _allTools.Add(new ScriptTool
@@ -397,13 +353,13 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "net_reset_tcp",
-            Name = "Réinitialiser Stack TCP/IP",
-            Description = "Réinitialise netsh int ip reset et réinitialise Winsock.",
+            Id = "net_reset_all",
+            Name = "Réinitialisation Complète Pile Réseau",
+            Description = "Réinitialise complètement TCP/IP, Winsock, purge le cache ARP et renouvelle le bail IP pour résoudre les coupures.",
             Category = "RESEAU",
             Icon = "🔌",
-            Action = (log, ct) => NetworkService.ResetTcpIp(log, ct),
-            Tags = new[] { "winsock", "tcp", "ip", "reset" }
+            Action = (log, ct) => NetworkService.ResetAll(log, ct),
+            Tags = new[] { "réseau", "winsock", "tcp", "ip", "reset", "connexion", "réparation" }
         });
 
         _allTools.Add(new ScriptTool
@@ -477,17 +433,6 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "dsk_chkdsk",
-            Name = "Réparation de Fichiers & Secteurs (CHKDSK)",
-            Description = "Planifie une vérification et réparation approfondie du disque C: (chkdsk C: /f /r).",
-            Category = "DISQUE",
-            Icon = "🩺",
-            Action = (log, ct) => DiskService.RunChkdskRepair(log, ct),
-            Tags = new[] { "chkdsk", "réparation", "secteurs", "erreurs", "ntfs" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
             Id = "dsk_diskpart",
             Name = "Console de Formatage DISKPART",
             Description = "Lance l'interpréteur de commandes DISKPART en mode administrateur pour le formatage avancé.",
@@ -495,17 +440,6 @@ public static class ToolRegistry
             Icon = "💻",
             Action = (log, ct) => DiskService.LaunchDiskpart(log, ct),
             Tags = new[] { "diskpart", "formater", "nettoyer", "partition", "cmd" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "dsk_cleanmgr",
-            Name = "Nettoyage de Disque (Cleanmgr)",
-            Description = "Lance l'outil Windows officiel de nettoyage de fichiers système et temporaires.",
-            Category = "DISQUE",
-            Icon = "🧹",
-            Action = (log, ct) => DiskService.LaunchCleanmgr(log, ct),
-            Tags = new[] { "cleanmgr", "nettoyage", "espace", "temporaires" }
         });
     }
 
@@ -579,13 +513,13 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "app_install_winrar",
-            Name = "Installer WinRAR",
-            Description = "Utilitaire de compression et décompression d'archives RAR/ZIP.",
+            Id = "app_install_7zip",
+            Name = "Installer 7-Zip",
+            Description = "Compresseur et décompresseur d'archives open-source, gratuit et standard (7z, zip, rar, tar).",
             Category = "APPLICATIONS",
             Icon = "🗜️",
-            Action = (log, ct) => AppService.InstallWinRar(log, ct),
-            Tags = new[] { "winrar", "rar", "zip", "archive", "compression" }
+            Action = (log, ct) => AppService.Install7Zip(log, ct),
+            Tags = new[] { "7zip", "zip", "rar", "archive", "compression", "open source" }
         });
 
         _allTools.Add(new ScriptTool
@@ -638,17 +572,6 @@ public static class ToolRegistry
 
     private static void RegisterHardwareTools()
     {
-        _allTools.Add(new ScriptTool
-        {
-            Id = "hw_smart_detail",
-            Name = "Test SMART Approfondi",
-            Description = "Interroge le bus de stockage pour l'usure et la santé des SSD/HDD.",
-            Category = "MATERIEL",
-            Icon = "💾",
-            Action = (log, ct) => HardwareService.RunSmartTest(log, ct),
-            Tags = new[] { "smart", "ssd", "santé", "disque" }
-        });
-
         _allTools.Add(new ScriptTool
         {
             Id = "hw_power_perf",
@@ -725,17 +648,6 @@ public static class ToolRegistry
             Action = (log, ct) => HardwareService.RunWinSat(log, ct),
             Tags = new[] { "winsat", "benchmark", "stress", "performance", "matériel" }
         });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "hw_smart_wmic",
-            Name = "Santé Disques S.M.A.R.T. (WMIC)",
-            Description = "Interroge directement l'état de santé S.M.A.R.T. de chaque disque via wmic diskdrive get status.",
-            Category = "MATERIEL",
-            Icon = "🩺",
-            Action = (log, ct) => HardwareService.GetSmartWmicStatus(log, ct),
-            Tags = new[] { "smart", "wmic", "disque", "santé", "status" }
-        });
     }
 
     private static void RegisterReportsTools()
@@ -809,23 +721,12 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "rpt_battery",
-            Name = "Rapport de Batterie (Portables)",
-            Description = "Génère l'historique complet et la santé de la batterie (powercfg /batteryreport).",
+            Name = "Rapport & Santé Batterie (HTML + Direct)",
+            Description = "Affiche le niveau de charge et tension en direct, puis génère et ouvre l'historique complet d'usure de la batterie.",
             Category = "RAPPORTS",
             Icon = "🔋",
-            Action = (log, ct) => DiagnosticService.GetBatteryReport(log, ct),
-            Tags = new[] { "batterie", "powercfg", "batteryreport", "rapport", "autonomie" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "rpt_winsxs",
-            Name = "Nettoyage Composants WinSxS",
-            Description = "Purge et compresse le magasin des composants Windows Update (DISM /StartComponentCleanup /ResetBase).",
-            Category = "RAPPORTS",
-            Icon = "🧹",
-            Action = (log, ct) => CleaningService.CleanWinSxS(log, ct),
-            Tags = new[] { "winsxs", "dism", "nettoyage", "cleanup", "resetbase" }
+            Action = (log, ct) => DiagnosticService.GetFullBatteryReport(log, ct),
+            Tags = new[] { "batterie", "powercfg", "batteryreport", "rapport", "autonomie", "live", "santé" }
         });
     }
 
@@ -860,11 +761,55 @@ public static class ToolRegistry
         {
             Id = "exp_drivers",
             Name = "Sauvegarder Pilotes Système",
-            Description = "Exporte tous les pilotes tiers installés vers un dossier de sauvegarde.",
+            Description = "Exporte et sauvegarde tous les pilotes tiers vers C:\\DriversBackup via DISM /Export-Driver.",
             Category = "EXTRACTION",
             Icon = "💾",
             Action = (log, ct) => ExportService.ExportDrivers(log, ct),
-            Tags = new[] { "pilotes", "drivers", "backup" }
+            Tags = new[] { "pilotes", "drivers", "backup", "dism", "export" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "exp_software_list",
+            Name = "Exporter Liste des Logiciels",
+            Description = "Génère un fichier texte sur le Bureau avec la liste complète des applications installées.",
+            Category = "EXTRACTION",
+            Icon = "📋",
+            Action = (log, ct) => ExportService.ExportSoftwareList(log, ct),
+            Tags = new[] { "export", "logiciels", "liste", "applications", "bureau" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "exp_wifi_profiles",
+            Name = "Exporter Profils & Clés Wi-Fi",
+            Description = "Sauvegarde tous les profils et clés Wi-Fi sous forme de fichiers XML sur le Bureau.",
+            Category = "EXTRACTION",
+            Icon = "📶",
+            Action = (log, ct) => ExportService.ExportWifiAndApps(log, ct),
+            Tags = new[] { "wifi", "export", "mot de passe", "profils", "xml" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "exp_sensitive_audit",
+            Name = "Audit Documents Sensibles",
+            Description = "Recherche les clés SSH, tokens d'API et identifiants stockés dans les dossiers utilisateur.",
+            Category = "EXTRACTION",
+            Icon = "🛡️",
+            Action = (log, ct) => ExportService.ScanSensitiveDocs(log, ct),
+            Tags = new[] { "audit", "sécurité", "ssh", "tokens", "secrets" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "exp_browser_history",
+            Name = "Détecter Historique Web",
+            Description = "Localise et affiche l'historique et profils SQLite de Google Chrome et Microsoft Edge.",
+            Category = "EXTRACTION",
+            Icon = "🌐",
+            Action = (log, ct) => ExportService.AnalyzeBrowserHistory(log, ct),
+            Tags = new[] { "historique", "chrome", "edge", "navigateur", "profil" }
         });
     }
 

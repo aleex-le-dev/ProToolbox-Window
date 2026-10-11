@@ -30,8 +30,8 @@ public class AppService
     public static Task InstallSumatraPdf(Action<string> onOutput, CancellationToken ct = default)
         => Install("SumatraPDF.SumatraPDF", "Sumatra PDF", onOutput, ct);
 
-    public static Task InstallWinRar(Action<string> onOutput, CancellationToken ct = default)
-        => Install("RARLab.WinRAR", "WinRAR", onOutput, ct);
+    public static Task Install7Zip(Action<string> onOutput, CancellationToken ct = default)
+        => Install("7zip.7zip", "7-Zip", onOutput, ct);
 
     public static Task InstallPs7(Action<string> onOutput, CancellationToken ct = default)
         => Install("Microsoft.PowerShell", "PowerShell 7", onOutput, ct);

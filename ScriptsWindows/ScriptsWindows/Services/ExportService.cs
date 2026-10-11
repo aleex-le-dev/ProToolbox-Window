@@ -26,10 +26,23 @@ if ($key) {
     // Export pilotes  (sys_drivers)
     public static async Task ExportDrivers(Action<string> onOutput, CancellationToken ct = default)
     {
-        var dest = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Pilotes_Export");
-        onOutput($"[i] Export vers : {dest}");
+        var dest = @"C:\DriversBackup";
+        try
+        {
+            if (!Directory.Exists(dest))
+                Directory.CreateDirectory(dest);
+        }
+        catch
+        {
+            dest = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DriversBackup");
+            if (!Directory.Exists(dest))
+                Directory.CreateDirectory(dest);
+        }
+
+        onOutput($"[i] Dossier cible vérifié : {dest}");
+        onOutput("[i] Sauvegarde et extraction de tous les pilotes système tiers via DISM...");
         await CommandRunner.RunAsync($"DISM /Online /Export-Driver /Destination:\"{dest}\"", onOutput, ct);
-        onOutput($"[OK] Pilotes exportés dans {dest}");
+        onOutput($"[OK] Pilotes exportés avec succès dans {dest}");
     }
 
     // Liste logiciels  (sys_export_software)
