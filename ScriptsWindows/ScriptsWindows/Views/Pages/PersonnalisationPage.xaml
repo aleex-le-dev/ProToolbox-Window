@@ -10,7 +10,7 @@
                        FontSize="22" FontWeight="Bold"
                        Foreground="{StaticResource TextPrimary}"
                        Margin="0,0,0,8" />
-            <TextBlock Text="Page en cours de construction — outils à venir"
+            <TextBlock Text="God Mode, menu contextuel classique et réglages Windows"
                        Style="{StaticResource SubtitleText}" />
             <!-- Les ToolCards seront générées ici -->
             <WrapPanel x:Name="ToolsPanel" Margin="0,16,0,0" />

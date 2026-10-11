@@ -118,18 +118,23 @@ public partial class MainWindow : Window
             OutputPanel.Visibility = Visibility.Visible;
             RunningIndicator.Visibility = Visibility.Visible;
 
-            var para = new Paragraph { Margin = new Thickness(0) };
+            var para = new Paragraph { Margin = new Thickness(0, 1, 0, 1) };
             var run  = new Run(line);
 
-            // Coloration syntaxique basique
-            run.Foreground = line.StartsWith("[ERR]") ? new SolidColorBrush(Color.FromRgb(239, 68, 68))
-                           : line.StartsWith("[OK]")  ? new SolidColorBrush(Color.FromRgb(16, 185, 129))
-                           : line.StartsWith("[!]")   ? new SolidColorBrush(Color.FromRgb(245, 158, 11))
+            // Coloration syntaxique
+            run.Foreground = (line.StartsWith("[ERR]") || line.Contains("[ERREUR]") || line.Contains("❌"))
+                           ? new SolidColorBrush(Color.FromRgb(239, 68, 68))
+                           : (line.StartsWith("[OK]") || line.Contains("✅"))
+                           ? new SolidColorBrush(Color.FromRgb(16, 185, 129))
+                           : (line.StartsWith("[!]") || line.Contains("⚠️"))
+                           ? new SolidColorBrush(Color.FromRgb(245, 158, 11))
+                           : (line.StartsWith("[i]") || line.Contains("🚀"))
+                           ? new SolidColorBrush(Color.FromRgb(129, 140, 248))
                            : new SolidColorBrush(Color.FromRgb(209, 213, 219));
 
             para.Inlines.Add(run);
             OutputBox.Document.Blocks.Add(para);
-            OutputScroll.ScrollToEnd();
+            OutputBox.ScrollToEnd();
         });
     }
 

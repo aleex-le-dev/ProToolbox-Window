@@ -264,7 +264,7 @@
                     Background="#0A0A0A"
                     BorderBrush="{StaticResource Border}"
                     BorderThickness="0,1,0,0"
-                    MaxHeight="220"
+                    Height="220"
                     Visibility="Collapsed">
                 <DockPanel>
                     <!-- Toolbar du terminal -->
@@ -293,20 +293,19 @@
                             </StackPanel>
                         </DockPanel>
                     </Border>
-                    <!-- Sortie texte -->
-                    <ScrollViewer x:Name="OutputScroll"
-                                  VerticalScrollBarVisibility="Auto"
-                                  HorizontalScrollBarVisibility="Auto">
-                        <RichTextBox x:Name="OutputBox"
-                                     Background="Transparent"
-                                     BorderThickness="0"
-                                     Padding="12,8,12,8"
-                                     FontFamily="{StaticResource FontMono}"
-                                     FontSize="12"
-                                     Foreground="{StaticResource Success}"
-                                     IsReadOnly="True"
-                                     IsDocumentEnabled="True" />
-                    </ScrollViewer>
+                    <!-- Sortie texte (autonome sans ScrollViewer externe pour éviter le wrapping vertical) -->
+                    <RichTextBox x:Name="OutputBox"
+                                 Background="#0A0A0A"
+                                 BorderThickness="0"
+                                 Padding="14,10,14,10"
+                                 FontFamily="{StaticResource FontMono}"
+                                 FontSize="12"
+                                 Foreground="#E2E8F0"
+                                 IsReadOnly="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Disabled">
+                        <FlowDocument PagePadding="0" />
+                    </RichTextBox>
                 </DockPanel>
             </Border>
 

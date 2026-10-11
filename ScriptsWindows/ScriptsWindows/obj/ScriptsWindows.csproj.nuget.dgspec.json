@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj": {}
+    "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj": {}
   },
   "projects": {
-    "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj": {
+    "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj": {
       "version": "4.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
+        "projectUniqueName": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
         "projectName": "ScriptsWindows",
-        "projectPath": "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
+        "projectPath": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
         "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\obj\\",
+        "outputPath": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config"
