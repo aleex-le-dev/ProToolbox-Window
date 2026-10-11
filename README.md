@@ -124,6 +124,6 @@ Cliquez sur le bouton `🎨 Thème` dans le bandeau supérieur pour faire défil
 5. **Applications** : Lister les logiciels obsolètes et tout mettre à niveau via Winget.
 6. **Sécurité** : Extraction des clés Wi-Fi en clair, Credential Manager, scans Defender rapide et complet, test EICAR.
 7. **Utilisateurs** : Liste des comptes Windows locaux, ajout, droits admin, compte Super-Administrateur.
-8. **Matériel** : Santé SMART approfondie, score WinSAT, on/off tactile, file d'impression spooler, plan d'alimentation Performances Ultimes.
+8. **Matériel** : Santé SMART approfondie, score WinSAT, on/off tactile, file d'impression spooler.
 9. **Extraction** : Clé produit Windows originale (BIOS OA3x), sauvegarde de tous les pilotes tiers avec DISM.
 10. **Personnalisation** : Dossier God Mode bureau, rétablissement du clic droit classique Windows 10 sur Windows 11.

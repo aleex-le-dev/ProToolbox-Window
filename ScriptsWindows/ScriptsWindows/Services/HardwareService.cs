@@ -161,14 +161,6 @@ if ($dev) {
     public static Task SetPlanHigh(Action<string> onOutput, CancellationToken ct = default)
         => SetPowerPlan("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c", "Hautes performances", onOutput, ct);
 
-    public static async Task SetPlanUltimate(Action<string> onOutput, CancellationToken ct = default)
-    {
-        // Activer d'abord le plan Ultimate (masqué par défaut)
-        await CommandRunner.RunAsync("powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61", onOutput, ct);
-        await CommandRunner.RunAsync("powercfg /setactive e9a42b02-d5df-448d-aa00-03f14749eb61", onOutput, ct);
-        onOutput("[OK] Plan Performances Ultimes activé");
-    }
-
     public static async Task GetCurrentPlan(Action<string> onOutput, CancellationToken ct = default)
         => await CommandRunner.RunAsync("powercfg /getactivescheme", onOutput, ct);
 

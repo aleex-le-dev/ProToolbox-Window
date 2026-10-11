@@ -574,17 +574,6 @@ public static class ToolRegistry
     {
         _allTools.Add(new ScriptTool
         {
-            Id = "hw_power_perf",
-            Name = "Plan Performances Ultimes",
-            Description = "Active le profil d'alimentation Ultimate Performance de Windows.",
-            Category = "MATERIEL",
-            Icon = "⚡",
-            Action = (log, ct) => HardwareService.SetPlanUltimate(log, ct),
-            Tags = new[] { "batterie", "powercfg", "performance" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
             Id = "hw_ram_diag",
             Name = "Diagnostic Mémoire RAM",
             Description = "Lance mdsched.exe pour tester la mémoire au prochain redémarrage.",
