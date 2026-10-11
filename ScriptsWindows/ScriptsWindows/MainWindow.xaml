@@ -4,57 +4,58 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         Title="Boîte à Scripts Windows — AleexLeDev v4.0"
-        Height="750" Width="1200"
-        MinHeight="600" MinWidth="900"
+        Height="780" Width="1320"
+        MinHeight="600" MinWidth="960"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BgDeep}">
+        Background="{DynamicResource WindowGradientBrush}">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <!-- Sidebar -->
+            <!-- 1. Sidebar gauche -->
             <ColumnDefinition Width="240" />
-            <!-- Contenu principal -->
+            <!-- 2. Contenu central -->
             <ColumnDefinition Width="*" />
+            <!-- 3. Terminal latéral à droite -->
+            <ColumnDefinition x:Name="TerminalColumn" Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!-- ══════════════════════════════════════════ -->
-        <!--                  SIDEBAR                   -->
+        <!--             1. SIDEBAR GAUCHE              -->
         <!-- ══════════════════════════════════════════ -->
         <Border Grid.Column="0"
-                Background="{StaticResource BgSidebar}"
-                BorderBrush="{StaticResource Border}"
+                Background="{DynamicResource BgSidebar}"
+                BorderBrush="{DynamicResource Border}"
                 BorderThickness="0,0,1,0">
             <DockPanel>
 
                 <!-- Logo / Header -->
                 <Border DockPanel.Dock="Top"
                         Padding="16,20,16,16"
-                        BorderBrush="{StaticResource Border}"
+                        BorderBrush="{DynamicResource Border}"
                         BorderThickness="0,0,0,1">
                     <StackPanel>
                         <TextBlock Text="⚡ ALEEXLEDEV"
                                    FontFamily="{StaticResource FontMain}"
                                    FontSize="11"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource Accent}"
- />
+                                   Foreground="{DynamicResource Accent}" />
                         <TextBlock Text="Boîte à Scripts Windows"
                                    FontFamily="{StaticResource FontMain}"
                                    FontSize="15"
                                    FontWeight="SemiBold"
-                                   Foreground="{StaticResource TextPrimary}"
+                                   Foreground="{DynamicResource TextPrimary}"
                                    Margin="0,4,0,0" />
                         <TextBlock Text="v4.0 — WPF Edition"
                                    FontSize="11"
-                                   Foreground="{StaticResource TextMuted}"
+                                   Foreground="{DynamicResource TextMuted}"
                                    Margin="0,2,0,0" />
                     </StackPanel>
                 </Border>
 
                 <!-- Barre de recherche -->
                 <Border DockPanel.Dock="Top" Padding="12,10,12,10">
-                    <Border Background="{StaticResource BgCard}"
-                            BorderBrush="{StaticResource Border}"
+                    <Border Background="{DynamicResource BgCard}"
+                            BorderBrush="{DynamicResource Border}"
                             BorderThickness="1"
                             CornerRadius="{StaticResource RadiusSM}">
                         <Grid>
@@ -70,8 +71,8 @@
                                      Grid.Column="1"
                                      Background="Transparent"
                                      BorderThickness="0"
-                                     Foreground="{StaticResource TextPrimary}"
-                                     CaretBrush="{StaticResource Accent}"
+                                     Foreground="{DynamicResource TextPrimary}"
+                                     CaretBrush="{DynamicResource Accent}"
                                      Padding="4,7,8,7"
                                      FontFamily="{StaticResource FontMain}"
                                      FontSize="13"
@@ -98,90 +99,80 @@
                                 Style="{StaticResource SidebarItem}"
                                 Click="NavFavoris_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⭐" FontSize="16" VerticalAlignment="Center" />
-                                <TextBlock Text="Mes Favoris" VerticalAlignment="Center" />
+                                <TextBlock Text="⭐" FontSize="15" Margin="0,0,10,0" />
+                                <TextBlock Text="Favoris" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- Séparateur -->
-                        <Separator Margin="0,8,0,8" Background="{StaticResource Border}" />
+                        <Border Height="1" Background="{DynamicResource Border}" Margin="8,8,8,8" />
 
-                        <!-- DIAGNOSTIC -->
-                        <Button x:Name="NavDiagnostic" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="DIAGNOSTIC">
+                        <!-- Catégories 1-10 -->
+                        <Button Tag="DIAGNOSTIC" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="🔍" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Diagnostic" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- RÉPARATION -->
-                        <Button x:Name="NavReparation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="REPARATION">
+                        <Button Tag="REPARATION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🔧" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="🔧" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Réparation" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- NETTOYAGE -->
-                        <Button x:Name="NavNettoyage" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="NETTOYAGE">
+                        <Button Tag="NETTOYAGE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🧹" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="🧹" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Nettoyage" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- RÉSEAU -->
-                        <Button x:Name="NavReseau" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="RESEAU">
+                        <Button Tag="RESEAU" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🌐" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="🌐" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Réseau" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- DISQUE -->
-                        <Button x:Name="NavDisque" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="DISQUE">
+                        <Button Tag="DISQUE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="💽" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="💽" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Disque" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- APPLICATIONS -->
-                        <Button x:Name="NavApplications" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="APPLICATIONS">
+                        <Button Tag="APPLICATIONS" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📦" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="📦" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Applications" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- SÉCURITÉ -->
-                        <Button x:Name="NavSecurite" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="SECURITE">
+                        <Button Tag="SECURITE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🔐" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="🔐" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Sécurité" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- EXTRACTION -->
-                        <Button x:Name="NavExtraction" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="EXTRACTION">
+                        <Button Tag="EXTRACTION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📤" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="📤" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Extraction" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- PERSONNALISATION -->
-                        <Button x:Name="NavPersonnalisation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="PERSONNALISATION">
+                        <Button Tag="PERSONNALISATION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🎨" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="🎨" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Personnalisation" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <!-- MATÉRIEL -->
-                        <Button x:Name="NavMateriel" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="MATERIEL">
+                        <Button Tag="MATERIEL" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🖥️" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="🖥️" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Matériel" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
@@ -189,45 +180,33 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- Footer sidebar -->
-                <Border DockPanel.Dock="Bottom"
-                        Padding="16,12"
-                        BorderBrush="{StaticResource Border}"
-                        BorderThickness="0,1,0,0">
-                    <TextBlock Text="🛡️ Mode Administrateur"
-                               FontFamily="{StaticResource FontMain}"
-                               FontSize="11"
-                               Foreground="{StaticResource Success}" />
-                </Border>
-
             </DockPanel>
         </Border>
 
         <!-- ══════════════════════════════════════════ -->
-        <!--                CONTENU PRINCIPAL           -->
+        <!--           2. CONTENU PRINCIPAL             -->
         <!-- ══════════════════════════════════════════ -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <!-- Header de page -->
                 <RowDefinition Height="Auto" />
-                <!-- Zone de contenu scrollable -->
+                <!-- Zone de contenu des pages -->
                 <RowDefinition Height="*" />
-                <!-- Panel de sortie terminal (bas) -->
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- Header de page -->
             <Border Grid.Row="0"
-                    Background="{StaticResource HeaderGradient}"
-                    BorderBrush="{StaticResource Border}"
+                    Background="{DynamicResource HeaderGradient}"
+                    BorderBrush="{DynamicResource Border}"
                     BorderThickness="0,0,0,1"
-                    Padding="24,16,24,16">
+                    Padding="24,14,24,14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
+                    
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
                         <TextBlock x:Name="PageTitle"
                                    Text="⭐ Mes Favoris"
                                    Style="{StaticResource TitleText}"
@@ -235,80 +214,100 @@
                         <TextBlock x:Name="PageSubtitle"
                                    Text="Vos outils préférés accessibles rapidement"
                                    Style="{StaticResource SubtitleText}"
-                                   Margin="0,4,0,0" />
+                                   Margin="0,3,0,0" />
                     </StackPanel>
-                    <!-- Indicateur d'exécution -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Border x:Name="RunningIndicator"
-                                Background="#1A3A1A"
-                                BorderBrush="{StaticResource Success}"
-                                BorderThickness="1"
-                                CornerRadius="{StaticResource RadiusFull}"
-                                Padding="10,4,10,4"
-                                Visibility="Collapsed">
-                            <TextBlock Text="⚙️ En cours..." FontSize="12" Foreground="{StaticResource Success}" />
-                        </Border>
+                    
+                    <!-- Actions du Header : Icône Thème discrète -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Icône de Thème discrète -->
+                        <Button x:Name="BtnTheme"
+                                Click="BtnTheme_Click"
+                                Style="{StaticResource BtnSecondary}"
+                                Padding="8,6,8,6"
+                                ToolTip="Changer de style / thème">
+                            <TextBlock x:Name="TxtThemeIcon" Text="💎" FontSize="13" />
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <!-- Zone de contenu des pages -->
+            <!-- Zone de contenu des pages (transparente pour laisser voir le fond immersif) -->
             <Frame x:Name="MainFrame"
                    Grid.Row="1"
                    NavigationUIVisibility="Hidden"
-                   Background="{StaticResource BgDeep}" />
+                   Background="Transparent" />
+        </Grid>
 
-            <!-- Terminal Output Panel -->
-            <Border x:Name="OutputPanel"
-                    Grid.Row="2"
-                    Background="#0A0A0A"
-                    BorderBrush="{StaticResource Border}"
-                    BorderThickness="0,1,0,0"
-                    Height="220"
-                    Visibility="Collapsed">
-                <DockPanel>
-                    <!-- Toolbar du terminal -->
-                    <Border DockPanel.Dock="Top"
-                            Background="#111"
-                            Padding="12,6,12,6">
-                        <DockPanel>
-                            <TextBlock Text="⬛ Terminal"
+        <!-- ══════════════════════════════════════════ -->
+        <!--       3. TERMINAL LATÉRAL À DROITE         -->
+        <!-- ══════════════════════════════════════════ -->
+        <Border x:Name="OutputPanel"
+                Grid.Column="2"
+                Width="240"
+                Background="{DynamicResource TerminalBg}"
+                BorderBrush="{DynamicResource Border}"
+                BorderThickness="1,0,0,0"
+                Visibility="Collapsed">
+            <DockPanel>
+                <!-- Toolbar du terminal -->
+                <Border DockPanel.Dock="Top"
+                        Background="{DynamicResource BgSidebar}"
+                        BorderBrush="{DynamicResource Border}"
+                        BorderThickness="0,0,0,1"
+                        Padding="10,10,10,10">
+                    <DockPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="⬛ Console"
                                        FontFamily="{StaticResource FontMono}"
                                        FontSize="12"
-                                       Foreground="{StaticResource TextSecondary}"
-                                       VerticalAlignment="Center" />
-                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button x:Name="BtnClearOutput"
-                                        Content="Effacer"
-                                        Style="{StaticResource BtnSecondary}"
-                                        Padding="8,4,8,4"
-                                        FontSize="11"
-                                        Click="BtnClearOutput_Click" />
-                                <Button x:Name="BtnCloseOutput"
-                                        Content="✕"
-                                        Style="{StaticResource BtnSecondary}"
-                                        Padding="8,4,8,4"
-                                        FontSize="11"
-                                        Click="BtnCloseOutput_Click" />
-                            </StackPanel>
-                        </DockPanel>
-                    </Border>
-                    <!-- Sortie texte (autonome sans ScrollViewer externe pour éviter le wrapping vertical) -->
-                    <RichTextBox x:Name="OutputBox"
-                                 Background="#0A0A0A"
-                                 BorderThickness="0"
-                                 Padding="14,10,14,10"
-                                 FontFamily="{StaticResource FontMono}"
-                                 FontSize="12"
-                                 Foreground="#E2E8F0"
-                                 IsReadOnly="True"
-                                 VerticalScrollBarVisibility="Auto"
-                                 HorizontalScrollBarVisibility="Disabled">
-                        <FlowDocument PagePadding="0" />
-                    </RichTextBox>
-                </DockPanel>
-            </Border>
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimary}" />
+                            <!-- Indicateur d'exécution discret interne à la console -->
+                            <TextBlock x:Name="RunningIndicator"
+                                       Text=" ● En cours"
+                                       FontFamily="{StaticResource FontMono}"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource Success}"
+                                       VerticalAlignment="Center"
+                                       Margin="6,0,0,0"
+                                       Visibility="Collapsed" />
+                        </StackPanel>
+                        
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="BtnClearOutput"
+                                    Content="🗑️"
+                                    Style="{StaticResource BtnSecondary}"
+                                    Padding="6,3,6,3"
+                                    FontSize="11"
+                                    Margin="0,0,4,0"
+                                    ToolTip="Effacer la console"
+                                    Click="BtnClearOutput_Click" />
+                            <Button x:Name="BtnCloseOutput"
+                                    Content="✕"
+                                    Style="{StaticResource BtnSecondary}"
+                                    Padding="6,3,6,3"
+                                    FontSize="11"
+                                    ToolTip="Fermer la console"
+                                    Click="BtnCloseOutput_Click" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
 
-        </Grid>
+                <!-- Sortie texte en colonne droite (pleine hauteur) -->
+                <RichTextBox x:Name="OutputBox"
+                             Background="{DynamicResource TerminalBg}"
+                             BorderThickness="0"
+                             Padding="14,12,14,12"
+                             FontFamily="{StaticResource FontMono}"
+                             FontSize="12"
+                             Foreground="{DynamicResource TerminalText}"
+                             IsReadOnly="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Disabled">
+                    <FlowDocument PagePadding="0" />
+                </RichTextBox>
+            </DockPanel>
+        </Border>
+
     </Grid>
 </Window>

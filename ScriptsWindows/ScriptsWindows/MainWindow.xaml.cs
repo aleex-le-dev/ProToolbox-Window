@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using ScriptsWindows.Core;
 using ScriptsWindows.Views.Pages;
 
 namespace ScriptsWindows;
@@ -18,14 +19,46 @@ public partial class MainWindow : Window
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        // Appliquer le thème actif et initialiser l'état du bouton
+        ThemeManager.ApplyTheme(ThemeManager.CurrentTheme);
+        UpdateThemeButtonState();
+
         // Démarrer sur la page Favoris
-        NavigateTo(NavFavoris, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés");
+        NavigateTo(NavFavoris, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+    }
+
+    // ─── Thème ───────────────────────────────────────────────────────
+
+    private void BtnTheme_Click(object sender, RoutedEventArgs e)
+    {
+        var newTheme = ThemeManager.NextTheme();
+        UpdateThemeButtonState();
+        // Aucun log dans la console
+    }
+
+    private void UpdateThemeButtonState()
+    {
+        var current = ThemeManager.CurrentTheme;
+        TxtThemeIcon.Text = current.Icon;
+        BtnTheme.ToolTip = $"Thème actif : {current.Name} ({current.VisualStyle})\nCliquez pour changer de style";
+    }
+
+    // ─── Console Terminal Latéral ────────────────────────────────────
+
+    private void BtnCloseOutput_Click(object sender, RoutedEventArgs e)
+    {
+        OutputPanel.Visibility = Visibility.Collapsed;
+    }
+
+    private void BtnClearOutput_Click(object sender, RoutedEventArgs e)
+    {
+        OutputBox.Document.Blocks.Clear();
     }
 
     // ─── Navigation sidebar ──────────────────────────────────────────
 
     private void NavFavoris_Click(object sender, RoutedEventArgs e)
-        => NavigateTo((Button)sender, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés");
+        => NavigateTo((Button)sender, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
 
     private void NavCategory_Click(object sender, RoutedEventArgs e)
     {
@@ -49,17 +82,17 @@ public partial class MainWindow : Window
 
         var (title, subtitle) = tag switch
         {
-            "DIAGNOSTIC"       => ("🔍 Diagnostic", "Analyse et diagnostic système"),
-            "REPARATION"       => ("🔧 Réparation", "Outils de réparation Windows"),
-            "NETTOYAGE"        => ("🧹 Nettoyage", "Nettoyage et optimisation système"),
-            "RESEAU"           => ("🌐 Réseau", "DNS, Wi-Fi, LAN et pentest réseau"),
-            "DISQUE"           => ("💽 Disque", "Formatage et gestion des disques"),
-            "APPLICATIONS"     => ("📦 Applications", "Winget, installations et mises à jour"),
-            "SECURITE"         => ("🔐 Sécurité", "Comptes, Defender et extraction"),
-            "EXTRACTION"       => ("📤 Extraction", "Export de données et clés"),
-            "PERSONNALISATION" => ("🎨 Personnalisation", "Menu contextuel, God Mode, thèmes"),
-            "MATERIEL"         => ("🖥️ Matériel", "Écran tactile, imprimantes, plan d'alimentation"),
-            _                  => ("⭐ Favoris", "Vos outils préférés")
+            "DIAGNOSTIC"       => ("🔍 Diagnostic", "Analyse approfondie de la configuration et des composants système"),
+            "REPARATION"       => ("🔧 Réparation", "Intégrité système SFC, DISM, CHKDSK et redémarrages de secours"),
+            "NETTOYAGE"        => ("🧹 Nettoyage", "Optimisation, suppression des fichiers temporaires et caches"),
+            "RESEAU"           => ("🌐 Réseau", "Configuration DNS, audit Wi-Fi, réinitialisation de pile réseau"),
+            "DISQUE"           => ("💽 Disque", "Formatage sécurisé, état SMART et gestion des disques"),
+            "APPLICATIONS"     => ("📦 Applications", "Gestion, mise à jour et installation de logiciels"),
+            "SECURITE"         => ("🔐 Sécurité", "Comptes d'utilisateurs, Defender, mots de passe Wi-Fi et audit"),
+            "EXTRACTION"       => ("📤 Extraction", "Récupération de licences, exports et sauvegardes"),
+            "PERSONNALISATION" => ("🎨 Personnalisation", "God Mode, menu contextuel classique et réglages Windows"),
+            "MATERIEL"         => ("🖥️ Matériel", "Écran tactile, imprimantes, performances et alimentation"),
+            _                  => ("⭐ Mes Favoris", "Vos outils préférés accessibles rapidement")
         };
 
         NavigateTo(btn, page, title, subtitle);
@@ -104,7 +137,7 @@ public partial class MainWindow : Window
             if (_activeNavBtn != null)
                 NavCategory_Click(_activeNavBtn, new RoutedEventArgs());
             else
-                NavigateTo(NavFavoris, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés");
+                NavigateTo(NavFavoris, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
         }
     }
 
@@ -115,20 +148,21 @@ public partial class MainWindow : Window
     {
         Dispatcher.Invoke(() =>
         {
+            // S'assurer que la console est visible lors de l'exécution
             OutputPanel.Visibility = Visibility.Visible;
             RunningIndicator.Visibility = Visibility.Visible;
 
             var para = new Paragraph { Margin = new Thickness(0, 1, 0, 1) };
             var run  = new Run(line);
 
-            // Coloration syntaxique
+            // Coloration syntaxique moderne
             run.Foreground = (line.StartsWith("[ERR]") || line.Contains("[ERREUR]") || line.Contains("❌"))
                            ? new SolidColorBrush(Color.FromRgb(239, 68, 68))
                            : (line.StartsWith("[OK]") || line.Contains("✅"))
                            ? new SolidColorBrush(Color.FromRgb(16, 185, 129))
                            : (line.StartsWith("[!]") || line.Contains("⚠️"))
                            ? new SolidColorBrush(Color.FromRgb(245, 158, 11))
-                           : (line.StartsWith("[i]") || line.Contains("🚀"))
+                           : (line.StartsWith("[i]") || line.Contains("🚀") || line.Contains("🎨"))
                            ? new SolidColorBrush(Color.FromRgb(129, 140, 248))
                            : new SolidColorBrush(Color.FromRgb(209, 213, 219));
 
@@ -144,15 +178,5 @@ public partial class MainWindow : Window
         {
             RunningIndicator.Visibility = isRunning ? Visibility.Visible : Visibility.Collapsed;
         });
-    }
-
-    private void BtnClearOutput_Click(object sender, RoutedEventArgs e)
-    {
-        OutputBox.Document.Blocks.Clear();
-    }
-
-    private void BtnCloseOutput_Click(object sender, RoutedEventArgs e)
-    {
-        OutputPanel.Visibility = Visibility.Collapsed;
     }
 }

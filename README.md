@@ -57,9 +57,10 @@ SCRIPT-WINDOWS-ALEEXLEDEV/
 │
 └── ScriptsWindows/ScriptsWindows/
     ├── App.xaml / App.xaml.cs             ← Point d'entrée, styles globaux, élévation UAC
-    ├── MainWindow.xaml / .cs              ← Fenêtre principale (Sidebar + Topbar + Terminal output)
+    ├── MainWindow.xaml / .cs              ← Fenêtre principale (Sidebar + Topbar + Terminal latéral à droite)
     │
     ├── Core/                              ← Moteurs et utilitaires
+    │   ├── ThemeManager.cs                ← 5 thèmes visuels dynamiques (Glassmorphism, Néon, Matrix...)
     │   ├── AdminElevation.cs              ← Auto-élévation UAC admin si nécessaire
     │   ├── PowerShellRunner.cs            ← Exécuteur PowerShell async avec streaming live
     │   ├── CommandRunner.cs               ← Exécuteur de commandes CMD / Process
@@ -81,20 +82,40 @@ SCRIPT-WINDOWS-ALEEXLEDEV/
     │
     ├── Views/
     │   ├── Controls/
-    │   │   └── ToolCard.xaml / .cs        ← Carte d'outil cliquable avec favori ⭐ et badge Admin
+    │   │   └── ToolCard.xaml / .cs        ← Carte d'outil avec halo/ombre dynamique, favori ⭐ et badge Admin
     │   └── Pages/
     │       ├── FavorisPage.xaml           ← Page d'accueil dynamique des favoris
     │       ├── SearchResultsPage.xaml     ← Page de recherche en direct instantanée
     │       └── [Diagnostic, Reparation, Nettoyage, Reseau, Disque, Applications, Securite, Extraction, Materiel, Personnalisation]Page.xaml
     │
     └── Assets/Styles/
-        ├── Theme.xaml                     ← Palette sombre (Deep Dark / Indigo), typographie
+        ├── Theme.xaml                     ← Variables de thèmes, transparence, gradients, lueurs néon
         └── Controls.xaml                  ← Styles des boutons, cartes, sidebar, scrollbars
 ```
 
 ---
 
-## 🧰 4. Récapitulatif des 10 Catégories d'Outils
+## 🎨 4. Nouveautés d'Interface & Expérience Visuelle
+
+### ⬛ Terminal Latéral à Droite (Contrôles 100% Internes)
+* **Header épuré** : aucun bouton console ni indicateur dans la barre supérieure ; le haut de la fenêtre reste net et minimaliste.
+* **Ouverture automatique** : la console (240px) s'ouvre à droite dès qu'un outil ou un script est lancé.
+* **Bouton de fermeture direct sur la console** :
+  * Cliquez sur **`✕`** dans la barre d'outils de la console pour la masquer.
+  * Cliquez sur **`🗑️`** pour vider le flux de texte.
+  * L'état **`● En cours`** est affiché directement dans l'en-tête de la console.
+
+### 💎 Sélecteur de Thèmes Dynamique avec Transparence & Néon
+Cliquez sur le bouton `🎨 Thème` dans le bandeau supérieur pour faire défiler instantanément **5 styles visuels complets** :
+1. 💎 **Aero Glass (Translucide)** : Dégradé profond atmosphérique, cartes translucides effet verre fumé givré.
+2. ⚡ **Cyberpunk Neon** : Contrastes intenses et halo néon rose rubis sous les cartes d'outils.
+3. 🟢 **Matrix Phosphor** : Ambiance terminal hacker, vert phosphore émeraude.
+4. ❄️ **Nordic Frost** : Verre polaire translucide givré et accents cyan glacier.
+5. 👑 **Obsidian Luxury** : Noir OLED absolu, biseau et lueur dorée pour une finition de haute précision.
+
+---
+
+## 🧰 5. Récapitulatif des 10 Catégories d'Outils
 
 1. **Diagnostic** : Rapport complet WMI, santé batterie HTML, statut live, sondes CPU, barrettes et conso RAM, BitLocker, Defender, SMART.
 2. **Réparation** : SFC /scannow, DISM Check & RestoreHealth, CHKDSK C:, reset composants WU, redémarrage Explorer, cache icônes, points de restauration.
