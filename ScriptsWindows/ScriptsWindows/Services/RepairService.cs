@@ -15,6 +15,16 @@ public class RepairService
         await CommandRunner.RunAsync("sfc /scannow", onOutput, ct);
     }
 
+    // Réparation réseau & DNS  (res_network_dns)
+    public static async Task RepairNetworkDns(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Réinitialisation Winsock...");
+        await CommandRunner.RunAsync("netsh winsock reset", onOutput, ct);
+        onOutput("[i] Vidage du cache DNS...");
+        await CommandRunner.RunAsync("ipconfig /flushdns", onOutput, ct);
+        onOutput("[OK] Winsock réinitialisé et cache DNS vidé — redémarrage recommandé");
+    }
+
     // DISM CheckHealth  (res_dism_check)
     public static async Task RunDismCheck(Action<string> onOutput, CancellationToken ct = default)
     {

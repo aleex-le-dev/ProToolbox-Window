@@ -53,7 +53,20 @@ public class PowerShellRunner
         proc.BeginOutputReadLine();
         proc.BeginErrorReadLine();
 
-        await proc.WaitForExitAsync(ct);
+        using var reg = ct.CanBeCanceled ? ct.Register(() =>
+        {
+            try { proc.Kill(entireProcessTree: true); } catch { }
+        }) : default;
+
+        try
+        {
+            await proc.WaitForExitAsync(ct);
+        }
+        catch (OperationCanceledException)
+        {
+            try { proc.Kill(entireProcessTree: true); } catch { }
+            throw;
+        }
     }
 
     /// <summary>

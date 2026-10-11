@@ -19,11 +19,41 @@ public class CommandRunner
         return sb.ToString();
     }
 
+    static CommandRunner()
+    {
+        try
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        }
+        catch { }
+    }
+
+    private static Encoding GetSafeEncoding(string command)
+    {
+        // Winget et PowerShell émettent généralement en UTF-8
+        if (command.Contains("winget", StringComparison.OrdinalIgnoreCase) ||
+            command.Contains("powershell", StringComparison.OrdinalIgnoreCase))
+        {
+            return Encoding.UTF8;
+        }
+
+        try
+        {
+            return Encoding.GetEncoding(850);
+        }
+        catch
+        {
+            return Encoding.UTF8;
+        }
+    }
+
     /// <summary>
     /// Exécute une commande cmd avec callback ligne par ligne (sortie live).
     /// </summary>
     public static async Task RunAsync(string command, Action<string> onOutput, CancellationToken ct = default)
     {
+        var encoding = GetSafeEncoding(command);
+
         var psi = new ProcessStartInfo("cmd.exe")
         {
             Arguments = $"/c {command}",
@@ -31,8 +61,8 @@ public class CommandRunner
             RedirectStandardError  = true,
             UseShellExecute        = false,
             CreateNoWindow         = true,
-            StandardOutputEncoding = Encoding.GetEncoding(850), // OEM pour cmd
-            StandardErrorEncoding  = Encoding.GetEncoding(850),
+            StandardOutputEncoding = encoding,
+            StandardErrorEncoding  = encoding,
         };
 
         using var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
@@ -50,7 +80,20 @@ public class CommandRunner
         proc.BeginOutputReadLine();
         proc.BeginErrorReadLine();
 
-        await proc.WaitForExitAsync(ct);
+        using var reg = ct.CanBeCanceled ? ct.Register(() =>
+        {
+            try { proc.Kill(entireProcessTree: true); } catch { }
+        }) : default;
+
+        try
+        {
+            await proc.WaitForExitAsync(ct);
+        }
+        catch (OperationCanceledException)
+        {
+            try { proc.Kill(entireProcessTree: true); } catch { }
+            throw;
+        }
     }
 
     /// <summary>

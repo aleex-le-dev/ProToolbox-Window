@@ -25,6 +25,7 @@ public static class ToolRegistry
         RegisterAppTools();
         RegisterSecurityTools();
         RegisterHardwareTools();
+        RegisterReportsTools();
         RegisterUserTools();
         RegisterExportTools();
         RegisterPersonalizationTools();
@@ -265,6 +266,17 @@ public static class ToolRegistry
             Action = (log, ct) => RepairService.CreateRestorePoint(log, ct),
             Tags = new[] { "restauration", "backup", "sauvegarde" }
         });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "res_network_dns",
+            Name = "Réparation Réseau & DNS",
+            Description = "Réinitialise Winsock et vide le cache DNS (netsh winsock reset + ipconfig /flushdns).",
+            Category = "REPARATION",
+            Icon = "🌐",
+            Action = (log, ct) => RepairService.RepairNetworkDns(log, ct),
+            Tags = new[] { "winsock", "dns", "flushdns", "réseau", "réparation" }
+        });
     }
 
     private static void RegisterCleaningTools()
@@ -466,6 +478,141 @@ public static class ToolRegistry
             Icon = "⚡",
             Action = (log, ct) => HardwareService.SetPlanUltimate(log, ct),
             Tags = new[] { "batterie", "powercfg", "performance" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_ram_diag",
+            Name = "Diagnostic Mémoire RAM",
+            Description = "Lance mdsched.exe pour tester la mémoire au prochain redémarrage.",
+            Category = "MATERIEL",
+            Icon = "🧠",
+            Action = (log, ct) => HardwareService.RunRamTest(log, ct),
+            Tags = new[] { "ram", "mémoire", "mdsched", "test" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_resmon",
+            Name = "Moniteur de Ressources",
+            Description = "Ouvre resmon.exe pour visualiser CPU, RAM, disque et réseau en temps réel.",
+            Category = "MATERIEL",
+            Icon = "📊",
+            Action = (log, ct) => HardwareService.LaunchResmon(log, ct),
+            Tags = new[] { "resmon", "ressources", "cpu", "ram", "réseau" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_msinfo32",
+            Name = "Informations Système",
+            Description = "Ouvre msinfo32 — vue complète du matériel et de la configuration Windows.",
+            Category = "MATERIEL",
+            Icon = "🖥️",
+            Action = (log, ct) => HardwareService.LaunchMsinfo32(log, ct),
+            Tags = new[] { "msinfo32", "système", "matériel", "configuration" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_dxdiag",
+            Name = "Diagnostic GPU & Audio (DxDiag)",
+            Description = "Ouvre dxdiag pour diagnostiquer DirectX, carte graphique et audio.",
+            Category = "MATERIEL",
+            Icon = "🎮",
+            Action = (log, ct) => HardwareService.LaunchDxdiag(log, ct),
+            Tags = new[] { "dxdiag", "directx", "gpu", "audio", "graphique" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_devmgmt",
+            Name = "Gestionnaire de Périphériques",
+            Description = "Ouvre devmgmt.msc pour gérer les drivers et périphériques installés.",
+            Category = "MATERIEL",
+            Icon = "🔌",
+            Action = (log, ct) => HardwareService.LaunchDevmgmt(log, ct),
+            Tags = new[] { "devmgmt", "périphériques", "drivers", "pilotes" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_winsat",
+            Name = "Stress Test Matériel (WinSAT)",
+            Description = "Exécute winsat formal pour évaluer les performances CPU, RAM, GPU et disque.",
+            Category = "MATERIEL",
+            Icon = "⚙️",
+            Action = (log, ct) => HardwareService.RunWinSat(log, ct),
+            Tags = new[] { "winsat", "benchmark", "stress", "performance", "matériel" }
+        });
+    }
+
+    private static void RegisterReportsTools()
+    {
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_reliability",
+            Name = "Moniteur de Fiabilité (Plantages)",
+            Description = "Ouvre l'historique des plantages et erreurs système (perfmon /rel).",
+            Category = "RAPPORTS",
+            Icon = "📉",
+            Action = (log, ct) => DiagnosticService.LaunchReliabilityMonitor(log, ct),
+            Tags = new[] { "fiabilité", "plantage", "crash", "historique", "perfmon" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_perfmon",
+            Name = "Rapport de Performances",
+            Description = "Génère un rapport complet des performances système (perfmon /report).",
+            Category = "RAPPORTS",
+            Icon = "📈",
+            Action = (log, ct) => DiagnosticService.LaunchPerfmonReport(log, ct),
+            Tags = new[] { "performances", "rapport", "perfmon", "analyse" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_mrt",
+            Name = "Antivirus Autonome (MRT)",
+            Description = "Lance l'outil officiel Microsoft de suppression de logiciels malveillants.",
+            Category = "RAPPORTS",
+            Icon = "🦠",
+            Action = (log, ct) => DiagnosticService.LaunchMrt(log, ct),
+            Tags = new[] { "mrt", "malware", "virus", "antivirus", "microsoft" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_eventvwr",
+            Name = "Observateur d'Événements",
+            Description = "Ouvre eventvwr.msc pour consulter les journaux système, sécurité et application.",
+            Category = "RAPPORTS",
+            Icon = "📋",
+            Action = (log, ct) => DiagnosticService.LaunchEventViewer(log, ct),
+            Tags = new[] { "eventvwr", "journaux", "événements", "logs" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_powercfg_energy",
+            Name = "Diagnostic Alimentation",
+            Description = "Analyse la consommation électrique et génère un rapport HTML (powercfg /energy).",
+            Category = "RAPPORTS",
+            Icon = "⚡",
+            Action = (log, ct) => HardwareService.RunPowercfgEnergy(log, ct),
+            Tags = new[] { "alimentation", "énergie", "powercfg", "batterie", "rapport" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_wifi_report",
+            Name = "Rapport Wi-Fi",
+            Description = "Génère le rapport HTML Wi-Fi complet (netsh wlan show wlanreport).",
+            Category = "RAPPORTS",
+            Icon = "📶",
+            Action = (log, ct) => DiagnosticService.GetWifiReport(log, ct),
+            Tags = new[] { "wifi", "wlan", "rapport", "réseau", "wlanreport" }
         });
     }
 

@@ -343,4 +343,69 @@ Get-PhysicalDisk | ForEach-Object {
 }
 ", onOutput, ct);
     }
+
+    // ────────────────────────────────────────────────────────────────
+    //  OBSERVATEUR D'ÉVÉNEMENTS  (rpt_eventvwr)
+    // ────────────────────────────────────────────────────────────────
+    public static Task LaunchEventViewer(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Lancement de l'Observateur d'événements...");
+        Core.CommandRunner.StartProcess("eventvwr.msc");
+        onOutput("[OK] Observateur d'événements ouvert");
+        return Task.CompletedTask;
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  MONITEUR DE FIABILITÉ  (rpt_perfmon_rel)
+    // ────────────────────────────────────────────────────────────────
+    public static Task LaunchReliabilityMonitor(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Lancement du Moniteur de fiabilité (historique des plantages)...");
+        Core.CommandRunner.StartProcess("perfmon.exe", "/rel");
+        onOutput("[OK] Moniteur de fiabilité ouvert");
+        return Task.CompletedTask;
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  RAPPORT DE PERFORMANCES  (rpt_perfmon_report)
+    // ────────────────────────────────────────────────────────────────
+    public static Task LaunchPerfmonReport(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Génération du rapport de performances système...");
+        Core.CommandRunner.StartProcess("perfmon.exe", "/report");
+        onOutput("[OK] Rapport de performances lancé (peut prendre 1 min)");
+        return Task.CompletedTask;
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  OUTIL ANTIVIRUS AUTONOME MRT  (rpt_mrt)
+    // ────────────────────────────────────────────────────────────────
+    public static Task LaunchMrt(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Lancement de l'outil de suppression de logiciels malveillants (MRT)...");
+        Core.CommandRunner.StartProcess("mrt.exe");
+        onOutput("[OK] MRT ouvert — suivez l'assistant pour analyser votre PC");
+        return Task.CompletedTask;
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  RAPPORT WI-FI  (rpt_wifi_report)
+    // ────────────────────────────────────────────────────────────────
+    public static async Task GetWifiReport(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Génération du rapport Wi-Fi...");
+        await Core.CommandRunner.RunAsync("netsh wlan show wlanreport", onOutput, ct);
+        var reportPath = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramData),
+            @"Microsoft\Windows\WlanReport\wlan-report-latest.html");
+        if (System.IO.File.Exists(reportPath))
+        {
+            onOutput($"[OK] Rapport Wi-Fi : {reportPath}");
+            Core.CommandRunner.StartProcess(reportPath);
+        }
+        else
+        {
+            onOutput("[i] Rapport généré — cherchez wlan-report-latest.html dans ProgramData\\Microsoft\\Windows\\WlanReport");
+        }
+    }
 }

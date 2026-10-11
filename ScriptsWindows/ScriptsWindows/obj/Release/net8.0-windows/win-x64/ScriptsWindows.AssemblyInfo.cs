@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("© 2026 AleexLeDev")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("4.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("4.0.0+6be763f8e2b8caa3143c404946b7461a608c171e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("4.0.0+d16b49bede4f619351b4a138d435f65e65f8d96d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Alex Toolkit")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AlexToolkit")]
 [assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]

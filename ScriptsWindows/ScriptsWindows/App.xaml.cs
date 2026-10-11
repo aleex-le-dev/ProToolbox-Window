@@ -8,6 +8,13 @@ public partial class App : Application
 {
     public App()
     {
+        // Activer le support des pages de code OEM Windows (850, 1252...) pour cmd/console
+        try
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+        }
+        catch { }
+
         DispatcherUnhandledException += (s, e) =>
         {
             LogCrash("DispatcherUnhandledException", e.Exception);

@@ -28,18 +28,14 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo [2/2] Mise a jour de AlexToolkit.exe a la racine...
-copy /Y "%~dp0ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\AlexToolkit.exe" "%~dp0AlexToolkit.exe" >nul
+copy /Y "%~dp0ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\AlexToolkit.exe" "%~dp0AlexToolkit.exe" >nul 2>&1
 
 if %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo [INFO] AlexToolkit.exe a la racine est actuellement ouvert.
-    echo Fermez l'application ouverte pour mettre a jour le fichier a la racine.
-    echo Le nouvel executable est pret dans :
-    echo   ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\AlexToolkit.exe
-    echo.
-    pause
-    exit /b 0
+    :: Si le fichier est ouvert, on le renomme temporairement pour permettre la copie
+    move /Y "%~dp0AlexToolkit.exe" "%~dp0AlexToolkit.old.exe" >nul 2>&1
+    copy /Y "%~dp0ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\AlexToolkit.exe" "%~dp0AlexToolkit.exe" >nul
 )
+if exist "%~dp0AlexToolkit.old.exe" del /f /q "%~dp0AlexToolkit.old.exe" >nul 2>&1
 
 :: Nettoyage de l'ancien binaire ScriptsWindows.exe s'il existe
 if exist "%~dp0ScriptsWindows.exe" del /f /q "%~dp0ScriptsWindows.exe" >nul 2>&1

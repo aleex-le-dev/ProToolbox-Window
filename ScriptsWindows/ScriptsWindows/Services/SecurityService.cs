@@ -18,18 +18,73 @@ Write-Output $creds
     // Mots de passe Wi-Fi  (dump_wifi)
     public static async Task DumpWifiPasswords(Action<string> onOutput, CancellationToken ct = default)
     {
-        await PowerShellRunner.RunAsync(@"
-Write-Output '--- MOTS DE PASSE WI-FI ---'
-$profiles = netsh wlan show profiles | Select-String 'Profil\s+utilisateur\s+:' | ForEach-Object {
-    ($_ -split ':')[1].Trim()
-}
-foreach ($p in $profiles) {
-    $details = netsh wlan show profile name=""$p"" key=clear
-    $pass = ($details | Select-String 'Contenu de la clé\s+:') -replace '.*:\s*', ''
-    if (-not $pass) { $pass = ($details | Select-String 'Key Content\s+:') -replace '.*:\s*', '' }
-    Write-Output ""[SSID] $p — MDP: $($pass.Trim())""
-}
-", onOutput, ct);
+        onOutput("--- MOTS DE PASSE WI-FI ---");
+        onOutput("[i] Recherche des profils Wi-Fi enregistrés...");
+
+        var rawProfiles = await CommandRunner.RunAsync("netsh wlan show profiles", ct);
+        var profiles = new List<string>();
+
+        foreach (var line in rawProfiles.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+        {
+            var idx = line.IndexOf(':');
+            if (idx >= 0)
+            {
+                var prefix = line.Substring(0, idx);
+                if (prefix.Contains("Profil", StringComparison.OrdinalIgnoreCase) ||
+                    prefix.Contains("Profile", StringComparison.OrdinalIgnoreCase))
+                {
+                    var name = line.Substring(idx + 1).Trim();
+                    if (!string.IsNullOrWhiteSpace(name) &&
+                        !name.Contains("<") &&
+                        !name.Equals("lecture seule", StringComparison.OrdinalIgnoreCase))
+                    {
+                        profiles.Add(name);
+                    }
+                }
+            }
+        }
+
+        if (profiles.Count == 0)
+        {
+            onOutput("[i] Aucun profil Wi-Fi enregistré trouvé sur cette machine.");
+            return;
+        }
+
+        onOutput($"[OK] {profiles.Count} profil(s) Wi-Fi détecté(s) :\n");
+
+        foreach (var ssid in profiles)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var details = await CommandRunner.RunAsync($"netsh wlan show profile name=\"{ssid}\" key=clear", ct);
+            string? password = null;
+
+            foreach (var dLine in details.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (dLine.Contains("Contenu de la cl", StringComparison.OrdinalIgnoreCase) ||
+                    dLine.Contains("Key Content", StringComparison.OrdinalIgnoreCase))
+                {
+                    var cIdx = dLine.IndexOf(':');
+                    if (cIdx >= 0)
+                    {
+                        password = dLine.Substring(cIdx + 1).Trim();
+                        break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(password))
+            {
+                onOutput($"📶 [SSID] {ssid}");
+                onOutput($"   🔑 Mot de passe : {password}");
+            }
+            else
+            {
+                onOutput($"📶 [SSID] {ssid}");
+                onOutput($"   🔓 Mot de passe : (Réseau ouvert ou clé entreprise)");
+            }
+            onOutput("--------------------------------------------------");
+        }
     }
 
     // Windows Defender — Scan rapide  (wd_quick)

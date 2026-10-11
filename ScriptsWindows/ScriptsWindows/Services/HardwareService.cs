@@ -43,6 +43,59 @@ Get-PhysicalDisk | ForEach-Object {
         await RunSmartTest(onOutput, ct);
     }
 
+    // Moniteur de ressources  (hw_resmon)
+    public static Task LaunchResmon(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Lancement du Moniteur de ressources Windows...");
+        CommandRunner.StartProcess("resmon.exe");
+        onOutput("[OK] Moniteur de ressources ouvert");
+        return Task.CompletedTask;
+    }
+
+    // Informations système  (hw_msinfo32)
+    public static Task LaunchMsinfo32(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Lancement de msinfo32 — Informations système...");
+        CommandRunner.StartProcess("msinfo32.exe");
+        onOutput("[OK] Informations système ouvertes");
+        return Task.CompletedTask;
+    }
+
+    // Diagnostic DirectX / GPU / Audio  (hw_dxdiag)
+    public static Task LaunchDxdiag(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Lancement de DxDiag — Outil de diagnostic DirectX...");
+        CommandRunner.StartProcess("dxdiag.exe");
+        onOutput("[OK] DxDiag ouvert");
+        return Task.CompletedTask;
+    }
+
+    // Gestionnaire de périphériques  (hw_devmgmt)
+    public static Task LaunchDevmgmt(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Lancement du Gestionnaire de périphériques...");
+        CommandRunner.StartProcess("devmgmt.msc");
+        onOutput("[OK] Gestionnaire de périphériques ouvert");
+        return Task.CompletedTask;
+    }
+
+    // Diagnostic d'alimentation  (hw_powercfg_energy)
+    public static async Task RunPowercfgEnergy(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Analyse de consommation d'énergie en cours (60 secondes)...");
+        var reportPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "energy-report.html");
+        await CommandRunner.RunAsync($"powercfg /energy /output \"{reportPath}\" /duration 60", onOutput, ct);
+        if (System.IO.File.Exists(reportPath))
+        {
+            onOutput($"[OK] Rapport généré : {reportPath}");
+            CommandRunner.StartProcess(reportPath);
+        }
+        else
+        {
+            onOutput("[!] Rapport non généré — essayez avec les droits Administrateur");
+        }
+    }
+
     // Écran tactile — activer  (touch_enable)
     public static async Task EnableTouchscreen(Action<string> onOutput, CancellationToken ct = default)
     {
