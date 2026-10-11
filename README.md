@@ -1,121 +1,108 @@
+# 🛠️ Boîte à Scripts Windows — AleexLeDev (v4.0 WPF)
+
+> Mémo personnel du projet : structure du code, compilation de l'exécutable et nettoyage des fichiers temporaires.
+
+---
+
+## ⚡ 1. Compilation de l'exécutable
+
+L'application se compile en un **fichier unique `.exe` autonome** (`PublishSingleFile`), léger (~3,6 Mo) et optimisé pour Windows 10/11.
+
+### En 1 clic (recommandé)
+Lance simplement le script à la racine :
+> [`build.bat`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/build.bat)  
+Il compile le projet en Release et dépose directement [`ScriptsWindows.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows.exe) à la racine.
+
+### En ligne de commande (PowerShell)
+```powershell
+dotnet publish ScriptsWindows/ScriptsWindows/ScriptsWindows.csproj -c Release -r win-x64 --no-self-contained -p:PublishSingleFile=true
+```
+L'exécutable généré se trouve dans :
+`ScriptsWindows/ScriptsWindows/bin/Release/net8.0-windows/win-x64/publish/ScriptsWindows.exe`
+
+*(Note : Si le SDK .NET 8 n'est pas installé sur la machine :)*
+```powershell
+& ([scriptblock]::Create((Invoke-RestMethod -Uri https://dot.net/v1/dotnet-install.ps1))) -Channel 8.0 -InstallDir "$env:LOCALAPPDATA\Microsoft\dotnet"
+```
+
+---
+
+## 🧹 2. Nettoyage Automatique
+
+Le nettoyage des fichiers temporaires et des caches est **100% automatisé**.
+
+Il suffit de double-cliquer sur :
+> 👉 **[`clean.bat`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/clean.bat)**
+
+### Ce que le script nettoie automatiquement :
+* 🗑️ **Dossiers de collecte & tests** : supprime `DiagNav/`
+* 🗑️ **Rapports & logs résiduels** : supprime `Intelligence_Report.txt` et tous les fichiers `*.log`
+* 🗑️ **Caches de compilation** : purge les dossiers `bin/` et `obj/` de Visual Studio / .NET
+
+### Ce qui est conservé et sécurisé :
+* ✅ Vos fichiers sources (`ScriptsWindows/`, scripts `.sh` et `.bat`)
+* ✅ Votre exécutable principal [`ScriptsWindows.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows.exe)
+* 🔒 Vos identifiants locaux (`credentials.txt`, `webhook_tokens.txt`), qui restent protégés et ignorés par [`.gitignore`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/.gitignore)
+
+---
+
+## 📁 3. Architecture du Projet C# / WPF
+
 ```text
-  ▄▄▄▄▄▄▄ ▄▄       ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄   ▄▄    ▄▄       ▄▄▄▄▄▄▄    ▄▄▄▄▄▄  ▄▄▄▄▄▄▄ ▄▄   ▄▄ 
- █       █  █     █       █       █  █ █  █  █  █     █       █  █      ██       █  █ █  █
- █   ▄   █  █     █    ▄▄▄█    ▄▄▄█  █▄█  █  █  █     █    ▄▄▄█  █  ▄    █    ▄▄▄█  █▄█  █
- █  █▄█  █  █     █   █▄▄▄█   █▄▄▄█       █  █  █     █   █▄▄▄   █ █ █   █   █▄▄▄█       █
- █       █  █▄▄▄▄▄█    ▄▄▄█    ▄▄▄█       █  █  █▄▄▄▄▄█    ▄▄▄█  █ █▄█   █    ▄▄▄█       █
- █   ▄   █       █   █▄▄▄█   █▄▄▄█   ▄   █  █       █   █▄▄▄   █       █   █▄▄▄█   ▄   █
- █▄▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄█ █▄▄█  █▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█  █▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄█ █▄▄█
-
-             ---===[  A  L  E  E  X     L  E     D  E  V  ]===---
+SCRIPT-WINDOWS-ALEEXLEDEV/
+├── ScriptsWindows.exe                     ← Exécutable autonome compilé
+├── build.bat                              ← Script de build en 1 clic
+├── clean.bat                              ← Script de purge des caches
+├── SUIVI_REFONTE.md                       ← Suivi d'avancement technique
+│
+└── ScriptsWindows/ScriptsWindows/
+    ├── App.xaml / App.xaml.cs             ← Point d'entrée, styles globaux, élévation UAC
+    ├── MainWindow.xaml / .cs              ← Fenêtre principale (Sidebar + Topbar + Terminal output)
+    │
+    ├── Core/                              ← Moteurs et utilitaires
+    │   ├── AdminElevation.cs              ← Auto-élévation UAC admin si nécessaire
+    │   ├── PowerShellRunner.cs            ← Exécuteur PowerShell async avec streaming live
+    │   ├── CommandRunner.cs               ← Exécuteur de commandes CMD / Process
+    │   ├── ToolRegistry.cs                ← Catalogue central de TOUS les outils
+    │   └── FavoritesManager.cs            ← Persistance locale des favoris (%LocalAppData%)
+    │
+    ├── Services/                          ← Logique métier de chaque catégorie (100% C#)
+    │   ├── DiagnosticService.cs           ← Infos système, WMI, batterie, RAM, thermal
+    │   ├── RepairService.cs               ← SFC, DISM, CHKDSK, reset Windows Update, Explorer
+    │   ├── CleaningService.cs             ← Temp, purge WU, Cleanmgr, DNS, navigateurs, clean unifié
+    │   ├── NetworkService.cs              ← Wi-Fi scan, ARP, reset TCP/IP & Winsock
+    │   ├── DnsService.cs                  ← Cloudflare (1.1.1.1), Google (8.8.8.8), DHCP
+    │   ├── AppService.cs                  ← Winget (check MAJ, upgrade all)
+    │   ├── SecurityService.cs             ← Mots de passe Wi-Fi, CredMan, Defender, EICAR
+    │   ├── UserService.cs                 ← Comptes locaux, admin, SuperAdmin
+    │   ├── HardwareService.cs             ← SMART disques, WinSAT, écran tactile, profil Ultimate
+    │   ├── ExportService.cs               ← Clé Windows BIOS/UEFI, backup pilotes DISM
+    │   └── PersonalizationService.cs      ← God Mode, menu contextuel classique Win10
+    │
+    ├── Views/
+    │   ├── Controls/
+    │   │   └── ToolCard.xaml / .cs        ← Carte d'outil cliquable avec favori ⭐ et badge Admin
+    │   └── Pages/
+    │       ├── FavorisPage.xaml           ← Page d'accueil dynamique des favoris
+    │       ├── SearchResultsPage.xaml     ← Page de recherche en direct instantanée
+    │       └── [Diagnostic, Reparation, Nettoyage, Reseau, Disque, Applications, Securite, Extraction, Materiel, Personnalisation]Page.xaml
+    │
+    └── Assets/Styles/
+        ├── Theme.xaml                     ← Palette sombre (Deep Dark / Indigo), typographie
+        └── Controls.xaml                  ← Styles des boutons, cartes, sidebar, scrollbars
 ```
 
-# Scripts-by-AleexLeDev — Boîte à Outils Système (v3.5 Windows / v2.0 Linux)
-
-Toolkit multifonction de diagnostic, réparation, optimisation et cybersécurité.  
-Disponible en deux éditions : **Windows (Batch)** et **Linux (Bash)** — même structure, mêmes noms, mêmes fonctionnalités.
-
 ---
 
-## Editions
+## 🧰 4. Récapitulatif des 10 Catégories d'Outils
 
-| Fichier | Plateforme | Version | Outils |
-|---|---|---|---|
-| `Scripts-by-AleexLeDev.bat` | Windows 10/11 | v3.5 GOLDEN | 167 |
-| `Scripts-by-AleexLeDev-Linux.sh` | Debian / Ubuntu / Arch / Fedora | v2.0 | 167 |
-
----
-
-## Lancement
-
-### Windows
-```bat
-Clic droit → "Exécuter en tant qu'administrateur"
-```
-
-### Linux
-```bash
-sudo bash Scripts-by-AleexLeDev-Linux.sh
-```
-Le script détecte automatiquement l'absence de terminal et s'ouvre dans gnome-terminal / konsole / xterm.
-
----
-
-## Navigation
-
-- **Flèches ↑↓** — naviguer
-- **Entrée** — sélectionner
-- **Échap** — retour au menu précédent
-
-Aucune saisie clavier numérique. Jamais.
-
----
-
-## Structure — 10 Catégories, 167 outils
-
-### 1. DIAGNOSTIC
-Analyse complète du système : CPU, RAM, GPU, batterie, chiffrement disque, journal d'erreurs, température, antivirus, events critiques.
-
-### 2. REPARATION
-- **Rescue** : SFC/apt fix-broken, DISM/debsums, CHKDSK/fsck, Reset Windows Update/APT locks
-- **WinRE/GRUB** : Mode sans échec, accès BIOS/UEFI, statut boot, reset GRUB
-
-### 3. NETTOYAGE ET OPTIMISATION
-Nettoyage complet (temp, cache APT, DNS, disque, registre/orphelins, presse-papiers, navigateurs), tweaks système (swappiness, CPU governor, IPv6), gestionnaire de démarrage.
-
-### 4. RESEAU
-- **DNS** : Cloudflare, Google, Quad9, AdGuard, DHCP restore
-- **Dépannage** : flush DNS, ARP, renouvellement IP, reset TCP/IP, script urgence réseau
-- **Pentest** : scan LAN, flux réseau, triage connectivité, scanner distant, web interface hunt, enum services, vérif failles, audit WiFi
-
-### 5. DISQUE
-Gestionnaire complet : formatage sécurisé, SMART, fsck, benchmark I/O, effacement (shred).
-
-### 6. APPLICATIONS
-Mises à jour (apt + snap + flatpak + pip), installateur rapide (Chrome, VLC, LibreOffice, p7zip, zsh).
-
-### 7. COMPTES ET SECURITE
-- Extracteurs : credentials, Wi-Fi, navigateurs (Firefox/Chrome)
-- Utilisateurs : créer, supprimer, droits sudo, auto-login, root
-- **Antivirus ClamAV** : scan rapide/complet, mise à jour signatures, historique menaces, test EICAR, test heuristique
-
-### 8. EXTRACTION ET SAUVEGARDE
-Clé système, export pilotes/logiciels/Wi-Fi, loot complet, historique navigateurs, scan documents sensibles, audit routes web.
-
-### 9. PERSONNALISATION
-Menu contextuel Nautilus, God Mode, mode gaming (CPU perf + GameMode), raccourcis bureau, visionneuse d'images, explorateur d'arborescence.
-
-### 10. MATERIEL
-Écran tactile (xinput), imprimantes (CUPS), plans d'alimentation (governor), score de performances (sysbench), test RAM (memtester).
-
----
-
-## Système de Favoris
-
-- **Touche [F]** sur une option → ajouter/retirer des favoris
-- Les favoris apparaissent sur l'écran d'accueil pour un accès immédiat
-- Sauvegardés dans `favoris.txt` / `~/.config/scripts-aleex/favoris.txt`
-
----
-
-## Configuration Email (Windows — extraction Nirsoft)
-
-Créer `credentials.txt` à côté du script :
-```text
-SMTP_USER=votre-email@gmail.com
-SMTP_PASS=votre-mot-de-passe-application
-EMAIL_TO=email-reception@gmail.com
-```
-*Pour Gmail : utiliser un "Mot de passe d'application" depuis les paramètres du compte.*
-
----
-
-## Avertissement Légal
-
-Outil conçu pour le diagnostic système et le pentest éthique.  
-**Ne jamais tester une infrastructure sans autorisation explicite.**  
-L'auteur (ALEEXLEDEV) décline toute responsabilité en cas d'usage inapproprié.
-
----
-
-Développé avec passion par **ALEEXLEDEV**
+1. **Diagnostic** : Rapport complet WMI, santé batterie HTML, statut live, sondes CPU, barrettes et conso RAM, BitLocker, Defender, SMART.
+2. **Réparation** : SFC /scannow, DISM Check & RestoreHealth, CHKDSK C:, reset composants WU, redémarrage Explorer, cache icônes, points de restauration.
+3. **Nettoyage** : Vider temporaires, purge téléchargements WU, flush DNS, Cleanmgr, clés orphelines, caches navigateurs (Chrome, Edge, Firefox, Brave), nettoyage unifié.
+4. **Réseau** : Appliquer DNS Cloudflare 1.1.1.1 / Google 8.8.8.8, restaurer DHCP, scan Wi-Fi, purge ARP, reset réseau TCP/IP et Winsock.
+5. **Applications** : Lister les logiciels obsolètes et tout mettre à niveau via Winget.
+6. **Sécurité** : Extraction des clés Wi-Fi en clair, Credential Manager, scans Defender rapide et complet, test EICAR.
+7. **Utilisateurs** : Liste des comptes Windows locaux, ajout, droits admin, compte Super-Administrateur.
+8. **Matériel** : Santé SMART approfondie, score WinSAT, on/off tactile, file d'impression spooler, plan d'alimentation Performances Ultimes.
+9. **Extraction** : Clé produit Windows originale (BIOS OA3x), sauvegarde de tous les pilotes tiers avec DISM.
+10. **Personnalisation** : Dossier God Mode bureau, rétablissement du clic droit classique Windows 10 sur Windows 11.

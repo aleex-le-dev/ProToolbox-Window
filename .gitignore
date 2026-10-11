@@ -1,19 +1,28 @@
+# Build & C# / .NET
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+.vs/
+
 # Ignore text files (general)
 *.txt
 
 # Exclure explicitement les fichiers sensibles/locaux
 credentials.txt
 favoris.txt
+favoris_linux.txt
 ip distant.txt
 *.log
 webhook_tokens.txt
+Intelligence_Report.txt
 
 # Ignore les dossiers de collecte
-DiagNav
+DiagNav/
 DiagNav.zip
 
-# Ignore Windows executables
-*.exe
+# Ignore Windows executables (sauf l'exe de distribution si souhaité)
+# *.exe
 *.cfg
 
 # Ignore Chromium/Edge profile state files anywhere in the repo
