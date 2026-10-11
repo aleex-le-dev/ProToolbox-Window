@@ -37,7 +37,7 @@
                                    FontSize="11"
                                    FontWeight="Bold"
                                    Foreground="{StaticResource Accent}"
-                                   LetterSpacing="3" />
+ />
                         <TextBlock Text="Boîte à Scripts Windows"
                                    FontFamily="{StaticResource FontMain}"
                                    FontSize="15"
@@ -97,7 +97,7 @@
                         <Button x:Name="NavFavoris"
                                 Style="{StaticResource SidebarItem}"
                                 Click="NavFavoris_Click">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="⭐" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Mes Favoris" VerticalAlignment="Center" />
                             </StackPanel>
@@ -108,7 +108,7 @@
 
                         <!-- DIAGNOSTIC -->
                         <Button x:Name="NavDiagnostic" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="DIAGNOSTIC">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Diagnostic" VerticalAlignment="Center" />
                             </StackPanel>
@@ -116,7 +116,7 @@
 
                         <!-- RÉPARATION -->
                         <Button x:Name="NavReparation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="REPARATION">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🔧" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Réparation" VerticalAlignment="Center" />
                             </StackPanel>
@@ -124,7 +124,7 @@
 
                         <!-- NETTOYAGE -->
                         <Button x:Name="NavNettoyage" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="NETTOYAGE">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🧹" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Nettoyage" VerticalAlignment="Center" />
                             </StackPanel>
@@ -132,7 +132,7 @@
 
                         <!-- RÉSEAU -->
                         <Button x:Name="NavReseau" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="RESEAU">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🌐" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Réseau" VerticalAlignment="Center" />
                             </StackPanel>
@@ -140,7 +140,7 @@
 
                         <!-- DISQUE -->
                         <Button x:Name="NavDisque" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="DISQUE">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="💽" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Disque" VerticalAlignment="Center" />
                             </StackPanel>
@@ -148,7 +148,7 @@
 
                         <!-- APPLICATIONS -->
                         <Button x:Name="NavApplications" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="APPLICATIONS">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="📦" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Applications" VerticalAlignment="Center" />
                             </StackPanel>
@@ -156,7 +156,7 @@
 
                         <!-- SÉCURITÉ -->
                         <Button x:Name="NavSecurite" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="SECURITE">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🔐" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Sécurité" VerticalAlignment="Center" />
                             </StackPanel>
@@ -164,7 +164,7 @@
 
                         <!-- EXTRACTION -->
                         <Button x:Name="NavExtraction" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="EXTRACTION">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="📤" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Extraction" VerticalAlignment="Center" />
                             </StackPanel>
@@ -172,7 +172,7 @@
 
                         <!-- PERSONNALISATION -->
                         <Button x:Name="NavPersonnalisation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="PERSONNALISATION">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🎨" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Personnalisation" VerticalAlignment="Center" />
                             </StackPanel>
@@ -180,7 +180,7 @@
 
                         <!-- MATÉRIEL -->
                         <Button x:Name="NavMateriel" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" Tag="MATERIEL">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🖥️" FontSize="16" VerticalAlignment="Center" />
                                 <TextBlock Text="Matériel" VerticalAlignment="Center" />
                             </StackPanel>
@@ -238,7 +238,7 @@
                                    Margin="0,4,0,0" />
                     </StackPanel>
                     <!-- Indicateur d'exécution -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Border x:Name="RunningIndicator"
                                 Background="#1A3A1A"
                                 BorderBrush="{StaticResource Success}"
@@ -277,7 +277,7 @@
                                        FontSize="12"
                                        Foreground="{StaticResource TextSecondary}"
                                        VerticalAlignment="Center" />
-                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                                 <Button x:Name="BtnClearOutput"
                                         Content="Effacer"
                                         Style="{StaticResource BtnSecondary}"

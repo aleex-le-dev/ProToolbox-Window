@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 namespace ScriptsWindows.Core;
 
 /// <summary>
@@ -7,6 +12,19 @@ namespace ScriptsWindows.Core;
 /// </summary>
 public class FavoritesManager
 {
+    private static readonly Lazy<FavoritesManager> _instance = new(() =>
+    {
+        string localFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ScriptsWindows");
+        Directory.CreateDirectory(localFolder);
+        string file = Path.Combine(localFolder, "favoris.txt");
+        return new FavoritesManager(file);
+    });
+
+    public static FavoritesManager Default => _instance.Value;
+
+    public static bool IsFavorite(string toolId) => Default.IsFav(toolId);
+    public static void ToggleFavorite(string toolId) => Default.Toggle(toolId);
+
     private readonly string _filePath;
     private HashSet<string> _favorites;
 
@@ -20,7 +38,7 @@ public class FavoritesManager
     public IReadOnlySet<string> Favorites => _favorites;
 
     /// <summary>Vérifie si un outil est dans les favoris.</summary>
-    public bool IsFavorite(string toolId) => _favorites.Contains(toolId);
+    public bool IsFav(string toolId) => _favorites.Contains(toolId);
 
     /// <summary>Ajoute ou retire un outil des favoris (toggle).</summary>
     public void Toggle(string toolId)

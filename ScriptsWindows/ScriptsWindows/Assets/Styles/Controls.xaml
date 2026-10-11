@@ -110,8 +110,6 @@
         <Setter Property="FontWeight"  Value="SemiBold" />
         <Setter Property="Foreground"  Value="{StaticResource TextMuted}" />
         <Setter Property="Margin"      Value="0,16,0,6" />
-        <Setter Property="TextTransform" Value="Uppercase" />
-        <Setter Property="LetterSpacing" Value="1.5" />
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->

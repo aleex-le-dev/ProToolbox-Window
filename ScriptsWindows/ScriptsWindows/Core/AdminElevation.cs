@@ -27,7 +27,7 @@ public static class AdminElevation
         try
         {
             var exePath = Environment.ProcessPath
-                          ?? System.Reflection.Assembly.GetExecutingAssembly().Location;
+                          ?? System.IO.Path.Combine(AppContext.BaseDirectory, "ScriptsWindows.exe");
 
             var psi = new ProcessStartInfo(exePath)
             {

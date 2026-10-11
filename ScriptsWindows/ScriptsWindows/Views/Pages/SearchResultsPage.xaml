@@ -1,0 +1,43 @@
+<Page x:Class="ScriptsWindows.Views.Pages.SearchResultsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{StaticResource BgDeep}"
+      Title="Résultats de Recherche">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,20,24,24">
+            <TextBlock x:Name="TxtHeader" Text="🔍 Résultats de Recherche"
+                       FontFamily="{StaticResource FontMain}"
+                       FontSize="22" FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimary}"
+                       Margin="0,0,0,4" />
+            <TextBlock x:Name="TxtCount" Text="0 résultat trouvé"
+                       Style="{StaticResource SubtitleText}" />
+
+            <!-- État vide -->
+            <Border x:Name="EmptyPanel" Visibility="Collapsed"
+                    Background="{StaticResource BgCard}"
+                    BorderBrush="{StaticResource Border}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource RadiusMD}"
+                    Padding="40"
+                    HorizontalAlignment="Center"
+                    Margin="0,40,0,0">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="🔎" FontSize="44" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Aucun outil ne correspond à votre recherche"
+                               FontFamily="{StaticResource FontMain}"
+                               FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    <TextBlock Text="Essayez un autre mot-clé (ex: wifi, ram, dns, sfc...)"
+                               FontFamily="{StaticResource FontMain}"
+                               FontSize="13" Foreground="{StaticResource TextSecondary}"
+                               HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Cartes résultats -->
+            <WrapPanel x:Name="ResultsPanel" Margin="0,16,0,0" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

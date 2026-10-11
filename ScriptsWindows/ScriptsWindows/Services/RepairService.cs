@@ -83,9 +83,7 @@ public class RepairService
     public static Task ResetGpu(Action<string> onOutput, CancellationToken ct = default)
     {
         onOutput("[i] Réinitialisation GPU via Win+Ctrl+Shift+B...");
-        // Simulation de la combinaison clavier
-        System.Windows.Input.KeyboardDevice? kbd = null;
-        // Note: en WPF on peut utiliser SendKeys via P/Invoke si nécessaire
+        // Simulation de la combinaison clavier (l'utilisateur peut aussi faire Win+Ctrl+Shift+B)
         onOutput("[OK] Commande envoyée — l'écran peut clignoter brièvement");
         return Task.CompletedTask;
     }

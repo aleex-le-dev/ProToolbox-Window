@@ -88,7 +88,23 @@ public partial class MainWindow : Window
         var query = SearchBox.Text.Trim();
         if (query.Length >= 2)
         {
-            // TODO: ouvrir SearchResultsPage filtrée
+            if (MainFrame.Content is SearchResultsPage searchPage)
+            {
+                searchPage.UpdateSearch(query);
+            }
+            else
+            {
+                MainFrame.Navigate(new SearchResultsPage(query));
+                PageTitle.Text = "🔍 Recherche";
+                PageSubtitle.Text = $"Résultats pour \"{query}\"";
+            }
+        }
+        else if (query.Length == 0 && MainFrame.Content is SearchResultsPage)
+        {
+            if (_activeNavBtn != null)
+                NavCategory_Click(_activeNavBtn, new RoutedEventArgs());
+            else
+                NavigateTo(NavFavoris, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés");
         }
     }
 
