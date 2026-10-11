@@ -8,6 +8,8 @@ namespace ScriptsWindows.Views.Pages;
 
 public partial class SearchResultsPage : Page
 {
+    private string _lastQuery = string.Empty;
+
     public SearchResultsPage(string query)
     {
         InitializeComponent();
@@ -16,6 +18,10 @@ public partial class SearchResultsPage : Page
 
     public void UpdateSearch(string query)
     {
+        // Éviter de reconstruire si la query est identique (debounce côté MainWindow)
+        if (query == _lastQuery) return;
+        _lastQuery = query;
+
         TxtHeader.Text = $"🔍 Recherche : \"{query}\"";
         ResultsPanel.Children.Clear();
 
@@ -24,12 +30,12 @@ public partial class SearchResultsPage : Page
 
         if (matches.Count == 0)
         {
-            EmptyPanel.Visibility = Visibility.Visible;
+            EmptyPanel.Visibility   = Visibility.Visible;
             ResultsPanel.Visibility = Visibility.Collapsed;
         }
         else
         {
-            EmptyPanel.Visibility = Visibility.Collapsed;
+            EmptyPanel.Visibility   = Visibility.Collapsed;
             ResultsPanel.Visibility = Visibility.Visible;
 
             foreach (var tool in matches)

@@ -396,7 +396,7 @@ Get-PhysicalDisk | ForEach-Object {
         onOutput("[i] Génération du rapport Wi-Fi...");
         await Core.CommandRunner.RunAsync("netsh wlan show wlanreport", onOutput, ct);
         var reportPath = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ProgramData),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
             @"Microsoft\Windows\WlanReport\wlan-report-latest.html");
         if (System.IO.File.Exists(reportPath))
         {

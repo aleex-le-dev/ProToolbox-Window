@@ -14,15 +14,20 @@
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <!-- Optimisations de rapidité (Tiered Compilation & QuickJIT) -->
+
+    <!-- ── Optimisations de performance ────────────────────────── -->
+    <!-- Tiered Compilation : JIT adaptatif (Quick JIT → Full JIT) -->
     <Optimize>true</Optimize>
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <!-- ReadyToRun : pré-compilation AOT des méthodes fréquentes → démarrage plus rapide -->
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <!-- Pas de symboles de debug en release -->
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
 
-    <!-- Métadonnées & Icône -->
-    <Version>4.0.0</Version>
+    <!-- ── Métadonnées & Icône ──────────────────────────────────── -->
+    <Version>4.1.0</Version>
     <Company>AleexLeDev</Company>
     <Product>Alex Toolkit</Product>
     <Copyright>© 2026 AleexLeDev</Copyright>

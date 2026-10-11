@@ -1,8 +1,10 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using ScriptsWindows.Core;
 using ScriptsWindows.Views.Pages;
 
@@ -12,6 +14,18 @@ public partial class MainWindow : Window
 {
     private Button? _activeNavBtn;
 
+    // ── Brushes statiques (Freeze = zéro GC pressure sur chaque ligne de log) ──
+    private static readonly SolidColorBrush BrushError   = Freeze(Color.FromRgb(239, 68,  68));
+    private static readonly SolidColorBrush BrushSuccess = Freeze(Color.FromRgb(16,  185, 129));
+    private static readonly SolidColorBrush BrushWarning = Freeze(Color.FromRgb(245, 158, 11));
+    private static readonly SolidColorBrush BrushInfo    = Freeze(Color.FromRgb(129, 140, 248));
+    private static readonly SolidColorBrush BrushDefault = Freeze(Color.FromRgb(209, 213, 219));
+
+    private static SolidColorBrush Freeze(Color c) { var b = new SolidColorBrush(c); b.Freeze(); return b; }
+
+    // ── Debounce pour la recherche (évite de chercher à chaque frappe) ──
+    private DispatcherTimer? _searchDebounce;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -20,22 +34,26 @@ public partial class MainWindow : Window
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        // Appliquer le thème actif et initialiser l'état du bouton
         ThemeManager.ApplyTheme(ThemeManager.CurrentTheme);
         UpdateThemeButtonState();
 
         // Démarrer sur la page Favoris
         NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
 
-        // Préchauffage asynchrone des pages de catégories en arrière-plan (0 ms de délai au clic)
-        Dispatcher.InvokeAsync(WarmupPages, System.Windows.Threading.DispatcherPriority.Background);
+        // Préchauffage asynchrone de toutes les pages (0 ms de délai au clic)
+        Dispatcher.InvokeAsync(WarmupPages, DispatcherPriority.Background);
     }
 
     private void WarmupPages()
     {
         try
         {
-            string[] categories = { "DIAGNOSTIC", "REPARATION", "NETTOYAGE", "RESEAU", "DISQUE", "APPLICATIONS", "SECURITE", "EXTRACTION", "PERSONNALISATION", "MATERIEL" };
+            string[] categories =
+            {
+                "DIAGNOSTIC", "REPARATION", "NETTOYAGE", "RESEAU", "DISQUE",
+                "APPLICATIONS", "SECURITE", "EXTRACTION", "PERSONNALISATION",
+                "MATERIEL", "RAPPORTS"
+            };
             foreach (var cat in categories)
             {
                 if (!_pageCache.ContainsKey(cat))
@@ -49,40 +67,42 @@ public partial class MainWindow : Window
 
     private void BtnTheme_Click(object sender, RoutedEventArgs e)
     {
-        var newTheme = ThemeManager.NextTheme();
+        ThemeManager.NextTheme();
         UpdateThemeButtonState();
-        // Aucun log dans la console
     }
 
     private void UpdateThemeButtonState()
     {
         var current = ThemeManager.CurrentTheme;
         TxtThemeIcon.Text = current.Icon;
-        BtnTheme.ToolTip = $"Thème actif : {current.Name} ({current.VisualStyle})\nCliquez pour changer de style";
+        BtnTheme.ToolTip  = $"Thème actif : {current.Name} ({current.VisualStyle})\nCliquez pour changer de style";
     }
 
     // ─── Console Terminal Latéral ────────────────────────────────────
 
     private void BtnCloseOutput_Click(object sender, RoutedEventArgs e)
     {
+        if (ScriptExecutionCoordinator.IsRunning)
+        {
+            AppendOutput("\n🛑 [INTERRUPTION] Console fermée : annulation du script...");
+            ScriptExecutionCoordinator.StopActiveExecution();
+        }
         OutputPanel.Visibility = Visibility.Collapsed;
     }
 
     private void BtnClearOutput_Click(object sender, RoutedEventArgs e)
-    {
-        OutputBox.Document.Blocks.Clear();
-    }
+        => OutputBox.Document.Blocks.Clear();
 
     // ─── Redimensionnement de la console (Splitter) ──────────────────
 
-    private bool _isResizingTerminal;
-    private Point _resizeStartPoint;
+    private bool   _isResizingTerminal;
+    private Point  _resizeStartPoint;
     private double _startTerminalWidth;
 
     private void TerminalResizeGrip_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         _isResizingTerminal = true;
-        _resizeStartPoint = e.GetPosition(this);
+        _resizeStartPoint   = e.GetPosition(this);
         _startTerminalWidth = OutputPanel.ActualWidth;
         TerminalResizeGrip.CaptureMouse();
     }
@@ -90,28 +110,23 @@ public partial class MainWindow : Window
     private void TerminalResizeGrip_MouseMove(object sender, MouseEventArgs e)
     {
         if (!_isResizingTerminal) return;
-
-        var currentPoint = e.GetPosition(this);
-        double deltaX = _resizeStartPoint.X - currentPoint.X; // Glisser à gauche = agrandir
-        double newWidth = _startTerminalWidth + deltaX;
-
-        // Limites : min 200px, max 70% de la largeur de fenêtre
-        double maxWidth = Math.Max(300, ActualWidth * 0.7);
-        OutputPanel.Width = Math.Clamp(newWidth, 200, maxWidth);
+        var    currentPoint = e.GetPosition(this);
+        double deltaX       = _resizeStartPoint.X - currentPoint.X;
+        double newWidth     = _startTerminalWidth + deltaX;
+        double maxWidth     = Math.Max(300, ActualWidth * 0.7);
+        OutputPanel.Width   = Math.Clamp(newWidth, 200, maxWidth);
     }
 
     private void TerminalResizeGrip_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (_isResizingTerminal)
-        {
-            _isResizingTerminal = false;
-            TerminalResizeGrip.ReleaseMouseCapture();
-        }
+        if (!_isResizingTerminal) return;
+        _isResizingTerminal = false;
+        TerminalResizeGrip.ReleaseMouseCapture();
     }
 
     // ─── Navigation sidebar avec mise en cache des pages ─────────────
 
-    private readonly Dictionary<string, Page> _pageCache = new();
+    private readonly System.Collections.Generic.Dictionary<string, Page> _pageCache = new();
 
     private Page GetOrCreatePage(string tag)
     {
@@ -134,6 +149,7 @@ public partial class MainWindow : Window
             "EXTRACTION"       => new ExtractionPage(),
             "PERSONNALISATION" => new PersonnalisationPage(),
             "MATERIEL"         => new MaterielPage(),
+            "RAPPORTS"         => new RapportsPage(),
             _                  => new FavorisPage()
         };
 
@@ -148,22 +164,22 @@ public partial class MainWindow : Window
     {
         var btn = (Button)sender;
         var tag = btn.Tag?.ToString() ?? "";
-
-        Page page = GetOrCreatePage(tag);
+        var page = GetOrCreatePage(tag);
 
         var (title, subtitle) = tag switch
         {
-            "DIAGNOSTIC"       => ("🔍 Diagnostic", "Analyse approfondie de la configuration et des composants système"),
-            "REPARATION"       => ("🔧 Réparation", "Intégrité système SFC, DISM, CHKDSK et redémarrages de secours"),
-            "NETTOYAGE"        => ("🧹 Nettoyage", "Optimisation, suppression des fichiers temporaires et caches"),
-            "RESEAU"           => ("🌐 Réseau", "Configuration DNS, audit Wi-Fi, réinitialisation de pile réseau"),
-            "DISQUE"           => ("💽 Disque", "Formatage sécurisé, état SMART et gestion des disques"),
-            "APPLICATIONS"     => ("📦 Applications", "Gestion, mise à jour et installation de logiciels"),
-            "SECURITE"         => ("🔐 Sécurité", "Comptes d'utilisateurs, Defender, mots de passe Wi-Fi et audit"),
-            "EXTRACTION"       => ("📤 Extraction", "Récupération de licences, exports et sauvegardes"),
-            "PERSONNALISATION" => ("🎨 Personnalisation", "God Mode, menu contextuel classique et réglages Windows"),
-            "MATERIEL"         => ("🖥️ Matériel", "Écran tactile, imprimantes, performances et alimentation"),
-            _                  => ("⭐ Mes Favoris", "Vos outils préférés accessibles rapidement")
+            "DIAGNOSTIC"       => ("🔍 Diagnostic",       "Analyse approfondie de la configuration et des composants système"),
+            "REPARATION"       => ("🔧 Réparation",        "Intégrité système SFC, DISM, CHKDSK et redémarrages de secours"),
+            "NETTOYAGE"        => ("🧹 Nettoyage",         "Optimisation, suppression des fichiers temporaires et caches"),
+            "RESEAU"           => ("🌐 Réseau",            "Configuration DNS, audit Wi-Fi, réinitialisation de pile réseau"),
+            "DISQUE"           => ("💽 Disque",            "Formatage sécurisé, état SMART et gestion des disques"),
+            "APPLICATIONS"     => ("📦 Applications",     "Gestion, mise à jour et installation de logiciels"),
+            "SECURITE"         => ("🔐 Sécurité",         "Comptes d'utilisateurs, Defender, mots de passe Wi-Fi et audit"),
+            "EXTRACTION"       => ("📤 Extraction",        "Récupération de licences, exports et sauvegardes"),
+            "PERSONNALISATION" => ("🎨 Personnalisation",  "God Mode, menu contextuel classique et réglages Windows"),
+            "MATERIEL"         => ("🖥️ Matériel",         "Écran tactile, imprimantes, performances et alimentation"),
+            "RAPPORTS"         => ("📊 Rapports",          "Fiabilité, performances, Wi-Fi, alimentation et journaux Windows"),
+            _                  => ("⭐ Mes Favoris",       "Vos outils préférés accessibles rapidement")
         };
 
         NavigateTo(btn, page, title, subtitle);
@@ -171,25 +187,36 @@ public partial class MainWindow : Window
 
     private void NavigateTo(Button navBtn, Page page, string title, string subtitle)
     {
-        // Réinitialiser le bouton actif
         if (_activeNavBtn != null)
             _activeNavBtn.Style = (Style)FindResource("SidebarItem");
 
-        // Activer le nouveau bouton
-        navBtn.Style = (Style)FindResource("SidebarItemActive");
-        _activeNavBtn = navBtn;
+        navBtn.Style    = (Style)FindResource("SidebarItemActive");
+        _activeNavBtn   = navBtn;
 
-        // Naviguer
         MainFrame.Navigate(page);
         PageTitle.Text    = title;
         PageSubtitle.Text = subtitle;
     }
 
-    // ─── Recherche ───────────────────────────────────────────────────
+    // ─── Recherche avec debounce 200 ms ──────────────────────────────
 
     private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
     {
+        // Réinitialiser le timer à chaque frappe
+        _searchDebounce?.Stop();
+        _searchDebounce = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
+        _searchDebounce.Tick += (_, _) =>
+        {
+            _searchDebounce?.Stop();
+            ApplySearch();
+        };
+        _searchDebounce.Start();
+    }
+
+    private void ApplySearch()
+    {
         var query = SearchBox.Text.Trim();
+
         if (query.Length >= 2)
         {
             if (MainFrame.Content is SearchResultsPage searchPage)
@@ -199,7 +226,7 @@ public partial class MainWindow : Window
             else
             {
                 MainFrame.Navigate(new SearchResultsPage(query));
-                PageTitle.Text = "🔍 Recherche";
+                PageTitle.Text    = "🔍 Recherche";
                 PageSubtitle.Text = $"Résultats pour \"{query}\"";
             }
         }
@@ -214,40 +241,41 @@ public partial class MainWindow : Window
 
     // ─── Terminal Output ─────────────────────────────────────────────
 
-    /// <summary>Affiche une ligne dans le terminal output avec coloration.</summary>
+    /// <summary>Affiche une ligne dans le terminal output avec coloration (non-bloquant).</summary>
     public void AppendOutput(string line)
     {
-        Dispatcher.Invoke(() =>
+        // InvokeAsync = non-bloquant, ne gèle pas le thread appelant
+        Dispatcher.InvokeAsync(() =>
         {
-            // S'assurer que la console est visible lors de l'exécution
             OutputPanel.Visibility = Visibility.Visible;
-            RunningIndicator.Visibility = Visibility.Visible;
+
+            var brush = (line.StartsWith("[ERR]") || line.Contains("[ERREUR]") || line.Contains("❌"))
+                      ? BrushError
+                      : (line.StartsWith("[OK]") || line.Contains("✅"))
+                      ? BrushSuccess
+                      : (line.StartsWith("[!]") || line.Contains("⚠️"))
+                      ? BrushWarning
+                      : (line.StartsWith("[i]") || line.Contains("🚀") || line.Contains("🎨"))
+                      ? BrushInfo
+                      : BrushDefault;
 
             var para = new Paragraph { Margin = new Thickness(0, 1, 0, 1) };
-            var run  = new Run(line);
-
-            // Coloration syntaxique moderne
-            run.Foreground = (line.StartsWith("[ERR]") || line.Contains("[ERREUR]") || line.Contains("❌"))
-                           ? new SolidColorBrush(Color.FromRgb(239, 68, 68))
-                           : (line.StartsWith("[OK]") || line.Contains("✅"))
-                           ? new SolidColorBrush(Color.FromRgb(16, 185, 129))
-                           : (line.StartsWith("[!]") || line.Contains("⚠️"))
-                           ? new SolidColorBrush(Color.FromRgb(245, 158, 11))
-                           : (line.StartsWith("[i]") || line.Contains("🚀") || line.Contains("🎨"))
-                           ? new SolidColorBrush(Color.FromRgb(129, 140, 248))
-                           : new SolidColorBrush(Color.FromRgb(209, 213, 219));
-
-            para.Inlines.Add(run);
+            para.Inlines.Add(new Run(line) { Foreground = brush });
             OutputBox.Document.Blocks.Add(para);
             OutputBox.ScrollToEnd();
-        });
+        }, DispatcherPriority.Background);
     }
 
     public void SetRunning(bool isRunning)
     {
-        Dispatcher.Invoke(() =>
+    }
+
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        if (ScriptExecutionCoordinator.IsRunning)
         {
-            RunningIndicator.Visibility = isRunning ? Visibility.Visible : Visibility.Collapsed;
-        });
+            ScriptExecutionCoordinator.StopActiveExecution();
+        }
+        base.OnClosing(e);
     }
 }

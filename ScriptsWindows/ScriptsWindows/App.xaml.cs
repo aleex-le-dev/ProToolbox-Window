@@ -1,34 +1,36 @@
-using System.Diagnostics;
-using System.Security.Principal;
+using System;
 using System.Windows;
 
 namespace ScriptsWindows;
 
 public partial class App : Application
 {
-    public App()
+    protected override void OnStartup(StartupEventArgs e)
     {
-        // Activer le support des pages de code OEM Windows (850, 1252...) pour cmd/console
-        try
+        // ── Élévation admin avant tout affichage de fenêtre ──────────
+        // (évite le "flash" de la fenêtre principale avant le redémarrage)
+        if (!AdminElevation.IsAdmin())
         {
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            AdminElevation.RelaunchAsAdmin();
+            Shutdown();
+            return;
         }
-        catch { }
 
-        DispatcherUnhandledException += (s, e) =>
+        // ── Gestionnaires d'exceptions non-gérées ────────────────────
+        DispatcherUnhandledException += (s, ev) =>
         {
-            LogCrash("DispatcherUnhandledException", e.Exception);
+            LogCrash("DispatcherUnhandledException", ev.Exception);
             MessageBox.Show(
-                $"Une erreur est survenue :\n\n{e.Exception.Message}\n\nUn fichier crash_log.txt a été généré.",
+                $"Une erreur est survenue :\n\n{ev.Exception.Message}\n\nUn fichier crash_log.txt a été généré.",
                 "Erreur Alex Toolkit",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
-            e.Handled = true;
+            ev.Handled = true;
         };
 
-        AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+        AppDomain.CurrentDomain.UnhandledException += (s, ev) =>
         {
-            if (e.ExceptionObject is Exception ex)
+            if (ev.ExceptionObject is Exception ex)
             {
                 LogCrash("AppDomainUnhandledException", ex);
                 MessageBox.Show(
@@ -38,6 +40,8 @@ public partial class App : Application
                     MessageBoxImage.Error);
             }
         };
+
+        base.OnStartup(e);
     }
 
     private static void LogCrash(string source, Exception ex)
@@ -48,17 +52,5 @@ public partial class App : Application
             System.IO.File.AppendAllText(logPath, $"[{DateTime.Now}] [{source}]\n{ex}\n\n");
         }
         catch { }
-    }
-
-    protected override void OnStartup(StartupEventArgs e)
-    {
-        // Auto-élévation admin au démarrage si nécessaire
-        if (!AdminElevation.IsAdmin())
-        {
-            AdminElevation.RelaunchAsAdmin();
-            return;
-        }
-
-        base.OnStartup(e);
     }
 }

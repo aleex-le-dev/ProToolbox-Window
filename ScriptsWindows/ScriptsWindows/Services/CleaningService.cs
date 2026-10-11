@@ -127,4 +127,12 @@ Write-Output '[OK] Cache miniatures Windows supprimé'
         onOutput("");
         onOutput("[OK] === NETTOYAGE COMPLET TERMINÉ ===");
     }
+
+    // Nettoyage composants WinSxS (cl_winsxs)
+    public static async Task CleanWinSxS(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Nettoyage approfondi du magasin de composants WinSxS (DISM)...");
+        await CommandRunner.RunAsync("DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase", onOutput, ct);
+        onOutput("[OK] Nettoyage WinSxS terminé");
+    }
 }

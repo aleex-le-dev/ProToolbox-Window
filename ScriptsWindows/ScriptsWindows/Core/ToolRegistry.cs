@@ -22,6 +22,7 @@ public static class ToolRegistry
         RegisterRepairTools();
         RegisterCleaningTools();
         RegisterNetworkTools();
+        RegisterDiskTools();
         RegisterAppTools();
         RegisterSecurityTools();
         RegisterHardwareTools();
@@ -335,6 +336,17 @@ public static class ToolRegistry
             Action = (log, ct) => CleaningService.CleanAll(log, ct),
             Tags = new[] { "global", "total", "nettoyage" }
         });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "cl_winsxs",
+            Name = "Nettoyage Magasin WinSxS (DISM)",
+            Description = "Purge et optimise le magasin des composants Windows Update (DISM /StartComponentCleanup /ResetBase).",
+            Category = "NETTOYAGE",
+            Icon = "🧹",
+            Action = (log, ct) => CleaningService.CleanWinSxS(log, ct),
+            Tags = new[] { "winsxs", "dism", "nettoyage", "cleanup", "resetbase" }
+        });
     }
 
     private static void RegisterNetworkTools()
@@ -406,6 +418,97 @@ public static class ToolRegistry
         });
     }
 
+    private static void RegisterDiskTools()
+    {
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_mgmt_gui",
+            Name = "Gestionnaire de Disques (GUI)",
+            Description = "Ouvre l'utilitaire graphique de gestion des disques et partitions (diskmgmt.msc).",
+            Category = "DISQUE",
+            Icon = "💽",
+            Action = (log, ct) => DiskService.LaunchDiskManagement(log, ct),
+            Tags = new[] { "disque", "diskmgmt", "partition", "volume", "formater" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_volumes",
+            Name = "Espace et Volumes Disponibles",
+            Description = "Affiche la liste détaillée de chaque lecteur, système de fichiers et espace libre/occupé.",
+            Category = "DISQUE",
+            Icon = "📊",
+            Action = (log, ct) => DiskService.GetVolumesStatus(log, ct),
+            Tags = new[] { "espace", "volume", "lecteur", "go", "taille", "disque" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_physical",
+            Name = "Santé et Disques Physiques",
+            Description = "Affiche les disques durs/SSD détectés, types de média et état de santé S.M.A.R.T.",
+            Category = "DISQUE",
+            Icon = "💾",
+            Action = (log, ct) => DiskService.GetPhysicalDisks(log, ct),
+            Tags = new[] { "ssd", "hdd", "smart", "santé", "physique", "disque" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_optimize_trim",
+            Name = "Optimisation Disque & TRIM SSD",
+            Description = "Exécute la commande defrag /O (TRIM pour les SSD, réorganisation pour les disques durs).",
+            Category = "DISQUE",
+            Icon = "⚡",
+            Action = (log, ct) => DiskService.OptimizeDrives(log, ct),
+            Tags = new[] { "trim", "defrag", "optimiser", "ssd", "vitesse" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_defrag_gui",
+            Name = "Défragmenteur de Disque (GUI)",
+            Description = "Ouvre l'interface Windows de défragmentation et d'optimisation des lecteurs (dfrgui.exe).",
+            Category = "DISQUE",
+            Icon = "🛠️",
+            Action = (log, ct) => DiskService.LaunchDefragGui(log, ct),
+            Tags = new[] { "dfrgui", "defrag", "interface", "optimisation" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_chkdsk",
+            Name = "Réparation de Fichiers & Secteurs (CHKDSK)",
+            Description = "Planifie une vérification et réparation approfondie du disque C: (chkdsk C: /f /r).",
+            Category = "DISQUE",
+            Icon = "🩺",
+            Action = (log, ct) => DiskService.RunChkdskRepair(log, ct),
+            Tags = new[] { "chkdsk", "réparation", "secteurs", "erreurs", "ntfs" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_diskpart",
+            Name = "Console de Formatage DISKPART",
+            Description = "Lance l'interpréteur de commandes DISKPART en mode administrateur pour le formatage avancé.",
+            Category = "DISQUE",
+            Icon = "💻",
+            Action = (log, ct) => DiskService.LaunchDiskpart(log, ct),
+            Tags = new[] { "diskpart", "formater", "nettoyer", "partition", "cmd" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "dsk_cleanmgr",
+            Name = "Nettoyage de Disque (Cleanmgr)",
+            Description = "Lance l'outil Windows officiel de nettoyage de fichiers système et temporaires.",
+            Category = "DISQUE",
+            Icon = "🧹",
+            Action = (log, ct) => DiskService.LaunchCleanmgr(log, ct),
+            Tags = new[] { "cleanmgr", "nettoyage", "espace", "temporaires" }
+        });
+    }
+
     private static void RegisterAppTools()
     {
         _allTools.Add(new ScriptTool
@@ -423,11 +526,88 @@ public static class ToolRegistry
         {
             Id = "app_update_all",
             Name = "Mettre à Jour Tous les Logiciels",
-            Description = "Lance la mise à niveau automatique de toutes les applications via winget.",
+            Description = "Lance la mise à niveau automatique de toutes les applications via winget (winget upgrade --all).",
             Category = "APPLICATIONS",
             Icon = "🚀",
             Action = (log, ct) => AppService.UpdateAll(log, ct),
-            Tags = new[] { "upgrade", "all", "tout mettre a jour" }
+            Tags = new[] { "upgrade", "all", "tout mettre a jour", "winget" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_list_installed",
+            Name = "Lister les Logiciels Installés",
+            Description = "Affiche la liste complète des applications installées sur le système (winget list).",
+            Category = "APPLICATIONS",
+            Icon = "📋",
+            Action = (log, ct) => AppService.GetInstalledApps(log, ct),
+            Tags = new[] { "liste", "applications", "winget", "logiciels" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_chrome",
+            Name = "Installer Google Chrome",
+            Description = "Installe la dernière version de Google Chrome via Winget.",
+            Category = "APPLICATIONS",
+            Icon = "🌐",
+            Action = (log, ct) => AppService.InstallChrome(log, ct),
+            Tags = new[] { "chrome", "navigateur", "google", "web" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_vlc",
+            Name = "Installer VLC Media Player",
+            Description = "Installe le lecteur multimédia open-source VLC.",
+            Category = "APPLICATIONS",
+            Icon = "🎬",
+            Action = (log, ct) => AppService.InstallVlc(log, ct),
+            Tags = new[] { "vlc", "video", "media", "musique" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_sumatra",
+            Name = "Installer Sumatra PDF",
+            Description = "Lecteur de fichiers PDF et e-books ultra-léger et rapide.",
+            Category = "APPLICATIONS",
+            Icon = "📄",
+            Action = (log, ct) => AppService.InstallSumatraPdf(log, ct),
+            Tags = new[] { "pdf", "sumatra", "document", "lecteur" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_winrar",
+            Name = "Installer WinRAR",
+            Description = "Utilitaire de compression et décompression d'archives RAR/ZIP.",
+            Category = "APPLICATIONS",
+            Icon = "🗜️",
+            Action = (log, ct) => AppService.InstallWinRar(log, ct),
+            Tags = new[] { "winrar", "rar", "zip", "archive", "compression" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_ps7",
+            Name = "Installer PowerShell 7",
+            Description = "Installe la version moderne et multiplateforme de PowerShell.",
+            Category = "APPLICATIONS",
+            Icon = "⚡",
+            Action = (log, ct) => AppService.InstallPs7(log, ct),
+            Tags = new[] { "powershell", "ps7", "terminal", "script" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_office",
+            Name = "Télécharger Microsoft Office 2024",
+            Description = "Ouvre la page de téléchargement officielle de la suite Office.",
+            Category = "APPLICATIONS",
+            Icon = "💼",
+            Action = (log, ct) => AppService.InstallOffice(log, ct),
+            Tags = new[] { "office", "word", "excel", "microsoft" }
         });
     }
 
@@ -545,6 +725,17 @@ public static class ToolRegistry
             Action = (log, ct) => HardwareService.RunWinSat(log, ct),
             Tags = new[] { "winsat", "benchmark", "stress", "performance", "matériel" }
         });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_smart_wmic",
+            Name = "Santé Disques S.M.A.R.T. (WMIC)",
+            Description = "Interroge directement l'état de santé S.M.A.R.T. de chaque disque via wmic diskdrive get status.",
+            Category = "MATERIEL",
+            Icon = "🩺",
+            Action = (log, ct) => HardwareService.GetSmartWmicStatus(log, ct),
+            Tags = new[] { "smart", "wmic", "disque", "santé", "status" }
+        });
     }
 
     private static void RegisterReportsTools()
@@ -613,6 +804,28 @@ public static class ToolRegistry
             Icon = "📶",
             Action = (log, ct) => DiagnosticService.GetWifiReport(log, ct),
             Tags = new[] { "wifi", "wlan", "rapport", "réseau", "wlanreport" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_battery",
+            Name = "Rapport de Batterie (Portables)",
+            Description = "Génère l'historique complet et la santé de la batterie (powercfg /batteryreport).",
+            Category = "RAPPORTS",
+            Icon = "🔋",
+            Action = (log, ct) => DiagnosticService.GetBatteryReport(log, ct),
+            Tags = new[] { "batterie", "powercfg", "batteryreport", "rapport", "autonomie" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "rpt_winsxs",
+            Name = "Nettoyage Composants WinSxS",
+            Description = "Purge et compresse le magasin des composants Windows Update (DISM /StartComponentCleanup /ResetBase).",
+            Category = "RAPPORTS",
+            Icon = "🧹",
+            Action = (log, ct) => CleaningService.CleanWinSxS(log, ct),
+            Tags = new[] { "winsxs", "dism", "nettoyage", "cleanup", "resetbase" }
         });
     }
 

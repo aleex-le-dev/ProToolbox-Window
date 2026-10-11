@@ -168,6 +168,7 @@ public static class ThemeManager
     };
 
     private static int _currentIndex = 0;
+    private static string? _lastAppliedThemeId;
 
     public static AppTheme CurrentTheme => AvailableThemes[_currentIndex];
 
@@ -180,68 +181,76 @@ public static class ThemeManager
 
     public static void ApplyTheme(AppTheme theme)
     {
+        // Éviter de réappliquer le même thème inutilement
+        if (_lastAppliedThemeId == theme.Id) return;
+        _lastAppliedThemeId = theme.Id;
+
         var res = Application.Current.Resources;
 
         // Couleurs fondamentales
-        res["BgDeepColor"] = theme.BgDeep;
-        res["BgSidebarColor"] = theme.BgSidebar;
-        res["BgCardColor"] = theme.BgCard;
+        res["BgDeepColor"]      = theme.BgDeep;
+        res["BgSidebarColor"]   = theme.BgSidebar;
+        res["BgCardColor"]      = theme.BgCard;
         res["BgCardHoverColor"] = theme.BgCardHover;
-        res["AccentColor"] = theme.Accent;
+        res["AccentColor"]      = theme.Accent;
         res["AccentHoverColor"] = theme.AccentHover;
-        res["AccentDimColor"] = theme.AccentDim;
-        res["BorderColor"] = theme.Border;
-        res["BorderAccentColor"] = theme.BorderAccent;
+        res["AccentDimColor"]   = theme.AccentDim;
+        res["BorderColor"]      = theme.Border;
+        res["BorderAccentColor"]= theme.BorderAccent;
 
-        // SolidColorBrushes dynamiques (avec canaux Alpha de transparence)
-        res["BgDeep"] = new SolidColorBrush(theme.BgDeep);
-        res["BgSidebar"] = new SolidColorBrush(theme.BgSidebar);
-        res["BgCard"] = new SolidColorBrush(theme.BgCard);
-        res["BgCardHover"] = new SolidColorBrush(theme.BgCardHover);
-        res["Accent"] = new SolidColorBrush(theme.Accent);
-        res["AccentHover"] = new SolidColorBrush(theme.AccentHover);
-        res["AccentDim"] = new SolidColorBrush(theme.AccentDim);
-        res["Border"] = new SolidColorBrush(theme.Border);
-        res["BorderAccent"] = new SolidColorBrush(theme.BorderAccent);
+        // SolidColorBrushes dynamiques (Frozen = lecture seule, performant)
+        res["BgDeep"]      = MakeBrush(theme.BgDeep);
+        res["BgSidebar"]   = MakeBrush(theme.BgSidebar);
+        res["BgCard"]      = MakeBrush(theme.BgCard);
+        res["BgCardHover"] = MakeBrush(theme.BgCardHover);
+        res["Accent"]      = MakeBrush(theme.Accent);
+        res["AccentHover"] = MakeBrush(theme.AccentHover);
+        res["AccentDim"]   = MakeBrush(theme.AccentDim);
+        res["Border"]      = MakeBrush(theme.Border);
+        res["BorderAccent"]= MakeBrush(theme.BorderAccent);
 
-        // Effets visuels (Ombre / Lueur Glow / Épaisseur)
-        res["CardShadowColor"] = theme.ShadowColor;
-        res["CardShadowOpacity"] = theme.ShadowOpacity;
-        res["CardShadowBlur"] = theme.ShadowBlur;
-        res["CardBorderThickness"] = new Thickness(theme.CardBorderThickness);
+        // Effets visuels
+        res["CardShadowColor"]      = theme.ShadowColor;
+        res["CardShadowOpacity"]    = theme.ShadowOpacity;
+        res["CardShadowBlur"]       = theme.ShadowBlur;
+        res["CardBorderThickness"]  = new Thickness(theme.CardBorderThickness);
 
-        // Dégradé de fond de fenêtre (donne toute la profondeur à la transparence)
-        var windowGradient = new LinearGradientBrush
-        {
-            StartPoint = new Point(0, 0),
-            EndPoint = new Point(1, 1)
-        };
-        windowGradient.GradientStops.Add(new GradientStop(theme.BgDeep, 0));
-        windowGradient.GradientStops.Add(new GradientStop(theme.BgDeepGradientEnd, 1));
-        res["WindowGradientBrush"] = windowGradient;
+        // Dégradé de fond de fenêtre
+        res["WindowGradientBrush"] = MakeGradient(
+            new Point(0, 0), new Point(1, 1),
+            (theme.BgDeep, 0.0),
+            (theme.BgDeepGradientEnd, 1.0));
 
         // Dégradé du header
-        var headerGrad = new LinearGradientBrush
-        {
-            StartPoint = new Point(0, 0),
-            EndPoint = new Point(1, 0)
-        };
-        headerGrad.GradientStops.Add(new GradientStop(theme.BgSidebar, 0));
-        headerGrad.GradientStops.Add(new GradientStop(theme.BgDeep, 1));
-        res["HeaderGradient"] = headerGrad;
+        res["HeaderGradient"] = MakeGradient(
+            new Point(0, 0), new Point(1, 0),
+            (theme.BgSidebar, 0.0),
+            (theme.BgDeep, 1.0));
 
         // Dégradé d'accent
-        var accentGrad = new LinearGradientBrush
-        {
-            StartPoint = new Point(0, 0),
-            EndPoint = new Point(1, 1)
-        };
-        accentGrad.GradientStops.Add(new GradientStop(theme.Accent, 0));
-        accentGrad.GradientStops.Add(new GradientStop(theme.AccentHover, 1));
-        res["AccentGradient"] = accentGrad;
+        res["AccentGradient"] = MakeGradient(
+            new Point(0, 0), new Point(1, 1),
+            (theme.Accent, 0.0),
+            (theme.AccentHover, 1.0));
 
         // Terminal
-        res["TerminalBg"] = new SolidColorBrush(theme.TerminalBg);
-        res["TerminalText"] = new SolidColorBrush(theme.TerminalText);
+        res["TerminalBg"]   = MakeBrush(theme.TerminalBg);
+        res["TerminalText"] = MakeBrush(theme.TerminalText);
+    }
+
+    private static SolidColorBrush MakeBrush(Color color)
+    {
+        var b = new SolidColorBrush(color);
+        b.Freeze();
+        return b;
+    }
+
+    private static LinearGradientBrush MakeGradient(Point start, Point end, params (Color color, double offset)[] stops)
+    {
+        var grad = new LinearGradientBrush { StartPoint = start, EndPoint = end };
+        foreach (var (color, offset) in stops)
+            grad.GradientStops.Add(new GradientStop(color, offset));
+        grad.Freeze();
+        return grad;
     }
 }

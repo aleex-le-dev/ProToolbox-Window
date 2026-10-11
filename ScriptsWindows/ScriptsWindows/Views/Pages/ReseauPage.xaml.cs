@@ -6,6 +6,8 @@ namespace ScriptsWindows.Views.Pages;
 
 public partial class ReseauPage : Page
 {
+    private bool _loaded;
+
     public ReseauPage()
     {
         InitializeComponent();
@@ -14,6 +16,9 @@ public partial class ReseauPage : Page
 
     private void LoadTools()
     {
+        if (_loaded) return;
+        _loaded = true;
+
         ToolsPanel.Children.Clear();
         foreach (var tool in ToolRegistry.GetByCategory("RESEAU"))
         {

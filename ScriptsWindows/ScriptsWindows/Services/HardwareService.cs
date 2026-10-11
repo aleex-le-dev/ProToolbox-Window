@@ -174,4 +174,11 @@ if ($dev) {
 
     public static async Task ListPowerPlans(Action<string> onOutput, CancellationToken ct = default)
         => await CommandRunner.RunAsync("powercfg /list", onOutput, ct);
+
+    // Santé disque S.M.A.R.T. (wmic diskdrive get status)
+    public static async Task GetSmartWmicStatus(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Interrogation de l'état S.M.A.R.T. via WMIC...");
+        await CommandRunner.RunAsync("wmic diskdrive get status,model,caption", onOutput, ct);
+    }
 }
