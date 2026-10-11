@@ -117,80 +117,86 @@
                         <Button x:Name="NavFavoris"
                                 Style="{StaticResource SidebarItem}"
                                 Click="NavFavoris_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⭐" FontSize="15" Margin="0,0,10,0" />
-                                <TextBlock Text="Favoris" VerticalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="⭐" FontSize="14" Margin="0,0,10,0" />
+                                <TextBlock Text="Favoris" VerticalAlignment="Center" FontWeight="Medium" />
                             </StackPanel>
                         </Button>
 
-                        <Border Height="1" Background="{DynamicResource Border}" Margin="8,8,8,8" />
+                        <!-- Séparateur & En-tête Catégories -->
+                        <Border Height="1" Background="{DynamicResource Border}" Margin="4,8,4,8" />
+                        <TextBlock Text="CATÉGORIES"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource TextMuted}"
+                                   Margin="10,2,0,6" />
 
                         <!-- Catégories 1-10 -->
                         <Button Tag="DIAGNOSTIC" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🔍" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Diagnostic" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="REPARATION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🔧" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Réparation" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="NETTOYAGE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🧹" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Nettoyage" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="RESEAU" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🌐" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Réseau" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="DISQUE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="💽" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Disque" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="APPLICATIONS" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="📦" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Applications" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="SECURITE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🔐" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Sécurité" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="EXTRACTION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="📤" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Extraction" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="PERSONNALISATION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🎨" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Personnalisation" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <Button Tag="MATERIEL" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🖥️" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Matériel" VerticalAlignment="Center" />
                             </StackPanel>
@@ -267,91 +273,124 @@
         <!-- ══════════════════════════════════════════ -->
         <!--       3. TERMINAL LATÉRAL À DROITE         -->
         <!-- ══════════════════════════════════════════ -->
-        <Border x:Name="OutputPanel"
-                Grid.Column="2"
-                Width="240"
-                Background="{DynamicResource TerminalBg}"
-                BorderBrush="{DynamicResource Border}"
-                BorderThickness="1,0,0,0"
-                Visibility="Collapsed">
-            <DockPanel>
-                <!-- Toolbar du terminal -->
-                <Border DockPanel.Dock="Top"
-                        Background="{DynamicResource BgSidebar}"
-                        BorderBrush="{DynamicResource Border}"
-                        BorderThickness="0,0,0,1"
-                        Padding="12,10,12,10">
-                    <DockPanel>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text=">_ Console"
-                                       FontFamily="{StaticResource FontMono}"
-                                       FontSize="11.5"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource Accent}" />
-                            <!-- Indicateur d'exécution discret interne à la console -->
-                            <TextBlock x:Name="RunningIndicator"
-                                       Text=" ● En cours"
-                                       FontFamily="{StaticResource FontMono}"
-                                       FontSize="10.5"
-                                       Foreground="{DynamicResource Success}"
-                                       VerticalAlignment="Center"
-                                       Margin="6,0,0,0"
-                                       Visibility="Collapsed" />
-                        </StackPanel>
-                        
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button x:Name="BtnClearOutput"
-                                    Content="🗑️"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Foreground="{DynamicResource TextSecondary}"
-                                    Padding="6,3,6,3"
-                                    FontSize="11"
-                                    Margin="0,0,4,0"
-                                    Cursor="Hand"
-                                    ToolTip="Effacer la console"
-                                    Click="BtnClearOutput_Click">
-                                <Button.Resources>
-                                    <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="5"/>
-                                    </Style>
-                                </Button.Resources>
-                            </Button>
-                            <Button x:Name="BtnCloseOutput"
-                                    Content="✕"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Foreground="{DynamicResource TextSecondary}"
-                                    Padding="6,3,6,3"
-                                    FontSize="11"
-                                    Cursor="Hand"
-                                    ToolTip="Fermer la console"
-                                    Click="BtnCloseOutput_Click">
-                                <Button.Resources>
-                                    <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="5"/>
-                                    </Style>
-                                </Button.Resources>
-                            </Button>
-                        </StackPanel>
-                    </DockPanel>
-                </Border>
+        <Grid x:Name="OutputPanel"
+              Grid.Column="2"
+              Width="260"
+              MinWidth="200"
+              Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <!-- Poignée de redimensionnement (curseur SizeWE) -->
+                <ColumnDefinition Width="6" />
+                <!-- Contenu de la console -->
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-                <!-- Sortie texte en colonne droite (pleine hauteur) -->
-                <RichTextBox x:Name="OutputBox"
-                             Background="{DynamicResource TerminalBg}"
-                             BorderThickness="0"
-                             Padding="14,12,14,12"
-                             FontFamily="{StaticResource FontMono}"
-                             FontSize="12"
-                             Foreground="{DynamicResource TerminalText}"
-                             IsReadOnly="True"
-                             VerticalScrollBarVisibility="Auto"
-                             HorizontalScrollBarVisibility="Disabled">
-                    <FlowDocument PagePadding="0" />
-                </RichTextBox>
-            </DockPanel>
-        </Border>
+            <!-- Poignée Splitter pour élargir ou réduire la console -->
+            <Border Grid.Column="0"
+                    x:Name="TerminalResizeGrip"
+                    Background="Transparent"
+                    BorderBrush="{DynamicResource Border}"
+                    BorderThickness="1,0,0,0"
+                    Cursor="SizeWE"
+                    ToolTip="Glisser vers la gauche pour élargir la console"
+                    MouseLeftButtonDown="TerminalResizeGrip_MouseLeftButtonDown"
+                    MouseMove="TerminalResizeGrip_MouseMove"
+                    MouseLeftButtonUp="TerminalResizeGrip_MouseLeftButtonUp">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentDim}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+
+            <!-- Contenu du terminal -->
+            <Border Grid.Column="1"
+                    Background="{DynamicResource TerminalBg}">
+                <DockPanel>
+                    <!-- Toolbar du terminal -->
+                    <Border DockPanel.Dock="Top"
+                            Background="{DynamicResource BgSidebar}"
+                            BorderBrush="{DynamicResource Border}"
+                            BorderThickness="0,0,0,1"
+                            Padding="12,10,12,10">
+                        <DockPanel>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text=">_ Console"
+                                           FontFamily="{StaticResource FontMono}"
+                                           FontSize="11.5"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource Accent}" />
+                                <!-- Indicateur d'exécution discret interne à la console -->
+                                <TextBlock x:Name="RunningIndicator"
+                                           Text=" ● En cours"
+                                           FontFamily="{StaticResource FontMono}"
+                                           FontSize="10.5"
+                                           Foreground="{DynamicResource Success}"
+                                           VerticalAlignment="Center"
+                                           Margin="6,0,0,0"
+                                           Visibility="Collapsed" />
+                            </StackPanel>
+                            
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button x:Name="BtnClearOutput"
+                                        Content="🗑️"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="{DynamicResource TextSecondary}"
+                                        Padding="6,3,6,3"
+                                        FontSize="11"
+                                        Margin="0,0,4,0"
+                                        Cursor="Hand"
+                                        ToolTip="Effacer la console"
+                                        Click="BtnClearOutput_Click">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                                <Button x:Name="BtnCloseOutput"
+                                        Content="✕"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="{DynamicResource TextSecondary}"
+                                        Padding="6,3,6,3"
+                                        FontSize="11"
+                                        Cursor="Hand"
+                                        ToolTip="Fermer la console"
+                                        Click="BtnCloseOutput_Click">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Sortie texte en colonne droite (pleine hauteur) -->
+                    <RichTextBox x:Name="OutputBox"
+                                 Background="{DynamicResource TerminalBg}"
+                                 BorderThickness="0"
+                                 Padding="14,12,14,12"
+                                 FontFamily="{StaticResource FontMono}"
+                                 FontSize="12"
+                                 Foreground="{DynamicResource TerminalText}"
+                                 IsReadOnly="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Disabled">
+                        <FlowDocument PagePadding="0" />
+                    </RichTextBox>
+                </DockPanel>
+            </Border>
+        </Grid>
 
     </Grid>
 </Window>

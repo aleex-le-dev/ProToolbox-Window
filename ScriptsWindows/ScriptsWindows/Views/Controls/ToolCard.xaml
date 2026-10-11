@@ -4,23 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="140" d:DesignWidth="320">
+             d:DesignHeight="148" d:DesignWidth="320"
+             Width="320" Height="148" Margin="0,0,14,14">
     <UserControl.Resources>
-        <Style x:Key="CardBorderStyle" TargetType="Border">
+        <Style x:Key="ModernCardStyle" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource BgCard}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource Border}"/>
-            <Setter Property="BorderThickness" Value="{DynamicResource CardBorderThickness}"/>
+            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Padding" Value="14,12,14,12"/>
-            <Setter Property="Margin" Value="6,6,8,8"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect Color="{DynamicResource CardShadowColor}" 
-                                      BlurRadius="{DynamicResource CardShadowBlur}" 
-                                      Opacity="{DynamicResource CardShadowOpacity}" 
+                                      BlurRadius="8" 
+                                      Opacity="0.2" 
                                       Direction="270" 
-                                      ShadowDepth="2" 
+                                      ShadowDepth="1" 
                                       RenderingBias="Performance"/>
                 </Setter.Value>
             </Setter>
@@ -33,66 +33,64 @@
         </Style>
     </UserControl.Resources>
 
-    <Border Style="{StaticResource CardBorderStyle}" Width="316" Height="144">
+    <Border Style="{StaticResource ModernCardStyle}">
         <Grid>
             <Grid.RowDefinitions>
+                <!-- 1. En-tête : Icône, Titre, Favori -->
                 <RowDefinition Height="Auto"/>
+                <!-- 2. Description -->
                 <RowDefinition Height="*"/>
+                <!-- 3. Pied de carte : Bouton Exécuter -->
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- En-tête : Badge Icône, Titre, Bouton Favori -->
-            <Grid Grid.Row="0">
+            <!-- 1. En-tête -->
+            <Grid Grid.Row="0" Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Badge Icône Moderne façon Raycast/Linear -->
-                <Border Background="{DynamicResource AccentDim}" 
-                        CornerRadius="8" Width="30" Height="30" Margin="0,0,10,0"
+                <!-- Badge Icône moderne -->
+                <Border Grid.Column="0" 
+                        Background="{DynamicResource AccentDim}" 
+                        CornerRadius="8" Width="36" Height="36" Margin="0,0,10,0"
                         VerticalAlignment="Center">
-                    <TextBlock x:Name="TxtIcon" Text="⚡" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TxtIcon" Text="⚡" FontSize="17" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
 
                 <!-- Titre de l'outil -->
-                <TextBlock x:Name="TxtTitle" Grid.Column="1" Text="Titre de l'outil" 
-                           FontWeight="SemiBold" FontSize="13.5" Foreground="{DynamicResource TextPrimary}"
-                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                <TextBlock x:Name="TxtTitle" Grid.Column="1"
+                           Text="Titre de l'outil" 
+                           FontWeight="SemiBold" FontSize="13.5" 
+                           Foreground="{DynamicResource TextPrimary}"
+                           TextWrapping="Wrap" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
 
                 <!-- Favori -->
-                <Button x:Name="BtnFavorite" Grid.Column="2" 
+                <Button x:Name="BtnFavorite" Grid.Column="2"
                         Background="Transparent" BorderThickness="0" 
-                        Foreground="{DynamicResource TextSecondary}" FontSize="14" Cursor="Hand"
-                        Click="BtnFavorite_Click" Padding="4,2" ToolTip="Ajouter / Retirer des favoris">
+                        Foreground="{DynamicResource TextSecondary}" FontSize="16" Cursor="Hand"
+                        Click="BtnFavorite_Click" Padding="4,2" VerticalAlignment="Top"
+                        ToolTip="Ajouter / Retirer des favoris">
                     <TextBlock x:Name="TxtFavIcon" Text="☆"/>
                 </Button>
             </Grid>
 
-            <!-- Description -->
-            <TextBlock x:Name="TxtDescription" Grid.Row="1" Margin="0,8,0,6"
+            <!-- 2. Description -->
+            <TextBlock x:Name="TxtDescription" Grid.Row="1"
                        Text="Description concise de la fonction de l'outil." 
-                       Foreground="{DynamicResource TextSecondary}" FontSize="11.5" LineHeight="16"
-                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="44"/>
+                       Foreground="{DynamicResource TextSecondary}" FontSize="12"
+                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Top" Margin="0,2,0,4"/>
 
-            <!-- Pied : Badge Admin & Bouton Exécuter -->
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Badge Admin Pilule Moderne -->
-                <Border x:Name="BadgeAdmin" HorizontalAlignment="Left" VerticalAlignment="Center"
-                        Background="#1EF43F5E" BorderBrush="#3EF43F5E" BorderThickness="1" CornerRadius="5" Padding="6,2">
-                    <TextBlock Text="🛡️ Admin" FontSize="10" Foreground="#FDA4AF" FontWeight="SemiBold"/>
-                </Border>
-
-                <!-- Bouton Lancer avec icône de lecture -->
-                <Button x:Name="BtnRun" Grid.Column="1" Click="BtnRun_Click"
+            <!-- 3. Pied : Bouton Exécuter aligné à droite -->
+            <DockPanel Grid.Row="2" LastChildFill="False">
+                <Button x:Name="BtnRun" DockPanel.Dock="Right" Click="BtnRun_Click"
                         Content="▶ Exécuter" FontSize="11.5" FontWeight="SemiBold"
-                        Padding="12,5" Cursor="Hand"
+                        Padding="14,6" Cursor="Hand"
                         Background="{DynamicResource Accent}" Foreground="#FFFFFF" BorderThickness="0">
                     <Button.Resources>
                         <Style TargetType="Border">
@@ -100,7 +98,7 @@
                         </Style>
                     </Button.Resources>
                 </Button>
-            </Grid>
+            </DockPanel>
         </Grid>
     </Border>
 </UserControl>

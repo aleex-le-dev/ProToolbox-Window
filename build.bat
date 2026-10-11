@@ -8,6 +8,7 @@ echo.
 :: Priorite au SDK installe localement dans LocalAppData
 if exist "%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe" (
     set "DOTNET_ROOT=%LOCALAPPDATA%\Microsoft\dotnet"
+    set "DOTNET_MULTILEVEL_LOOKUP=0"
     set "PATH=%LOCALAPPDATA%\Microsoft\dotnet;%PATH%"
     set "DOTNET_CMD=%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe"
 ) else (

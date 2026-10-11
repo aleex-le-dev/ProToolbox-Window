@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using ScriptsWindows.Core;
 using ScriptsWindows.Views.Pages;
@@ -53,6 +54,42 @@ public partial class MainWindow : Window
     private void BtnClearOutput_Click(object sender, RoutedEventArgs e)
     {
         OutputBox.Document.Blocks.Clear();
+    }
+
+    // ─── Redimensionnement de la console (Splitter) ──────────────────
+
+    private bool _isResizingTerminal;
+    private Point _resizeStartPoint;
+    private double _startTerminalWidth;
+
+    private void TerminalResizeGrip_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        _isResizingTerminal = true;
+        _resizeStartPoint = e.GetPosition(this);
+        _startTerminalWidth = OutputPanel.ActualWidth;
+        TerminalResizeGrip.CaptureMouse();
+    }
+
+    private void TerminalResizeGrip_MouseMove(object sender, MouseEventArgs e)
+    {
+        if (!_isResizingTerminal) return;
+
+        var currentPoint = e.GetPosition(this);
+        double deltaX = _resizeStartPoint.X - currentPoint.X; // Glisser à gauche = agrandir
+        double newWidth = _startTerminalWidth + deltaX;
+
+        // Limites : min 200px, max 70% de la largeur de fenêtre
+        double maxWidth = Math.Max(300, ActualWidth * 0.7);
+        OutputPanel.Width = Math.Clamp(newWidth, 200, maxWidth);
+    }
+
+    private void TerminalResizeGrip_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (_isResizingTerminal)
+        {
+            _isResizingTerminal = false;
+            TerminalResizeGrip.ReleaseMouseCapture();
+        }
     }
 
     // ─── Navigation sidebar ──────────────────────────────────────────

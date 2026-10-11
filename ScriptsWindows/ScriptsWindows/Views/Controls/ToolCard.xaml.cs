@@ -31,7 +31,6 @@ public partial class ToolCard : UserControl
         TxtIcon.Text = string.IsNullOrEmpty(tool.Icon) ? "⚡" : tool.Icon;
         TxtTitle.Text = tool.Title;
         TxtDescription.Text = tool.Description;
-        BadgeAdmin.Visibility = tool.RequiresAdmin ? Visibility.Visible : Visibility.Collapsed;
 
         UpdateFavoriteState();
     }

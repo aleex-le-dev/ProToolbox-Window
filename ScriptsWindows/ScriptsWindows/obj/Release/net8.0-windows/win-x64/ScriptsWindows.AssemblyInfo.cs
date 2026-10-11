@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("© 2026 AleexLeDev")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("4.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("4.0.0+6f104f1bcba65341096b0ee549b1204ee1ead01d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("4.0.0+a7b017f8f8457430cddb36b0ed0f60b70ed26756")]
 [assembly: System.Reflection.AssemblyProductAttribute("Boîte à Scripts Windows")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ScriptsWindows")]
 [assembly: System.Reflection.AssemblyVersionAttribute("4.0.0.0")]

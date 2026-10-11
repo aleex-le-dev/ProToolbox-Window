@@ -36,7 +36,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Cartes résultats -->
+            <!-- Cartes résultats en grille -->
             <WrapPanel x:Name="ResultsPanel" Margin="0,16,0,0" />
         </StackPanel>
     </ScrollViewer>

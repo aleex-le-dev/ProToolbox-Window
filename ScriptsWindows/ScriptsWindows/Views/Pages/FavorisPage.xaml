@@ -32,11 +32,11 @@
                 </StackPanel>
             </Border>
 
-            <!-- Grille des favoris (générée dynamiquement) -->
+            <!-- Grille des cartes favoris -->
             <ItemsControl x:Name="FavorisGrid">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
+                        <WrapPanel />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>

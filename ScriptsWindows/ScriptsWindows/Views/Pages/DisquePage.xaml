@@ -5,7 +5,7 @@
       Title="Gestion des Disques">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24,16,24,24">
-            <!-- Les ToolCards sont générées ici directement -->
+            <!-- Cartes en grille -->
             <WrapPanel x:Name="ToolsPanel" Margin="0,4,0,0" />
         </StackPanel>
     </ScrollViewer>
