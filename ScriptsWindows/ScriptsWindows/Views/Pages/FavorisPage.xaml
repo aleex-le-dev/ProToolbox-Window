@@ -1,0 +1,45 @@
+<Page x:Class="ScriptsWindows.Views.Pages.FavorisPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{StaticResource BgDeep}"
+      Title="Mes Favoris">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,20,24,24">
+            <!-- Info si pas de favoris -->
+            <Border x:Name="EmptyState"
+                    Background="{StaticResource BgCard}"
+                    BorderBrush="{StaticResource Border}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource RadiusMD}"
+                    Padding="40"
+                    HorizontalAlignment="Center"
+                    Margin="0,40,0,0">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="⭐" FontSize="48" HorizontalAlignment="Center" />
+                    <TextBlock Text="Aucun favori pour l'instant"
+                               FontFamily="{StaticResource FontMain}"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               HorizontalAlignment="Center"
+                               Margin="0,12,0,0" />
+                    <TextBlock Text="Cliquez sur ⭐ sur un outil pour l'ajouter ici"
+                               FontFamily="{StaticResource FontMain}"
+                               FontSize="13"
+                               Foreground="{StaticResource TextSecondary}"
+                               HorizontalAlignment="Center"
+                               Margin="0,6,0,0" />
+                </StackPanel>
+            </Border>
+
+            <!-- Grille des favoris (générée dynamiquement) -->
+            <ItemsControl x:Name="FavorisGrid">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

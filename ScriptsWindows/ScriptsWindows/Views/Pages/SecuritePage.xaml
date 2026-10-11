@@ -1,0 +1,19 @@
+<Page x:Class="ScriptsWindows.Views.Pages.SecuritePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{StaticResource BgDeep}"
+      Title="Sécurité">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,20,24,24">
+            <TextBlock Text="🔐 Sécurité"
+                       FontFamily="{StaticResource FontMain}"
+                       FontSize="22" FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimary}"
+                       Margin="0,0,0,8" />
+            <TextBlock Text="Page en cours de construction — outils à venir"
+                       Style="{StaticResource SubtitleText}" />
+            <!-- Les ToolCards seront générées ici -->
+            <WrapPanel x:Name="ToolsPanel" Margin="0,16,0,0" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>
