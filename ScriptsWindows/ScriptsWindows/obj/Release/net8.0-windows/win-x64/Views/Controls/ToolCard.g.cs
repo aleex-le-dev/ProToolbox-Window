@@ -99,7 +99,7 @@ namespace ScriptsWindows.Views.Controls {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ScriptsWindows;component/views/controls/toolcard.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/AlexToolkit;component/views/controls/toolcard.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\..\Views\Controls\ToolCard.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

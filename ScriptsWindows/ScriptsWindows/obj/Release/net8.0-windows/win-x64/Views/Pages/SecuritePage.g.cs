@@ -59,7 +59,7 @@ namespace ScriptsWindows.Views.Pages {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/ScriptsWindows;component/views/pages/securitepage.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/AlexToolkit;component/views/pages/securitepage.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\..\Views\Pages\SecuritePage.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

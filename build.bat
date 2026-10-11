@@ -1,7 +1,7 @@
 @echo off
 setlocal
 echo ========================================================
-echo   Compilation de Scripts Windows v4.0 (C# / WPF)
+echo   Compilation de Alex Toolkit v4.0 (C# / WPF)
 echo ========================================================
 echo.
 
@@ -27,23 +27,26 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [2/2] Mise a jour de ScriptsWindows.exe a la racine...
-copy /Y "%~dp0ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\ScriptsWindows.exe" "%~dp0ScriptsWindows.exe" >nul
+echo [2/2] Mise a jour de AlexToolkit.exe a la racine...
+copy /Y "%~dp0ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\AlexToolkit.exe" "%~dp0AlexToolkit.exe" >nul
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [INFO] ScriptsWindows.exe a la racine est actuellement ouvert.
+    echo [INFO] AlexToolkit.exe a la racine est actuellement ouvert.
     echo Fermez l'application ouverte pour mettre a jour le fichier a la racine.
     echo Le nouvel executable est pret dans :
-    echo   ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\ScriptsWindows.exe
+    echo   ScriptsWindows\ScriptsWindows\bin\Release\net8.0-windows\win-x64\publish\AlexToolkit.exe
     echo.
     pause
     exit /b 0
 )
 
+:: Nettoyage de l'ancien binaire ScriptsWindows.exe s'il existe
+if exist "%~dp0ScriptsWindows.exe" del /f /q "%~dp0ScriptsWindows.exe" >nul 2>&1
+
 echo.
 echo ========================================================
-echo   [SUCCES] Executable genere : %~dp0ScriptsWindows.exe
+echo   [SUCCES] Executable genere : %~dp0AlexToolkit.exe
 echo ========================================================
 echo.
 pause

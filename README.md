@@ -1,24 +1,24 @@
-# 🛠️ Boîte à Scripts Windows — AleexLeDev (v4.0 WPF)
+# 🛠️ Alex Toolkit — AleexLeDev (v4.0 WPF)
 
-> Mémo personnel du projet : structure du code, compilation de l'exécutable et nettoyage des fichiers temporaires.
+> Outil tout-en-un de diagnostic, réparation, optimisation et maintenance Windows 10/11.
 
 ---
 
 ## ⚡ 1. Compilation de l'exécutable
 
-L'application se compile en un **fichier unique `.exe` autonome** (`PublishSingleFile`), léger (~3,6 Mo) et optimisé pour Windows 10/11.
+L'application se compile en un **fichier unique `.exe` autonome** (`PublishSingleFile`), ultra réactif (ReadyToRun AOT) et optimisé pour Windows 10/11.
 
 ### En 1 clic (recommandé)
 Lance simplement le script à la racine :
 > [`build.bat`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/build.bat)  
-Il compile le projet en Release et dépose directement [`ScriptsWindows.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows.exe) à la racine.
+Il compile le projet en Release et dépose directement [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe) à la racine.
 
 ### En ligne de commande (PowerShell)
 ```powershell
 dotnet publish ScriptsWindows/ScriptsWindows/ScriptsWindows.csproj -c Release -r win-x64 --no-self-contained -p:PublishSingleFile=true
 ```
 L'exécutable généré se trouve dans :
-`ScriptsWindows/ScriptsWindows/bin/Release/net8.0-windows/win-x64/publish/ScriptsWindows.exe`
+`ScriptsWindows/ScriptsWindows/bin/Release/net8.0-windows/win-x64/publish/AlexToolkit.exe`
 
 *(Note : Si le SDK .NET 8 n'est pas installé sur la machine :)*
 ```powershell

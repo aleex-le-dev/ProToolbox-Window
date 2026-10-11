@@ -25,7 +25,24 @@ public partial class MainWindow : Window
         UpdateThemeButtonState();
 
         // Démarrer sur la page Favoris
-        NavigateTo(NavFavoris, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+        NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+
+        // Préchauffage asynchrone des pages de catégories en arrière-plan (0 ms de délai au clic)
+        Dispatcher.InvokeAsync(WarmupPages, System.Windows.Threading.DispatcherPriority.Background);
+    }
+
+    private void WarmupPages()
+    {
+        try
+        {
+            string[] categories = { "DIAGNOSTIC", "REPARATION", "NETTOYAGE", "RESEAU", "DISQUE", "APPLICATIONS", "SECURITE", "EXTRACTION", "PERSONNALISATION", "MATERIEL" };
+            foreach (var cat in categories)
+            {
+                if (!_pageCache.ContainsKey(cat))
+                    GetOrCreatePage(cat);
+            }
+        }
+        catch { }
     }
 
     // ─── Thème ───────────────────────────────────────────────────────
@@ -92,17 +109,20 @@ public partial class MainWindow : Window
         }
     }
 
-    // ─── Navigation sidebar ──────────────────────────────────────────
+    // ─── Navigation sidebar avec mise en cache des pages ─────────────
 
-    private void NavFavoris_Click(object sender, RoutedEventArgs e)
-        => NavigateTo((Button)sender, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+    private readonly Dictionary<string, Page> _pageCache = new();
 
-    private void NavCategory_Click(object sender, RoutedEventArgs e)
+    private Page GetOrCreatePage(string tag)
     {
-        var btn = (Button)sender;
-        var tag = btn.Tag?.ToString() ?? "";
+        if (_pageCache.TryGetValue(tag, out var cachedPage))
+        {
+            if (cachedPage is FavorisPage fav)
+                fav.RefreshFavoris();
+            return cachedPage;
+        }
 
-        Page page = tag switch
+        Page newPage = tag switch
         {
             "DIAGNOSTIC"       => new DiagnosticPage(),
             "REPARATION"       => new ReparationPage(),
@@ -116,6 +136,20 @@ public partial class MainWindow : Window
             "MATERIEL"         => new MaterielPage(),
             _                  => new FavorisPage()
         };
+
+        _pageCache[tag] = newPage;
+        return newPage;
+    }
+
+    private void NavFavoris_Click(object sender, RoutedEventArgs e)
+        => NavigateTo((Button)sender, GetOrCreatePage("FAVORIS"), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+
+    private void NavCategory_Click(object sender, RoutedEventArgs e)
+    {
+        var btn = (Button)sender;
+        var tag = btn.Tag?.ToString() ?? "";
+
+        Page page = GetOrCreatePage(tag);
 
         var (title, subtitle) = tag switch
         {

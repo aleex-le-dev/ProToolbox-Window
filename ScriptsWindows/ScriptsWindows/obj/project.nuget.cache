@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "zet2pwZIqx4=",
+  "dgSpecHash": "1WfB186xbwA=",
   "success": true,
   "projectFilePath": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Alex\\.nuget\\packages\\communitytoolkit.mvvm\\8.3.2\\communitytoolkit.mvvm.8.3.2.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.31\\microsoft.net.illink.tasks.8.0.31.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\modernwpfui\\0.9.6\\modernwpfui.0.9.6.nupkg.sha512"
   ],

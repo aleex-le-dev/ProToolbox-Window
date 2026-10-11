@@ -8,7 +8,7 @@
       "version": "4.0.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
-        "projectName": "ScriptsWindows",
+        "projectName": "AlexToolkit",
         "projectPath": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
         "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\obj\\",
@@ -43,10 +43,6 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
-            "CommunityToolkit.Mvvm": {
-              "target": "Package",
-              "version": "[8.3.2, )"
-            },
             "Microsoft.NET.ILLink.Tasks": {
               "suppressParent": "All",
               "target": "Package",

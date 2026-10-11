@@ -2,22 +2,6 @@
   "version": 3,
   "targets": {
     "net8.0-windows7.0": {
-      "CommunityToolkit.Mvvm/8.3.2": {
-        "type": "package",
-        "compile": {
-          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "build": {
-          "buildTransitive/CommunityToolkit.Mvvm.targets": {}
-        }
-      },
       "Microsoft.NET.ILLink.Tasks/8.0.31": {
         "type": "package",
         "build": {
@@ -428,22 +412,6 @@
       }
     },
     "net8.0-windows7.0/win-x64": {
-      "CommunityToolkit.Mvvm/8.3.2": {
-        "type": "package",
-        "compile": {
-          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "build": {
-          "buildTransitive/CommunityToolkit.Mvvm.targets": {}
-        }
-      },
       "Microsoft.NET.ILLink.Tasks/8.0.31": {
         "type": "package",
         "build": {
@@ -855,47 +823,6 @@
     }
   },
   "libraries": {
-    "CommunityToolkit.Mvvm/8.3.2": {
-      "sha512": "m8EolE1A0Updj68WTsZSGI6VWb6mUqHPh7QFo0kt7+JPhYMNXRS1ch8TS/oITAdcxTLrwMOp3ku1KjeG1/Zdpg==",
-      "type": "package",
-      "path": "communitytoolkit.mvvm/8.3.2",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "License.md",
-        "ThirdPartyNotices.txt",
-        "analyzers/dotnet/roslyn4.0/cs/CommunityToolkit.Mvvm.CodeFixers.dll",
-        "analyzers/dotnet/roslyn4.0/cs/CommunityToolkit.Mvvm.SourceGenerators.dll",
-        "analyzers/dotnet/roslyn4.3/cs/CommunityToolkit.Mvvm.CodeFixers.dll",
-        "analyzers/dotnet/roslyn4.3/cs/CommunityToolkit.Mvvm.SourceGenerators.dll",
-        "build/CommunityToolkit.Mvvm.FeatureSwitches.targets",
-        "build/CommunityToolkit.Mvvm.SourceGenerators.targets",
-        "build/CommunityToolkit.Mvvm.WindowsSdk.targets",
-        "build/CommunityToolkit.Mvvm.targets",
-        "buildTransitive/CommunityToolkit.Mvvm.FeatureSwitches.targets",
-        "buildTransitive/CommunityToolkit.Mvvm.SourceGenerators.targets",
-        "buildTransitive/CommunityToolkit.Mvvm.WindowsSdk.targets",
-        "buildTransitive/CommunityToolkit.Mvvm.targets",
-        "communitytoolkit.mvvm.8.3.2.nupkg.sha512",
-        "communitytoolkit.mvvm.nuspec",
-        "lib/net6.0/CommunityToolkit.Mvvm.dll",
-        "lib/net6.0/CommunityToolkit.Mvvm.pdb",
-        "lib/net6.0/CommunityToolkit.Mvvm.xml",
-        "lib/net8.0-windows10.0.17763/CommunityToolkit.Mvvm.dll",
-        "lib/net8.0-windows10.0.17763/CommunityToolkit.Mvvm.pdb",
-        "lib/net8.0-windows10.0.17763/CommunityToolkit.Mvvm.xml",
-        "lib/net8.0/CommunityToolkit.Mvvm.dll",
-        "lib/net8.0/CommunityToolkit.Mvvm.pdb",
-        "lib/net8.0/CommunityToolkit.Mvvm.xml",
-        "lib/netstandard2.0/CommunityToolkit.Mvvm.dll",
-        "lib/netstandard2.0/CommunityToolkit.Mvvm.pdb",
-        "lib/netstandard2.0/CommunityToolkit.Mvvm.xml",
-        "lib/netstandard2.1/CommunityToolkit.Mvvm.dll",
-        "lib/netstandard2.1/CommunityToolkit.Mvvm.pdb",
-        "lib/netstandard2.1/CommunityToolkit.Mvvm.xml"
-      ]
-    },
     "Microsoft.NET.ILLink.Tasks/8.0.31": {
       "sha512": "OJdAGATV2QoVWL11zlDLEluA06q8rK+cgZR47ohrO8V+Qj5z9dlvN7bG9/0e5t0IOe+yD8tREC0bpsEgDGrzIQ==",
       "type": "package",
@@ -1490,7 +1417,6 @@
   },
   "projectFileDependencyGroups": {
     "net8.0-windows7.0": [
-      "CommunityToolkit.Mvvm >= 8.3.2",
       "Microsoft.NET.ILLink.Tasks >= 8.0.31",
       "ModernWpfUI >= 0.9.6"
     ]
@@ -1501,11 +1427,11 @@
   "project": {
     "version": "4.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
-      "projectName": "ScriptsWindows",
-      "projectPath": "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
+      "projectUniqueName": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
+      "projectName": "AlexToolkit",
+      "projectPath": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\ScriptsWindows.csproj",
       "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\obj\\",
+      "outputPath": "C:\\Users\\Alex\\Documents\\DEV\\PROJETS\\GITHUB\\SCRIPT-WINDOWS-ALEEXLEDEV\\ScriptsWindows\\ScriptsWindows\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -1537,10 +1463,6 @@
       "net8.0-windows7.0": {
         "targetAlias": "net8.0-windows",
         "dependencies": {
-          "CommunityToolkit.Mvvm": {
-            "target": "Package",
-            "version": "[8.3.2, )"
-          },
           "Microsoft.NET.ILLink.Tasks": {
             "suppressParent": "All",
             "target": "Package",

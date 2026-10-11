@@ -3,10 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Title="Boîte à Scripts Windows — AleexLeDev v4.0"
+        Title="Alex Toolkit — AleexLeDev v4.0"
         Height="780" Width="1320"
         MinHeight="600" MinWidth="960"
         WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display"
+        RenderOptions.ClearTypeHint="Enabled"
         Background="{DynamicResource WindowGradientBrush}">
 
     <Grid>
@@ -39,13 +42,13 @@
                                    FontSize="11"
                                    FontWeight="Bold"
                                    Foreground="{DynamicResource Accent}" />
-                        <TextBlock Text="Boîte à Scripts Windows"
+                        <TextBlock Text="Alex Toolkit"
                                    FontFamily="{StaticResource FontMain}"
                                    FontSize="15"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimary}"
                                    Margin="0,4,0,0" />
-                        <TextBlock Text="v4.0 — WPF Edition"
+                        <TextBlock Text="v4.0 — Edition Windows"
                                    FontSize="11"
                                    Foreground="{DynamicResource TextMuted}"
                                    Margin="0,2,0,0" />
