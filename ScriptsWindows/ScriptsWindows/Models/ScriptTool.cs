@@ -9,11 +9,11 @@ public class ScriptTool
     /// <summary>Identifiant unique (ex: "sys_report", "cl_temp")</summary>
     public required string Id { get; init; }
 
-    /// <summary>Nom affiché (ex: "Rapport Système")</summary>
+    /// <summary>Nom affiché</summary>
     public required string Name { get; init; }
 
-    /// <summary>Alias pour le titre affiché</summary>
-    public string Title => Name;
+    /// <summary>Titre affiché formaté selon la typographie française (acronymes préservés, pas de majuscules inutiles)</summary>
+    public string Title => Views.SectionViewBuilder.FormatFrenchTitle(Name);
 
     /// <summary>Description courte (ex: "CPU, RAM, GPU, Stockage, Réseau")</summary>
     public string Description { get; init; } = string.Empty;

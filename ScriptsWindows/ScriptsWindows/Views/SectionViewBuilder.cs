@@ -70,23 +70,85 @@ public class SectionController
 /// </summary>
 public static class SectionViewBuilder
 {
-    private static readonly HashSet<string> Acronyms = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, string> ProperTerms = new(StringComparer.OrdinalIgnoreCase)
     {
-        "SSD", "HDD", "RAM", "CPU", "GPU", "BIOS", "UEFI", "DNS", "ARP", "IP",
-        "TCP", "UDP", "OS", "UWP", "SFC", "DISM", "CHKDSK", "SMART", "TRIM",
-        "WMI", "CIM", "CMD", "GUI", "USB", "Wi-Fi", "WinSxS", "Windows", "Winget", "Defender"
+        { "SSD", "SSD" },
+        { "HDD", "HDD" },
+        { "RAM", "RAM" },
+        { "CPU", "CPU" },
+        { "GPU", "GPU" },
+        { "BIOS", "BIOS" },
+        { "UEFI", "UEFI" },
+        { "DNS", "DNS" },
+        { "ARP", "ARP" },
+        { "IP", "IP" },
+        { "IPv4", "IPv4" },
+        { "IPv6", "IPv6" },
+        { "TCP", "TCP" },
+        { "UDP", "UDP" },
+        { "DHCP", "DHCP" },
+        { "OS", "OS" },
+        { "UWP", "UWP" },
+        { "SFC", "SFC" },
+        { "DISM", "DISM" },
+        { "CHKDSK", "CHKDSK" },
+        { "SMART", "SMART" },
+        { "S.M.A.R.T.", "S.M.A.R.T." },
+        { "TRIM", "TRIM" },
+        { "WMI", "WMI" },
+        { "CIM", "CIM" },
+        { "CMD", "CMD" },
+        { "GUI", "GUI" },
+        { "USB", "USB" },
+        { "Wi-Fi", "Wi-Fi" },
+        { "WiFi", "Wi-Fi" },
+        { "WinSxS", "WinSxS" },
+        { "Windows", "Windows" },
+        { "Winget", "Winget" },
+        { "Defender", "Defender" },
+        { "Microsoft", "Microsoft" },
+        { "Store", "Store" },
+        { "Google", "Google" },
+        { "Chrome", "Chrome" },
+        { "VLC", "VLC" },
+        { "Media", "Media" },
+        { "Player", "Player" },
+        { "PDF", "PDF" },
+        { "Sumatra", "Sumatra" },
+        { "7-Zip", "7-Zip" },
+        { "PowerShell", "PowerShell" },
+        { "Office", "Office" },
+        { "BitLocker", "BitLocker" },
+        { "Cloudflare", "Cloudflare" },
+        { "Winsock", "Winsock" },
+        { "DxDiag", "DxDiag" },
+        { "WinSAT", "WinSAT" },
+        { "Resmon", "Resmon" },
+        { "Perfmon", "Perfmon" },
+        { "Msinfo32", "Msinfo32" },
+        { "Devmgmt", "Devmgmt" },
+        { "Cleanmgr", "Cleanmgr" },
+        { "DISKPART", "DISKPART" },
+        { "Diskpart", "DISKPART" },
+        { "BSOD", "BSOD" },
+        { "God", "God" },
+        { "Mode", "Mode" },
+        { "ScanHealth", "ScanHealth" },
+        { "RestoreHealth", "RestoreHealth" },
+        { "CheckHealth", "CheckHealth" },
+        { "QuickScan", "QuickScan" }
     };
 
     /// <summary>
-    /// Formate un titre ou nom de catégorie/sous-catégorie selon les règles typographiques françaises :
-    /// Majuscule au premier mot, minuscules pour les mots suivants, tout en préservant
-    /// les sigles et acronymes en majuscules (ex: SSD, RAM, CPU, GPU, BIOS, DNS, ARP, Wi-Fi...).
+    /// Formate un titre selon les règles typographiques françaises :
+    /// Seul le premier mot commence par une majuscule, tous les mots suivants sont en minuscules,
+    /// sauf les sigles, acronymes et noms propres technologiques préservés (SSD, RAM, CPU, GPU, BIOS, Windows...).
     /// </summary>
     public static string FormatFrenchTitle(string? input)
     {
         if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
-        var tokens = System.Text.RegularExpressions.Regex.Split(input.Trim(), @"(\s+|[()&/,›\-])");
+        var tokens = System.Text.RegularExpressions.Regex.Split(input.Trim(), @"(\s+|[()&/,›\-:])");
         var sb = new System.Text.StringBuilder();
         bool isFirstWord = true;
 
@@ -94,16 +156,15 @@ public static class SectionViewBuilder
         {
             if (string.IsNullOrEmpty(token)) continue;
 
-            if (char.IsWhiteSpace(token[0]) || token == "(" || token == ")" || token == "&" || token == "/" || token == "," || token == "›" || token == "-")
+            if (char.IsWhiteSpace(token[0]) || token == "(" || token == ")" || token == "&" || token == "/" || token == "," || token == "›" || token == "-" || token == ":")
             {
                 sb.Append(token);
                 continue;
             }
 
-            string matched = Acronyms.FirstOrDefault(a => a.Equals(token, StringComparison.OrdinalIgnoreCase)) ?? "";
-            if (!string.IsNullOrEmpty(matched))
+            if (ProperTerms.TryGetValue(token, out var proper))
             {
-                sb.Append(matched);
+                sb.Append(proper);
             }
             else if (token.Length > 1 && token.All(char.IsUpper))
             {
@@ -161,7 +222,7 @@ public static class SectionViewBuilder
             .Select(g => new
             {
                 SubHeading = g.Key,
-                Tools = g.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
+                Tools = g.OrderBy(t => t.Title, StringComparer.CurrentCultureIgnoreCase).ToList()
             })
             .OrderBy(g => g.SubHeading, StringComparer.CurrentCultureIgnoreCase)
             .ToList();
@@ -364,7 +425,7 @@ public static class SectionViewBuilder
                         .Select(sg => new
                         {
                             SubHeading = sg.Key,
-                            Tools      = sg.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
+                            Tools      = sg.OrderBy(t => t.Title, StringComparer.CurrentCultureIgnoreCase).ToList()
                         })
                         .OrderBy(sg => sg.SubHeading, StringComparer.CurrentCultureIgnoreCase)
                         .ToList()

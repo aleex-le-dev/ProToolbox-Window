@@ -62,7 +62,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_mobo",
-            Name = "Carte Mère, BIOS & Système",
+            Name = "Carte mère, BIOS & système",
             Description = "Modèle, fabricant, version BIOS via Get-CimInstance Win32_BaseBoard, Win32_BIOS.",
             Category = "DIAGNOSTIC",
             SubHeading = "Carte mère & Processeur",
@@ -74,7 +74,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_cpu",
-            Name = "CPU & Températures",
+            Name = "CPU & températures",
             Description = "Cœurs, fréquence, charge CPU et sondes thermiques ACPI (MSAcpi_ThermalZoneTemperature).",
             Category = "DIAGNOSTIC",
             SubHeading = "Carte mère & Processeur",
@@ -87,7 +87,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_ram",
-            Name = "RAM - Audit Matériel",
+            Name = "RAM - audit matériel",
             Description = "Vitesse, constructeur, slots et capacité par barrette (Win32_PhysicalMemory).",
             Category = "DIAGNOSTIC",
             SubHeading = "Mémoire vive (RAM)",
@@ -100,7 +100,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_smart",
-            Name = "Disques - Santé S.M.A.R.T.",
+            Name = "Disques - santé S.M.A.R.T.",
             Description = "Santé S.M.A.R.T. et type de disque (NVMe/SSD/HDD via Get-PhysicalDisk).",
             Category = "DIAGNOSTIC",
             SubHeading = "Stockage physique",
@@ -112,7 +112,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_volumes",
-            Name = "Disques - Volumes & Espace",
+            Name = "Disques - volumes & espace",
             Description = "Lecteurs, taux d'occupation et espace disponible (Get-Volume).",
             Category = "DIAGNOSTIC",
             SubHeading = "Stockage physique",
@@ -125,7 +125,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_battery",
-            Name = "Batterie - Santé & Usure",
+            Name = "Batterie - santé & usure",
             Description = "Tension/pourcentage direct et rapport d'usure (powercfg /batteryreport).",
             Category = "DIAGNOSTIC",
             SubHeading = "Alimentation & Batterie",
@@ -138,7 +138,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_network",
-            Name = "Carte Réseau & Connectivité",
+            Name = "Carte réseau & connectivité",
             Description = "Adaptateurs, débits négociés, adresses IP et test ping de connectivité.",
             Category = "DIAGNOSTIC",
             SubHeading = "Interface réseau",
@@ -151,7 +151,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_sfc",
-            Name = "Scan Intégrité Système (SFC)",
+            Name = "Scan intégrité système (SFC)",
             Description = "Contrôle d'intégrité des fichiers protégés (sfc /scannow).",
             Category = "DIAGNOSTIC",
             SubHeading = "Fichiers système Windows",
@@ -170,7 +170,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "hw_mdsched",
-            Name = "Diagnostic Mémoire (mdsched)",
+            Name = "Diagnostic mémoire (mdsched)",
             Description = "Outil de diagnostic mémoire Windows au redémarrage (mdsched.exe).",
             Category = "MATERIEL",
             SubHeading = "Mémoire vive (RAM)",
@@ -183,7 +183,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "hw_dxdiag",
-            Name = "Diagnostic Matériel (DxDiag)",
+            Name = "Diagnostic matériel (DxDiag)",
             Description = "Diagnostic matériel DirectX, GPU et cartes audio (dxdiag.exe).",
             Category = "MATERIEL",
             SubHeading = "Contrôleur graphique & Audio",
@@ -196,7 +196,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "hw_devmgmt",
-            Name = "Gestionnaire de Périphériques",
+            Name = "Gestionnaire de périphériques",
             Description = "Gestionnaire de périphériques (devmgmt.msc).",
             Category = "MATERIEL",
             SubHeading = "Pilotes & Périphériques d'entrée/sortie",
@@ -209,7 +209,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "hw_resmon",
-            Name = "Moniteur de Ressources (Resmon)",
+            Name = "Moniteur de ressources (Resmon)",
             Description = "Moniteur de ressources en temps réel (resmon.exe).",
             Category = "MATERIEL",
             SubHeading = "Banc d'essai & Performances globales",
@@ -221,7 +221,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "hw_msinfo",
-            Name = "Informations Système (Msinfo32)",
+            Name = "Informations système (Msinfo32)",
             Description = "Vue d'ensemble du matériel et configuration Windows (msinfo32.exe).",
             Category = "MATERIEL",
             SubHeading = "Banc d'essai & Performances globales",
@@ -233,7 +233,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "hw_winsat",
-            Name = "Benchmark Global (WinSAT)",
+            Name = "Benchmark global (WinSAT)",
             Description = "Benchmark complet CPU, RAM, GPU et disques (winsat formal).",
             Category = "MATERIEL",
             SubHeading = "Banc d'essai & Performances globales",
@@ -246,7 +246,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "hw_power_perf",
-            Name = "Profil Performances Élevées",
+            Name = "Profil performances élevées",
             Description = "Profil d'alimentation Ultimate Performance / Hautes performances.",
             Category = "MATERIEL",
             SubHeading = "Gestion d'énergie",
@@ -289,7 +289,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_pipeline",
-            Name = "Pipeline Curatif Global (DISM + SFC)",
+            Name = "Pipeline curatif global (DISM + SFC)",
             Description = "Exécution enchaînée DISM RestoreHealth puis sfc /scannow.",
             Category = "REPARATION",
             SubHeading = "Magasin d'images Windows (Component Store)",
@@ -302,7 +302,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_chkdsk",
-            Name = "Correction Disque (CHKDSK)",
+            Name = "Correction disque (CHKDSK)",
             Description = "Réparation des erreurs disques et secteurs (chkdsk C: /f /r).",
             Category = "REPARATION",
             SubHeading = "Système de fichiers & Partitions",
@@ -315,7 +315,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_export_drivers",
-            Name = "Sauvegarder Pilotes Système (DISM)",
+            Name = "Sauvegarder pilotes système (DISM)",
             Description = "Export et sauvegarde vers C:\\DriversBackup (DISM /Export-Driver).",
             Category = "REPARATION",
             SubHeading = "Pilotes de périphériques",
@@ -341,7 +341,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_network_stack",
-            Name = "Réparation Pile Réseau & Winsock",
+            Name = "Réparation pile réseau & Winsock",
             Description = "Réinitialisation TCP/IP, Winsock, purge ARP et bail DHCP.",
             Category = "REPARATION",
             SubHeading = "Pile réseau & Protocoles",
@@ -354,7 +354,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_spooler",
-            Name = "Déblocage Spouleur d'Impression",
+            Name = "Déblocage spouleur d'impression",
             Description = "Purge de spool\\PRINTERS et relance du spouleur d'impression.",
             Category = "REPARATION",
             SubHeading = "Sous-système d'impression",
@@ -380,7 +380,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_icon_cache",
-            Name = "Reconstruction Cache Icônes & Miniatures",
+            Name = "Reconstruction cache icônes & miniatures",
             Description = "Suppression de iconcache*.db / thumbcache*.db et relance d'Explorer.",
             Category = "REPARATION",
             SubHeading = "Interface graphique (Shell Windows)",
@@ -399,7 +399,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "clean_temp",
-            Name = "Purger les Fichiers Temp",
+            Name = "Purger les fichiers temp",
             Description = "Purge des dossiers temporaires (Windows\\Temp et %TEMP%).",
             Category = "NETTOYAGE",
             SubHeading = "Stockage temporaire OS & Profils",
@@ -411,7 +411,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "clean_wu_cache",
-            Name = "Purger Téléchargements Windows Update",
+            Name = "Purger téléchargements Windows Update",
             Description = "Suppression du dossier SoftwareDistribution\\Download.",
             Category = "NETTOYAGE",
             SubHeading = "Stockage temporaire OS & Profils",
@@ -424,7 +424,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "clean_browser_caches",
-            Name = "Nettoyer Caches Navigateurs & Vignettes",
+            Name = "Nettoyer caches navigateurs & vignettes",
             Description = "Nettoyage des caches (Chrome, Edge, Firefox, Brave) et vignettes.",
             Category = "NETTOYAGE",
             SubHeading = "Navigateurs web & Explorateur",
@@ -437,7 +437,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "clean_cleanmgr",
-            Name = "Outil Nettoyage Disque (Cleanmgr)",
+            Name = "Outil nettoyage disque (Cleanmgr)",
             Description = "Assistant de nettoyage de disque natif (cleanmgr.exe).",
             Category = "NETTOYAGE",
             SubHeading = "Disque système (Nettoyage natif)",
@@ -449,7 +449,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "clean_full_unified",
-            Name = "Nettoyage Complet Unifié",
+            Name = "Nettoyage complet unifié",
             Description = "Purge en 1 clic : corbeille, logs, temporaires et cache DNS.",
             Category = "NETTOYAGE",
             SubHeading = "Disque système (Nettoyage natif)",
@@ -462,7 +462,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "clean_winsxs",
-            Name = "Nettoyage Magasin WinSxS (DISM)",
+            Name = "Nettoyage magasin WinSxS (DISM)",
             Description = "Optimisation du dossier WinSxS (DISM /StartComponentCleanup /ResetBase).",
             Category = "NETTOYAGE",
             SubHeading = "Magasin de composants Windows",
@@ -481,7 +481,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_wifi_show",
-            Name = "Afficher Mots de Passe Wi-Fi",
+            Name = "Afficher mots de passe Wi-Fi",
             Description = "Affichage console immédiat des clés Wi-Fi en clair.",
             Category = "SECRETS",
             SubHeading = "Cartes réseau sans fil (Wi-Fi)",
@@ -493,7 +493,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_wifi_export",
-            Name = "Exporter Profils & Clés Wi-Fi",
+            Name = "Exporter profils & clés Wi-Fi",
             Description = "Sauvegarde des profils et clés Wi-Fi en XML sur le Bureau.",
             Category = "SECRETS",
             SubHeading = "Cartes réseau sans fil (Wi-Fi)",
@@ -506,7 +506,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_audit_sensitive",
-            Name = "Audit Documents Sensibles",
+            Name = "Audit documents sensibles",
             Description = "Audit des clés SSH (id_rsa), tokens .env et identifiants locaux.",
             Category = "SECRETS",
             SubHeading = "Dossiers utilisateurs & Clés d'authentification",
@@ -519,7 +519,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_win_key",
-            Name = "Récupérer Clé Produit Windows",
+            Name = "Récupérer clé produit Windows",
             Description = "Lecture de la clé de licence d'origine intégrée au BIOS/UEFI.",
             Category = "SECRETS",
             SubHeading = "Puce de sécurité / Carte mère (UEFI)",
@@ -532,7 +532,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_browser_profiles",
-            Name = "Détecter Historique Web & Profils",
+            Name = "Détecter historique web & profils",
             Description = "Localisation des fichiers d'historique et identifiants SQLite (Chrome/Edge).",
             Category = "SECRETS",
             SubHeading = "Navigateurs web (Bases locales)",
@@ -575,7 +575,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "net_dns_dhcp",
-            Name = "Restaurer DNS Automatique (DHCP)",
+            Name = "Restaurer DNS automatique (DHCP)",
             Description = "Rétablissement du mode automatique (DHCP de la box).",
             Category = "RESEAU",
             SubHeading = "Serveurs de noms de domaine (DNS)",
@@ -588,7 +588,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "net_arp_clear",
-            Name = "Purger la Table ARP",
+            Name = "Purger la table ARP",
             Description = "Purge complète de la table ARP (arp -d *).",
             Category = "RESEAU",
             SubHeading = "Table de routage & Cache ARP",
@@ -601,7 +601,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "net_wifi_scan",
-            Name = "Scanner les Réseaux Wi-Fi",
+            Name = "Scanner les réseaux Wi-Fi",
             Description = "Scan des bornes Wi-Fi avec puissance et canaux.",
             Category = "RESEAU",
             SubHeading = "Carte sans fil & Environnement radio",
@@ -613,7 +613,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "net_wifi_report",
-            Name = "Rapport Wi-Fi Complet",
+            Name = "Rapport Wi-Fi complet",
             Description = "Génération du rapport de diagnostic complet (netsh wlan show wlanreport).",
             Category = "RESEAU",
             SubHeading = "Carte sans fil & Environnement radio",
@@ -632,7 +632,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "disk_mgmt_gui",
-            Name = "Gestionnaire de Disques (GUI)",
+            Name = "Gestionnaire de disques (GUI)",
             Description = "Console de gestion des partitions (diskmgmt.msc).",
             Category = "DISQUE",
             SubHeading = "Tables de partitions & Volumes",
@@ -644,7 +644,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "disk_diskpart",
-            Name = "Console de Formatage DISKPART",
+            Name = "Console de formatage DISKPART",
             Description = "Invite de commandes DISKPART en mode administrateur.",
             Category = "DISQUE",
             SubHeading = "Tables de partitions & Volumes",
@@ -657,7 +657,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "disk_defrag_gui",
-            Name = "Défragmenteur de Disque (GUI)",
+            Name = "Défragmenteur de disque (GUI)",
             Description = "Défragmenteur de disque Windows (dfrgui.exe).",
             Category = "DISQUE",
             SubHeading = "Supports Flash & Mécaniques (SSD / HDD)",
@@ -669,7 +669,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "disk_trim_opt",
-            Name = "Optimisation Disque & TRIM SSD",
+            Name = "Optimisation disque & TRIM SSD",
             Description = "Commande d'optimisation TRIM pour SSD (defrag /O).",
             Category = "DISQUE",
             SubHeading = "Supports Flash & Mécaniques (SSD / HDD)",
@@ -682,7 +682,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "disk_bitlocker",
-            Name = "État Chiffrement BitLocker",
+            Name = "État chiffrement BitLocker",
             Description = "État de protection et de chiffrement des disques (manage-bde).",
             Category = "DISQUE",
             SubHeading = "Sécurité & Chiffrement de volume",
@@ -783,7 +783,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "upd_list_apps",
-            Name = "Lister les Logiciels Installés",
+            Name = "Lister les logiciels installés",
             Description = "Liste de l'ensemble des logiciels installés (winget list).",
             Category = "MISES_A_JOUR",
             SubHeading = "Gestionnaire de paquets (Winget)",
@@ -795,7 +795,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "upd_check_updates",
-            Name = "Vérifier Mises à Jour Disponibles",
+            Name = "Vérifier mises à jour disponibles",
             Description = "Détection des mises à jour disponibles (winget upgrade).",
             Category = "MISES_A_JOUR",
             SubHeading = "Gestionnaire de paquets (Winget)",
@@ -807,7 +807,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "upd_apply_all",
-            Name = "Mettre à Jour Tous les Logiciels",
+            Name = "Mettre à jour tous les logiciels",
             Description = "Mise à niveau automatique de toutes les applications (winget upgrade --all).",
             Category = "MISES_A_JOUR",
             SubHeading = "Gestionnaire de paquets (Winget)",
@@ -820,7 +820,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "upd_defender_sigs",
-            Name = "Mettre à Jour Signatures Defender",
+            Name = "Mettre à jour signatures Defender",
             Description = "Mise à jour immédiate des signatures de sécurité (Update-MpSignature).",
             Category = "MISES_A_JOUR",
             SubHeading = "Moteur antivirus Microsoft Defender",
@@ -839,7 +839,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_top_ram",
-            Name = "Top Processus & Charge RAM",
+            Name = "Top processus & charge RAM",
             Description = "Top 10 des applications les plus gourmandes en RAM.",
             Category = "SECURITE",
             SubHeading = "Mémoire vive & Processus système",
@@ -852,7 +852,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_event_errors",
-            Name = "Journal Erreurs Critiques & Plantages",
+            Name = "Journal erreurs critiques & plantages",
             Description = "Analyse des erreurs critiques récentes et BSOD dans le journal Système.",
             Category = "SECURITE",
             SubHeading = "Journaux d'événements & Noyau Windows",
@@ -864,7 +864,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_perfmon_rel",
-            Name = "Moniteur de Fiabilité (Perfmon)",
+            Name = "Moniteur de fiabilité (Perfmon)",
             Description = "Historique de fiabilité et plantages du système (perfmon /rel).",
             Category = "SECURITE",
             SubHeading = "Journaux d'événements & Noyau Windows",
@@ -889,7 +889,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_defender_quickscan",
-            Name = "Analyse Rapide Defender",
+            Name = "Analyse rapide Defender",
             Description = "Analyse antivirus rapide (Start-MpScan -ScanType QuickScan).",
             Category = "SECURITE",
             SubHeading = "Protection antivirale (Defender)",
@@ -921,7 +921,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "tweak_classic_context",
-            Name = "Menu Contextuel Windows 10",
+            Name = "Menu contextuel Windows 10",
             Description = "Rétablissement du menu clic droit classique Windows 10.",
             Category = "PERSONNALISATION",
             SubHeading = "Explorateur Windows 11",
