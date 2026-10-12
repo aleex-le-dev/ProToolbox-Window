@@ -1764,7 +1764,7 @@ pause
 goto system_tools
 
 :dump_wifi
-set "opts=Afficher les mots de passe Wi-Fi a l'ecran;Generer un fichier .txt sur le Bureau"
+set "opts=Afficher les mots de passe Wi-Fi a l'ecran;Sauvegarder dans un dossier au choix (Boite de dialogue)"
 call :DynamicMenu "MOTS DE PASSE WI-FI (WLAN NETSH)" "%opts%"
 set "wifi_choice=%errorlevel%"
 
@@ -1800,11 +1800,42 @@ goto dump_wifi
 
 :wifi_report
 cls
-set "OUTPUT=%USERPROFILE%\Desktop\Wifi_Mots_de_passe_%RANDOM%.txt"
-echo Extraction des mots de passe en cours...
-> "%OUTPUT%" echo Mots de passe Wi-Fi exportes - %date% %time%
->> "%OUTPUT%" echo ===============================================
 setlocal enabledelayedexpansion
+echo.
+echo  ================================================
+echo   SAUVEGARDE DES MOTS DE PASSE WI-FI
+echo  ================================================
+echo.
+echo  [*] Selectionnez le dossier de sauvegarde a la souris...
+set "FBD_PS=%TEMP%\fbd_%RANDOM%.ps1"
+> "%FBD_PS%" echo Add-Type -AssemblyName System.Windows.Forms
+>> "%FBD_PS%" echo $f = New-Object System.Windows.Forms.FolderBrowserDialog
+>> "%FBD_PS%" echo $f.Description = "Selectionnez le dossier ou enregistrer les mots de passe Wi-Fi"
+>> "%FBD_PS%" echo $f.ShowNewFolderButton = $true
+>> "%FBD_PS%" echo if ($f.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) { Write-Output $f.SelectedPath }
+set "SEL_FOLDER="
+for /f "usebackq delims=" %%D in (`powershell -NoProfile -ExecutionPolicy Bypass -File "%FBD_PS%"`) do set "SEL_FOLDER=%%D"
+if exist "%FBD_PS%" del /f /q "%FBD_PS%" 2>nul
+
+if not defined SEL_FOLDER (
+    echo  [!] Sauvegarde annulee par l'utilisateur.
+    timeout /t 2 >nul
+    endlocal
+    goto dump_wifi
+)
+
+set "TS=%DATE:~-4%%DATE:~3,2%%DATE:~0,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%"
+set "TS=%TS: =0%"
+set "TARGET_DIR=%SEL_FOLDER%\Sauvegarde_MotsDePasse_Wifi_%TS%"
+mkdir "!TARGET_DIR!" 2>nul
+
+set "OUTPUT=!TARGET_DIR!\Mots_de_passe_WiFi.txt"
+echo  [*] Extraction des mots de passe en cours...
+> "!OUTPUT!" echo ===============================================
+>> "!OUTPUT!" echo   INVENTAIRE MOTS DE PASSE WI-FI - %COMPUTERNAME%
+>> "!OUTPUT!" echo   Date : %DATE% %TIME%
+>> "!OUTPUT!" echo ===============================================
+>> "!OUTPUT!" echo.
 for /f "tokens=2 delims=:" %%I in ('netsh wlan show profiles ^| findstr /C:"Profil Tous" /C:"All User Profile"') do (
     set "ssid=%%I"
     set "ssid=!ssid:~1!"
@@ -1815,15 +1846,20 @@ for /f "tokens=2 delims=:" %%I in ('netsh wlan show profiles ^| findstr /C:"Prof
         )
         set "pwd=!pwd:~1!"
         if "!pwd!"=="" set "pwd=(Aucun / Ouvert)"
-        >> "%OUTPUT%" echo SSID: !ssid! ^| MDP: !pwd!
+        >> "!OUTPUT!" echo SSID : !ssid!
+        >> "!OUTPUT!" echo MDP  : !pwd!
+        >> "!OUTPUT!" echo -----------------------------------------------
     )
 )
-endlocal
+netsh wlan export profile key=clear folder="!TARGET_DIR!" >nul 2>&1
+
 echo.
-echo [SUCCES] Rapport exporte sur le Bureau :
-echo %OUTPUT%
+echo  [SUCCES] Mots de passe et profils XML exportes dans :
+echo  !TARGET_DIR!
 echo.
+start "" "!TARGET_DIR!"
 pause
+endlocal
 goto dump_wifi
 
 :sys_nirsoft_pw

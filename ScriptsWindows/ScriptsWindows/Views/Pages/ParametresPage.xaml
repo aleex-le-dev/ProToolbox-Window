@@ -65,7 +65,7 @@
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
 
                             <Button x:Name="BtnCopyHierarchy"
-                                    Content="📋 Copier l'arborescence (1 clic)"
+                                    Content="📋 Copier l'arborescence"
                                     Background="{DynamicResource Accent}"
                                     BorderThickness="0"
                                     Foreground="#FFFFFF"

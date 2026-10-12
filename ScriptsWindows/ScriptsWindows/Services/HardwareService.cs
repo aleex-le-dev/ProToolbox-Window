@@ -82,13 +82,27 @@ Get-PhysicalDisk | ForEach-Object {
     // Diagnostic d'alimentation  (hw_powercfg_energy)
     public static async Task RunPowercfgEnergy(Action<string> onOutput, CancellationToken ct = default)
     {
+        var targetDir = Core.FolderDialogHelper.AskAndCreateDestinationFolder(
+            title: "Sélectionnez l'emplacement où sauvegarder le rapport d'énergie",
+            folderPrefix: "Rapport_Energie",
+            confirmQuestion: "L'analyse d'énergie Windows (powercfg /energy) dure 60 secondes et évalue le comportement énergétique du système.\n\nSouhaitez-vous enregistrer le rapport d'énergie dans un dossier de votre choix ?",
+            confirmTitle: "Rapport d'énergie — Alex Toolkit"
+        );
+
+        var reportPath = targetDir != null
+            ? System.IO.Path.Combine(targetDir, "energy-report.html")
+            : System.IO.Path.Combine(System.IO.Path.GetTempPath(), "energy-report.html");
+
         onOutput("[i] Analyse de consommation d'énergie en cours (60 secondes)...");
-        var reportPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "energy-report.html");
         await CommandRunner.RunAsync($"powercfg /energy /output \"{reportPath}\" /duration 60", onOutput, ct);
         if (System.IO.File.Exists(reportPath))
         {
-            onOutput($"[OK] Rapport généré : {reportPath}");
+            onOutput($"✅ [SUCCÈS] Rapport généré : {reportPath}");
             CommandRunner.StartProcess(reportPath);
+            if (targetDir != null)
+            {
+                Core.FolderDialogHelper.OpenInExplorer(targetDir);
+            }
         }
         else
         {

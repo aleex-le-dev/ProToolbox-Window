@@ -52,6 +52,8 @@ Write-Output $creds
 
         onOutput($"[OK] {profiles.Count} profil(s) Wi-Fi détecté(s) :\n");
 
+        var wifiResults = new List<(string Ssid, string? Password)>();
+
         foreach (var ssid in profiles)
         {
             ct.ThrowIfCancellationRequested();
@@ -73,6 +75,8 @@ Write-Output $creds
                 }
             }
 
+            wifiResults.Add((ssid, password));
+
             if (!string.IsNullOrEmpty(password))
             {
                 onOutput($"📶 [SSID] {ssid}");
@@ -85,6 +89,160 @@ Write-Output $creds
             }
             onOutput("--------------------------------------------------");
         }
+
+        // Boîte de dialogue pour proposer la sauvegarde dans un dossier de destination
+        if (wifiResults.Count > 0)
+        {
+            var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
+                title: "Sélectionnez l'emplacement où copier les mots de passe Wi-Fi",
+                folderPrefix: "Sauvegarde_MotsDePasse_Wifi",
+                confirmQuestion: $"{wifiResults.Count} profil(s) Wi-Fi et clés ont été analysés.\n\nSouhaitez-vous rassembler et exporter l'ensemble de ces mots de passe dans un dossier sécurisé de votre choix ?",
+                confirmTitle: "Sauvegarde des mots de passe Wi-Fi — Alex Toolkit"
+            );
+
+            if (!string.IsNullOrEmpty(targetDir))
+            {
+                onOutput("\n═══════════════════════════════════════════════════════════════");
+                onOutput("  📁 EXPORTATION SÉCURISÉE DES MOTS DE PASSE WI-FI");
+                onOutput("═══════════════════════════════════════════════════════════════");
+                onOutput($"[i] Dossier de destination : {targetDir}");
+
+                string reportPath = System.IO.Path.Combine(targetDir, "Mots_de_passe_WiFi.txt");
+                var reportLines = new List<string>
+                {
+                    "===========================================================",
+                    $" INVENTAIRE DES MOTS DE PASSE WI-FI — {Environment.MachineName}",
+                    $" Date d'export : {DateTime.Now:dd/MM/yyyy HH:mm:ss}",
+                    "===========================================================",
+                    ""
+                };
+
+                foreach (var item in wifiResults)
+                {
+                    reportLines.Add($"Réseau (SSID) : {item.Ssid}");
+                    reportLines.Add($"Mot de passe  : {(string.IsNullOrEmpty(item.Password) ? "(Réseau ouvert ou clé entreprise)" : item.Password)}");
+                    reportLines.Add("-----------------------------------------------------------");
+                }
+
+                await System.IO.File.WriteAllLinesAsync(reportPath, reportLines, ct);
+
+                // Export natif complémentaire des profils XML netsh
+                try
+                {
+                    await CommandRunner.RunAsync($"netsh wlan export profile key=clear folder=\"{targetDir}\"", ct);
+                }
+                catch { }
+
+                onOutput($"✅ [SUCCÈS] Rapport texte créé : {reportPath}");
+                onOutput($"✅ [SUCCÈS] Profils XML exportés dans : {targetDir}");
+                FolderDialogHelper.OpenInExplorer(targetDir);
+            }
+            else
+            {
+                onOutput("\n[i] Sauvegarde des mots de passe Wi-Fi ignorée ou annulée par l'utilisateur.");
+            }
+        }
+    }
+
+    // Générateur de mots de passe aléatoires sécurisés pour comptes Windows & Wi-Fi
+    public static async Task GenerateSecurePasswords(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("═══════════════════════════════════════════════════════════════");
+        onOutput("  🔑 GÉNÉRATEUR DE MOTS DE PASSE ROBUSTES WINDOWS");
+        onOutput("═══════════════════════════════════════════════════════════════");
+        onOutput("[i] Génération d'une série de mots de passe cryptographiquement forts...\n");
+
+        var lengths = new[] { 16, 20, 24, 32 };
+        var generated = new List<(string Label, string Password, int Length)>();
+
+        for (int i = 0; i < lengths.Length; i++)
+        {
+            int len = lengths[i];
+            string pwd = CreateRandomPassword(len);
+            generated.Add(($"Profil Recommandé {i + 1} ({len} caractères)", pwd, len));
+            onOutput($"[{i + 1}] Profil ({len} car.) : {pwd}");
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            string ultraPwd = CreateRandomPassword(28);
+            generated.Add(($"Super Administrateur / BitLocker {i + 1} (28 caractères)", ultraPwd, 28));
+            onOutput($"[+] Haut Niveau (28 car.) : {ultraPwd}");
+        }
+
+        onOutput("\n═══════════════════════════════════════════════════════════════");
+
+        var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
+            title: "Sélectionnez l'emplacement où sauvegarder les mots de passe générés",
+            folderPrefix: "Generation_MotsDePasse",
+            confirmQuestion: "Une série de mots de passe sécurisés vient d'être générée.\n\nSouhaitez-vous enregistrer ces mots de passe dans un fichier texte au sein d'un dossier de votre choix ?",
+            confirmTitle: "Génération de mots de passe — Alex Toolkit"
+        );
+
+        if (!string.IsNullOrEmpty(targetDir))
+        {
+            string filePath = System.IO.Path.Combine(targetDir, "Mots_de_passe_generes.txt");
+            var lines = new List<string>
+            {
+                "===========================================================",
+                $" MOTS DE PASSE SÉCURISÉS GÉNÉRÉS — {Environment.MachineName}",
+                $" Date de génération : {DateTime.Now:dd/MM/yyyy HH:mm:ss}",
+                "===========================================================",
+                "RECOMMANDATION : Conservez ce fichier dans un endroit sûr ou dans un coffre-fort.",
+                ""
+            };
+
+            foreach (var item in generated)
+            {
+                lines.Add($"Label    : {item.Label}");
+                lines.Add($"Mot de passe : {item.Password}");
+                lines.Add($"Longueur : {item.Length} caractères");
+                lines.Add("-----------------------------------------------------------");
+            }
+
+            await System.IO.File.WriteAllLinesAsync(filePath, lines, ct);
+            onOutput($"\n✅ [SUCCÈS] Mots de passe enregistrés dans : {filePath}");
+            FolderDialogHelper.OpenInExplorer(targetDir);
+        }
+        else
+        {
+            onOutput("\n[i] Sauvegarde des mots de passe générés ignorée ou annulée par l'utilisateur.");
+        }
+    }
+
+    private static string CreateRandomPassword(int length)
+    {
+        const string upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        const string lower = "abcdefghijkmnopqrstuvwxyz";
+        const string digits = "23456789";
+        const string specials = "!@#$%^&*()_+-=[]{}|";
+        const string allChars = upper + lower + digits + specials;
+
+        var bytes = new byte[length];
+        System.Security.Cryptography.RandomNumberGenerator.Fill(bytes);
+
+        var chars = new char[length];
+        // Garantir au moins un caractère de chaque groupe
+        chars[0] = upper[bytes[0] % upper.Length];
+        chars[1] = lower[bytes[1] % lower.Length];
+        chars[2] = digits[bytes[2] % digits.Length];
+        chars[3] = specials[bytes[3] % specials.Length];
+
+        for (int i = 4; i < length; i++)
+        {
+            chars[i] = allChars[bytes[i] % allChars.Length];
+        }
+
+        // Mélange (Fisher-Yates)
+        var shuffleBytes = new byte[length];
+        System.Security.Cryptography.RandomNumberGenerator.Fill(shuffleBytes);
+        for (int i = length - 1; i > 0; i--)
+        {
+            int j = shuffleBytes[i] % (i + 1);
+            (chars[i], chars[j]) = (chars[j], chars[i]);
+        }
+
+        return new string(chars);
     }
 
     // Windows Defender — Scan rapide  (wd_quick)

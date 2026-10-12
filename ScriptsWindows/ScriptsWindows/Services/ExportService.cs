@@ -19,6 +19,9 @@ public class ExportService
     // ─── 1. Clé de produit Windows ───────────────────────────────────────────
     public static async Task GetWindowsKey(Action<string> onOutput, CancellationToken ct = default)
     {
+        string? foundKey = null;
+        string? source = null;
+
         await PowerShellRunner.RunAsync(@"
 $key = (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
 if ($key) {
@@ -32,36 +35,94 @@ if ($key) {
         Write-Output '[!] Aucune clé OEM physique en mémoire UEFI (Licence numérique liée au compte Microsoft).'
     }
 }
-", onOutput, ct);
+", line =>
+        {
+            if (line.Contains("Clé produit Windows BIOS/UEFI :"))
+            {
+                var idx = line.IndexOf(':');
+                if (idx >= 0) { foundKey = line.Substring(idx + 1).Trim(); source = "BIOS/UEFI (OA3x)"; }
+            }
+            else if (line.Contains("Clé Windows (Registre de secours) :"))
+            {
+                var idx = line.IndexOf(':');
+                if (idx >= 0) { foundKey = line.Substring(idx + 1).Trim(); source = "Registre de secours"; }
+            }
+            onOutput(line);
+        }, ct);
+
+        if (!string.IsNullOrWhiteSpace(foundKey))
+        {
+            var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
+                title: "Sélectionnez l'emplacement où sauvegarder la clé produit Windows",
+                folderPrefix: "Sauvegarde_Cle_Windows",
+                confirmQuestion: $"Une clé de licence Windows a été détectée ({source}) :\n\n{foundKey}\n\nSouhaitez-vous sauvegarder cette clé dans un dossier sécurisé de votre choix ?",
+                confirmTitle: "Sauvegarde de la clé Windows — Alex Toolkit"
+            );
+
+            if (!string.IsNullOrEmpty(targetDir))
+            {
+                string filePath = Path.Combine(targetDir, "Cle_Produit_Windows.txt");
+                var content = $"===========================================================\n" +
+                              $" CLÉ DE PRODUIT WINDOWS — {Environment.MachineName}\n" +
+                              $" Date d'export : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n" +
+                              $" Source        : {source}\n" +
+                              $"===========================================================\n\n" +
+                              $"Clé de licence : {foundKey}\n";
+                await File.WriteAllTextAsync(filePath, content, ct);
+                onOutput($"\n[OK] Clé de licence enregistrée dans : {filePath}");
+                FolderDialogHelper.OpenInExplorer(targetDir);
+            }
+            else
+            {
+                onOutput("\n[i] Sauvegarde de la clé ignorée ou annulée par l'utilisateur.");
+            }
+        }
     }
 
     // ─── 2. Export des pilotes tiers système ─────────────────────────────────
     public static async Task ExportDrivers(Action<string> onOutput, CancellationToken ct = default)
     {
-        var dest = @"C:\DriversBackup";
-        try
+        var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
+            title: "Sélectionnez l'emplacement où sauvegarder les pilotes système",
+            folderPrefix: "Sauvegarde_Pilotes_Systeme",
+            confirmQuestion: "L'exportation DISM va extraire et rassembler tous les pilotes tiers installés sur votre ordinateur.\n\nSouhaitez-vous sélectionner le dossier où créer la sauvegarde ?",
+            confirmTitle: "Sauvegarde des pilotes — Alex Toolkit"
+        );
+
+        if (string.IsNullOrEmpty(targetDir))
         {
-            if (!Directory.Exists(dest)) Directory.CreateDirectory(dest);
-        }
-        catch
-        {
-            dest = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DriversBackup");
-            if (!Directory.Exists(dest)) Directory.CreateDirectory(dest);
+            onOutput("[i] Sauvegarde des pilotes annulée par l'utilisateur.");
+            return;
         }
 
-        onOutput($"[i] Dossier cible vérifié : {dest}");
-        onOutput("[i] Sauvegarde et extraction de tous les pilotes système tiers via DISM...");
-        await CommandRunner.RunAsync($"DISM /Online /Export-Driver /Destination:\"{dest}\"", onOutput, ct);
-        onOutput($"[OK] Pilotes exportés avec succès dans {dest}");
+        onOutput($"[i] Dossier cible créé : {targetDir}");
+        onOutput("[i] Sauvegarde et extraction de tous les pilotes système tiers via DISM (cette opération peut prendre quelques minutes)...");
+        await CommandRunner.RunAsync($"DISM /Online /Export-Driver /Destination:\"{targetDir}\"", onOutput, ct);
+        onOutput($"\n✅ [SUCCÈS] Pilotes exportés avec succès dans : {targetDir}");
+        FolderDialogHelper.OpenInExplorer(targetDir);
     }
 
     // ─── 3. Export de la liste des logiciels installés ───────────────────────
     public static async Task ExportSoftwareList(Action<string> onOutput, CancellationToken ct = default)
     {
-        var dest = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "liste_logiciels.txt");
-        onOutput("[i] Export de la liste des logiciels via winget...");
+        var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
+            title: "Sélectionnez l'emplacement où exporter la liste des logiciels",
+            folderPrefix: "Inventaire_Logiciels",
+            confirmQuestion: "Souhaitez-vous exporter la liste complète des logiciels installés dans un dossier de sauvegarde de votre choix ?",
+            confirmTitle: "Export inventaire des logiciels — Alex Toolkit"
+        );
+
+        if (string.IsNullOrEmpty(targetDir))
+        {
+            onOutput("[i] Export de la liste des logiciels annulé par l'utilisateur.");
+            return;
+        }
+
+        var dest = Path.Combine(targetDir, "liste_logiciels.txt");
+        onOutput($"[i] Export de la liste des logiciels via winget vers {dest}...");
         await CommandRunner.RunAsync($"winget list > \"{dest}\"", onOutput, ct);
-        onOutput($"[OK] Liste exportée : {dest}");
+        onOutput($"\n✅ [SUCCÈS] Liste des logiciels exportée : {dest}");
+        FolderDialogHelper.OpenInExplorer(targetDir);
     }
 
     // ─── 4. Analyse & Extraction de l'historique web (SQLite) ────────────────
@@ -405,113 +466,68 @@ if ($key) {
                 }
 
                 // ─── Boîte de dialogue Windows native pour choisir l'emplacement à la souris ───
-                bool shouldExport = false;
-                string? selectedFolder = null;
+                var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
+                    title: "Sélectionnez l'emplacement où copier tous les documents sensibles",
+                    folderPrefix: "Sauvegarde_Secrets",
+                    confirmQuestion: $"{findings.Count} document(s) et clé(s) sensible(s) ont été identifiés sur votre ordinateur.\n\nSouhaitez-vous copier et rassembler l'ensemble de ces fichiers dans un dossier de sauvegarde sécurisé de votre choix ?",
+                    confirmTitle: "Sauvegarde des documents sensibles — Alex Toolkit"
+                );
 
-                try
-                {
-                    Application.Current?.Dispatcher?.Invoke(() =>
-                    {
-                        var mbResult = MessageBox.Show(
-                            Application.Current.MainWindow,
-                            $"{findings.Count} document(s) et clé(s) sensible(s) ont été identifiés sur votre ordinateur.\n\nSouhaitez-vous copier et rassembler l'ensemble de ces fichiers dans un dossier de sauvegarde sécurisé de votre choix ?",
-                            "Sauvegarde des documents sensibles — Alex Toolkit",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Question);
-
-                        if (mbResult == MessageBoxResult.Yes)
-                        {
-                            var folderDialog = new Microsoft.Win32.OpenFolderDialog
-                            {
-                                Title = "Sélectionnez l'emplacement où copier tous les documents sensibles",
-                                Multiselect = false
-                            };
-
-                            if (folderDialog.ShowDialog(Application.Current.MainWindow) == true)
-                            {
-                                selectedFolder = folderDialog.FolderName;
-                                shouldExport = true;
-                            }
-                        }
-                    });
-                }
-                catch { }
-
-                if (shouldExport && !string.IsNullOrWhiteSpace(selectedFolder))
+                if (!string.IsNullOrWhiteSpace(targetDir))
                 {
                     onOutput("\n═══════════════════════════════════════════════════════════════");
                     onOutput("  📁 EXPORTATION SÉCURISÉE DES DOCUMENTS SENSIBLES");
                     onOutput("═══════════════════════════════════════════════════════════════");
+                    onOutput($"[i] Dossier de destination créé : {targetDir}\n");
 
-                    string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                    string targetDir = Path.Combine(selectedFolder, $"Sauvegarde_Secrets_{timestamp}");
-                    try
+                    int copiedCount = 0;
+                    int errorCount = 0;
+
+                    foreach (var item in findings)
                     {
-                        Directory.CreateDirectory(targetDir);
-                        onOutput($"[i] Dossier de destination créé : {targetDir}\n");
-
-                        int copiedCount = 0;
-                        int errorCount = 0;
-
-                        foreach (var item in findings)
-                        {
-                            if (ct.IsCancellationRequested) break;
-                            try
-                            {
-                                if (!File.Exists(item.Path)) continue;
-
-                                // Sous-dossier ordonné par catégorie
-                                string sanitizedCat = CleanFolderName(item.Category);
-                                string catDir = Path.Combine(targetDir, sanitizedCat);
-                                if (!Directory.Exists(catDir)) Directory.CreateDirectory(catDir);
-
-                                string fileName = Path.GetFileName(item.Path);
-                                string destPath = Path.Combine(catDir, fileName);
-
-                                // Gestion des collisions de noms
-                                int suffix = 1;
-                                while (File.Exists(destPath))
-                                {
-                                    string nameOnly = Path.GetFileNameWithoutExtension(fileName);
-                                    string ext = Path.GetExtension(fileName);
-                                    destPath = Path.Combine(catDir, $"{nameOnly}_{suffix++}{ext}");
-                                }
-
-                                // Copie partagée sécurisée (contourne les éventuels verrous applicatifs)
-                                using (var src = new FileStream(item.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                                using (var dst = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None))
-                                {
-                                    src.CopyTo(dst);
-                                }
-
-                                copiedCount++;
-                                onOutput($"[COPIE] {item.Icon} {fileName} ➜ {sanitizedCat}\\{Path.GetFileName(destPath)}");
-                            }
-                            catch (Exception ex)
-                            {
-                                errorCount++;
-                                onOutput($"[!] Erreur copie ({Path.GetFileName(item.Path)}) : {ex.Message}");
-                            }
-                        }
-
-                        onOutput($"\n✅ {copiedCount} document(s) sensible(s) copié(s) avec succès !");
-                        onOutput($"📂 Emplacement final : {targetDir}");
-
-                        // Ouvrir automatiquement le dossier cible dans l'Explorateur Windows
+                        if (ct.IsCancellationRequested) break;
                         try
                         {
-                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            if (!File.Exists(item.Path)) continue;
+
+                            // Sous-dossier ordonné par catégorie
+                            string sanitizedCat = CleanFolderName(item.Category);
+                            string catDir = Path.Combine(targetDir, sanitizedCat);
+                            if (!Directory.Exists(catDir)) Directory.CreateDirectory(catDir);
+
+                            string fileName = Path.GetFileName(item.Path);
+                            string destPath = Path.Combine(catDir, fileName);
+
+                            // Gestion des collisions de noms
+                            int suffix = 1;
+                            while (File.Exists(destPath))
                             {
-                                FileName = targetDir,
-                                UseShellExecute = true
-                            });
+                                string nameOnly = Path.GetFileNameWithoutExtension(fileName);
+                                string ext = Path.GetExtension(fileName);
+                                destPath = Path.Combine(catDir, $"{nameOnly}_{suffix++}{ext}");
+                            }
+
+                            // Copie partagée sécurisée (contourne les éventuels verrous applicatifs)
+                            using (var src = new FileStream(item.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                            using (var dst = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                            {
+                                src.CopyTo(dst);
+                            }
+
+                            copiedCount++;
+                            onOutput($"[COPIE] {item.Icon} {fileName} ➜ {sanitizedCat}\\{Path.GetFileName(destPath)}");
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            errorCount++;
+                            onOutput($"[!] Erreur copie ({Path.GetFileName(item.Path)}) : {ex.Message}");
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        onOutput($"[!] Erreur lors de la création du dossier de sauvegarde : {ex.Message}");
-                    }
+
+                    onOutput($"\n✅ {copiedCount} document(s) sensible(s) copié(s) avec succès !");
+                    onOutput($"📂 Emplacement final : {targetDir}");
+
+                    FolderDialogHelper.OpenInExplorer(targetDir);
                 }
                 else
                 {
@@ -596,15 +612,29 @@ if ($key) {
         catch { }
     }
 
-    // ─── 6. Sauvegarde des profils Wi-Fi et logiciels sur le Bureau ──────────
+    // ─── 6. Sauvegarde des profils Wi-Fi et logiciels ─────────────────────────
     public static async Task ExportWifiAndApps(Action<string> onOutput, CancellationToken ct = default)
     {
-        var dest = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        onOutput("[i] Export des profils Wi-Fi...");
-        await CommandRunner.RunAsync($"netsh wlan export profile key=clear folder=\"{dest}\"", onOutput, ct);
-        onOutput("[i] Export de la liste des apps...");
-        await CommandRunner.RunAsync($"winget list > \"{dest}\\apps_list.txt\"", onOutput, ct);
-        onOutput("[OK] Export terminé sur le Bureau");
+        var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
+            title: "Sélectionnez l'emplacement où exporter les profils Wi-Fi et applications",
+            folderPrefix: "Export_WiFi_et_Applications",
+            confirmQuestion: "Souhaitez-vous exporter l'ensemble des profils et clés Wi-Fi (XML) ainsi que la liste des logiciels installés dans un dossier de sauvegarde de votre choix ?",
+            confirmTitle: "Export Wi-Fi et Applications — Alex Toolkit"
+        );
+
+        if (string.IsNullOrEmpty(targetDir))
+        {
+            onOutput("[i] Exportation annulée par l'utilisateur.");
+            return;
+        }
+
+        onOutput($"[i] Dossier de destination : {targetDir}");
+        onOutput("[i] Export des profils Wi-Fi (fichiers XML avec clés en clair)...");
+        await CommandRunner.RunAsync($"netsh wlan export profile key=clear folder=\"{targetDir}\"", onOutput, ct);
+        onOutput("[i] Export de la liste des applications via winget...");
+        await CommandRunner.RunAsync($"winget list > \"{Path.Combine(targetDir, "apps_list.txt")}\"", onOutput, ct);
+        onOutput($"\n✅ [SUCCÈS] Profils Wi-Fi et liste des logiciels exportés dans : {targetDir}");
+        FolderDialogHelper.OpenInExplorer(targetDir);
     }
 }
 

@@ -412,7 +412,7 @@ public static class ToolRegistry
         {
             Id = "repair_export_drivers",
             Name = "Sauvegarder pilotes système (DISM)",
-            Description = "Export et sauvegarde vers C:\\DriversBackup (DISM /Export-Driver).",
+            Description = "Export et sauvegarde de tous les pilotes système vers un dossier au choix (DISM /Export-Driver).",
             Category = "REPARATION",
             SubHeading = "Pilotes de périphériques",
             Icon = "💾",
@@ -590,7 +590,7 @@ public static class ToolRegistry
         {
             Id = "sec_wifi_export",
             Name = "Exporter profils & clés Wi-Fi",
-            Description = "Sauvegarde des profils et clés Wi-Fi en XML sur le Bureau.",
+            Description = "Sauvegarde des profils et clés Wi-Fi en XML dans le dossier de votre choix.",
             Category = "SECRETS",
             SubHeading = "Cartes réseau sans fil (Wi-Fi)",
             Icon = "💾",
@@ -599,6 +599,17 @@ public static class ToolRegistry
         });
 
         // Sous-titre interne : Dossiers utilisateurs & Clés d'authentification
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_pwd_generator",
+            Name = "Générer mots de passe robustes",
+            Description = "Génération de clés et mots de passe aléatoires sécurisés avec sauvegarde dans un dossier dédié.",
+            Category = "SECRETS",
+            SubHeading = "Dossiers utilisateurs & Clés d'authentification",
+            Icon = "🔐",
+            Action = (log, ct) => SecurityService.GenerateSecurePasswords(log, ct),
+            Tags = new[] { "mot de passe", "génération", "aléatoire", "sécurité", "robuste", "mdp" }
+        });
         _allTools.Add(new ScriptTool
         {
             Id = "sec_audit_sensitive",

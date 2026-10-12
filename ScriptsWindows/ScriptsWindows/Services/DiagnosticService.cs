@@ -124,18 +124,34 @@ Write-Output $sep
     // ────────────────────────────────────────────────────────────────
     public static async Task GetBatteryReport(Action<string> onOutput, CancellationToken ct = default)
     {
-        // Génère le rapport HTML et l'ouvre
-        await PowerShellRunner.RunAsync(@"
-$reportPath = ""$env:TEMP\battery-report.html""
+        var targetDir = Core.FolderDialogHelper.AskAndCreateDestinationFolder(
+            title: "Sélectionnez l'emplacement où sauvegarder le rapport batterie",
+            folderPrefix: "Rapport_Batterie",
+            confirmQuestion: "Souhaitez-vous enregistrer le rapport d'usure et d'autonomie de la batterie dans un dossier de votre choix ?",
+            confirmTitle: "Rapport de batterie — Alex Toolkit"
+        );
+
+        string reportPath = targetDir != null
+            ? System.IO.Path.Combine(targetDir, "battery-report.html")
+            : System.IO.Path.Combine(System.IO.Path.GetTempPath(), "battery-report.html");
+
+        await PowerShellRunner.RunAsync($@"
+$reportPath = '{reportPath.Replace("'", "''")}'
 & powercfg /batteryreport /output $reportPath | Out-Null
-if (Test-Path $reportPath) {
+if (Test-Path $reportPath) {{
     Write-Output '[OK] Rapport batterie généré'
-    Write-Output ""[i] Ouverture : $reportPath""
+    Write-Output ""[i] Emplacement : $reportPath""
     Start-Process $reportPath
-} else {
+}} else {{
     Write-Output '[!] Aucune batterie détectée ou rapport impossible'
-}
+}}
 ", onOutput, ct);
+
+        if (targetDir != null && System.IO.File.Exists(reportPath))
+        {
+            onOutput($"✅ [SUCCÈS] Rapport batterie enregistré dans : {targetDir}");
+            Core.FolderDialogHelper.OpenInExplorer(targetDir);
+        }
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -452,13 +468,32 @@ Get-PhysicalDisk | ForEach-Object {
     {
         onOutput("[i] Génération du rapport Wi-Fi...");
         await Core.CommandRunner.RunAsync("netsh wlan show wlanreport", onOutput, ct);
-        var reportPath = System.IO.Path.Combine(
+        var sourceReportPath = System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
             @"Microsoft\Windows\WlanReport\wlan-report-latest.html");
-        if (System.IO.File.Exists(reportPath))
+
+        if (System.IO.File.Exists(sourceReportPath))
         {
-            onOutput($"[OK] Rapport Wi-Fi : {reportPath}");
-            Core.CommandRunner.StartProcess(reportPath);
+            var targetDir = Core.FolderDialogHelper.AskAndCreateDestinationFolder(
+                title: "Sélectionnez l'emplacement où sauvegarder le rapport Wi-Fi",
+                folderPrefix: "Rapport_WiFi",
+                confirmQuestion: "Le rapport Wi-Fi complet a été généré.\n\nSouhaitez-vous copier ce rapport dans un dossier de sauvegarde de votre choix ?",
+                confirmTitle: "Rapport Wi-Fi — Alex Toolkit"
+            );
+
+            if (!string.IsNullOrEmpty(targetDir))
+            {
+                string destFile = System.IO.Path.Combine(targetDir, "wlan-report.html");
+                System.IO.File.Copy(sourceReportPath, destFile, true);
+                onOutput($"✅ [SUCCÈS] Rapport Wi-Fi copié dans : {destFile}");
+                Core.CommandRunner.StartProcess(destFile);
+                Core.FolderDialogHelper.OpenInExplorer(targetDir);
+            }
+            else
+            {
+                onOutput($"[OK] Rapport Wi-Fi : {sourceReportPath}");
+                Core.CommandRunner.StartProcess(sourceReportPath);
+            }
         }
         else
         {
