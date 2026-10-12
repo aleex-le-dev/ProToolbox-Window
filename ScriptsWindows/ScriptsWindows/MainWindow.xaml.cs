@@ -31,6 +31,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Loaded += MainWindow_Loaded;
+        OutputBox.PreviewMouseWheel += OutputBox_PreviewMouseWheel;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -137,6 +138,34 @@ public partial class MainWindow : Window
 
     private void BtnClearOutput_Click(object sender, RoutedEventArgs e)
         => OutputBox.Document.Blocks.Clear();
+
+    private void BtnZoomIn_Click(object sender, RoutedEventArgs e)
+        => AdjustOutputFontSize(1);
+
+    private void BtnZoomOut_Click(object sender, RoutedEventArgs e)
+        => AdjustOutputFontSize(-1);
+
+    private void OutputBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+        {
+            e.Handled = true;
+            if (e.Delta > 0)
+                AdjustOutputFontSize(1);
+            else if (e.Delta < 0)
+                AdjustOutputFontSize(-1);
+        }
+    }
+
+    private void AdjustOutputFontSize(double delta)
+    {
+        double newSize = Math.Clamp(OutputBox.FontSize + delta, 10.0, 24.0);
+        OutputBox.FontSize = newSize;
+        if (OutputBox.Document != null)
+        {
+            OutputBox.Document.FontSize = newSize;
+        }
+    }
 
     // ─── Redimensionnement de la console (Splitter) ──────────────────
 
