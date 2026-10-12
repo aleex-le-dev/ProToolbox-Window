@@ -1,3 +1,4 @@
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -96,6 +97,19 @@ Write-Output '[OK] Réenregistrement des applications UWP et Store terminé'
         onOutput("[OK] CHKDSK planifié — redémarrez le PC pour l'exécuter");
     }
 
+    /// <summary>Ouvre l'interface interactive de vérification et réparation CHKDSK.</summary>
+    public static async Task OpenChkdskDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.ChkdskDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
     // Reset Windows Update  (res_wu_reset)
     public static async Task ResetWindowsUpdate(Action<string> onOutput, CancellationToken ct = default)
     {
@@ -166,6 +180,19 @@ Write-Output '[OK] Point de restauration créé avec succès'
 ", onOutput, ct);
     }
 
+    /// <summary>Ouvre l'interface interactive de gestion et création de points de restauration système.</summary>
+    public static async Task OpenRestorePointDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.RestorePointDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
     // WinRE — Redémarrer  (winre_boot)
     public static async Task RebootToWinRE(Action<string> onOutput, CancellationToken ct = default)
     {
@@ -230,5 +257,18 @@ Write-Output '[OK] Lien ouvert dans le navigateur'
     public static async Task GetBcdStatus(Action<string> onOutput, CancellationToken ct = default)
     {
         await CommandRunner.RunAsync("bcdedit /enum {default}", onOutput, ct);
+    }
+
+    /// <summary>Ouvre l'interface interactive de gestion des services Windows stratégiques.</summary>
+    public static async Task OpenServicesManagerDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.ServicesManagerDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 }

@@ -1,3 +1,4 @@
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -527,5 +528,18 @@ Get-PhysicalDisk | ForEach-Object {
         {
             onOutput("[i] Rapport généré — cherchez wlan-report-latest.html dans ProgramData\\Microsoft\\Windows\\WlanReport");
         }
+    }
+
+    /// <summary>Ouvre l'interface interactive de gestion des applications au démarrage de Windows.</summary>
+    public static async Task OpenStartupManagerDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.StartupManagerDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 }

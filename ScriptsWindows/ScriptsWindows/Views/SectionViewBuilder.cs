@@ -213,7 +213,7 @@ public static class SectionViewBuilder
         "DISQUE"           => "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker",
         "MATERIEL"         => "Outils de diagnostic mémoire, GPU/DxDiag, périphériques et benchmarks",
         "MISES_A_JOUR"     => "Inventaire applicatif, mise à niveau winget et signatures Defender",
-        "NETTOYAGE"        => "Nettoyage unifié, magasins WinSxS, caches navigateurs, temp et cleanmgr",
+        "NETTOYAGE"        => "Centre interactif de nettoyage de disque, caches, corbeille et magasin WinSxS",
         "PERSONNALISATION" => "God Mode et rétablissement du menu contextuel classique Windows 10",
         "REPARATION"       => "CHKDSK, spouleur, pipeline DISM+SFC, cache icônes et Windows Update",
         "RESEAU"           => "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions",
@@ -221,6 +221,31 @@ public static class SectionViewBuilder
         "SECURITE"         => "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources",
         _                  => "Outils système Windows"
     };
+
+    /// <summary>
+    /// Affiche directement les cartes d'outils dans une grille fluide (WrapPanel) sans accordéon ni sous-titres.
+    /// Utilisé lorsque les outils doivent être accessibles immédiatement sans clic intermédiaire.
+    /// </summary>
+    public static SectionController PopulateDirect(Panel container, IEnumerable<ScriptTool> tools)
+    {
+        container.Children.Clear();
+        var controller = new SectionController();
+
+        var wrapPanel = new WrapPanel
+        {
+            Margin = new Thickness(0, 4, 0, 0)
+        };
+
+        foreach (var tool in tools)
+        {
+            var card = new ToolCard();
+            card.BindTool(tool);
+            wrapPanel.Children.Add(card);
+        }
+
+        container.Children.Add(wrapPanel);
+        return controller;
+    }
 
     /// <summary>
     /// Construit la vue partitionnée par sous-titres/composants pour chaque page de catégorie.
@@ -233,6 +258,12 @@ public static class SectionViewBuilder
 
         var toolList = tools.ToList();
         if (toolList.Count == 0) return controller;
+
+        // Si aucun outil n'a de sous-catégorie définie, affichage direct immédiat
+        if (toolList.All(t => string.IsNullOrWhiteSpace(t.SubHeading)))
+        {
+            return PopulateDirect(container, toolList);
+        }
 
         // Grouper par sous-catégorie et trier systématiquement par ordre alphabétique avec casse de phrase
         var groups = toolList

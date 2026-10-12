@@ -1,3 +1,4 @@
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -135,4 +136,18 @@ Write-Output '[OK] Cache miniatures Windows supprimé'
         await CommandRunner.RunAsync("DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase", onOutput, ct);
         onOutput("[OK] Nettoyage WinSxS terminé");
     }
+
+    /// <summary>Ouvre l'interface interactive de nettoyage système et disque unifié.</summary>
+    public static async Task OpenSystemCleanupDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.SystemCleanupDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
 }
+

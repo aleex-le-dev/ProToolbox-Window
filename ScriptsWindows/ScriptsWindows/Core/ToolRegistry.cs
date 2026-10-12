@@ -74,12 +74,8 @@ public static class ToolRegistry
         ["repair_uwp_store"] = "wsreset.exe && powershell Add-AppxPackage",
         ["repair_icon_cache"] = "taskkill.exe /f /im explorer.exe && del %localappdata%\\IconCache.db && start explorer.exe",
 
-        // ─── Nettoyage (6) ───
-        ["clean_temp"] = "del /q /f /s %TEMP%\\* && del /q /f /s C:\\Windows\\Temp\\*",
-        ["clean_wu_cache"] = "net stop wuauserv && del /q /f /s C:\\Windows\\SoftwareDistribution\\Download\\*",
-        ["clean_browser_caches"] = "powershell Remove-Item (Caches Chrome/Edge/Firefox)",
-        ["clean_cleanmgr"] = "cleanmgr.exe /sagerun:1",
-        ["clean_full_unified"] = "powershell Clear-RecycleBin && ipconfig /flushdns && del %TEMP%\\*",
+        // ─── Nettoyage (2) ───
+        ["clean_system_unified"] = "AlexToolkit.exe (Interface interactive : Cleanmgr, temporaires, corbeille, caches et WinSxS)",
         ["clean_winsxs"] = "dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase",
 
         // ─── Secrets et Clés (5) ───
@@ -126,8 +122,9 @@ public static class ToolRegistry
 
         // ─── Personnalisation (2) ───
         ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
-        ["tweak_classic_context"] = "reg.exe add HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32"
+        ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)"
     };
+
 
     public static string GetCommand(string toolId)
     {
@@ -242,6 +239,19 @@ public static class ToolRegistry
             Action = (log, ct) => RepairService.RunSfc(log, ct),
             Tags = new[] { "sfc", "scannow", "intégrité", "fichiers", "système" }
         });
+
+        // Sous-titre interne : Démarrage et Processus système
+        _allTools.Add(new ScriptTool
+        {
+            Id = "diag_startup_manager",
+            Name = "Gestionnaire des Programmes au Démarrage",
+            Description = "Visualiser les logiciels qui se lancent avec Windows et désactiver les éléments superflus.",
+            Category = "DIAGNOSTIC",
+            SubHeading = "Démarrage et Processus système",
+            Icon = "🚀",
+            Action = (log, ct) => DiagnosticService.OpenStartupManagerDialog(log, ct),
+            Tags = new[] { "démarrage", "startup", "boot", "programmes", "applications", "accélérer", "taskmgr" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -325,18 +335,6 @@ public static class ToolRegistry
             Tags = new[] { "benchmark", "winsat", "performance", "score", "cpu", "gpu", "ram", "disque" }
         });
 
-        // Sous-titre interne : Gestion d'énergie
-        _allTools.Add(new ScriptTool
-        {
-            Id = "hw_power_perf",
-            Name = "Profil performances élevées",
-            Description = "Profil d'alimentation Ultimate Performance / Hautes performances.",
-            Category = "MATERIEL",
-            SubHeading = "Gestion d'énergie",
-            Icon = "⚡",
-            Action = (log, ct) => HardwareService.SetPlanHigh(log, ct),
-            Tags = new[] { "alimentation", "énergie", "performances", "powercfg", "profil" }
-        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -385,13 +383,13 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_chkdsk",
-            Name = "Correction disque (CHKDSK)",
-            Description = "Réparation des erreurs disques et secteurs (chkdsk C: /f /r).",
+            Name = "Vérification et Réparation CHKDSK",
+            Description = "Choisir le lecteur et lancer une analyse (lecture seule, correction /f ou réparation complète /r).",
             Category = "REPARATION",
             SubHeading = "Système de fichiers et Partitions",
             Icon = "🔍",
-            Action = (log, ct) => RepairService.RunChkdsk("C", log, ct),
-            Tags = new[] { "chkdsk", "disque", "réparation", "ntfs", "erreurs" }
+            Action = (log, ct) => RepairService.OpenChkdskDialog(log, ct),
+            Tags = new[] { "chkdsk", "disque", "réparation", "ntfs", "erreurs", "secteurs" }
         });
 
         // Sous-titre interne : Pilotes de périphériques
@@ -433,6 +431,19 @@ public static class ToolRegistry
             Tags = new[] { "réseau", "winsock", "tcp", "ip", "arp", "pile", "connexion" }
         });
 
+        // Sous-titre interne : Services système et Processus
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_services_manager",
+            Name = "Gestionnaire des Services Windows",
+            Description = "Piloter, démarrer, arrêter ou redémarrer les services clés (Spouleur, Windows Update, SysMain, Télémétrie...).",
+            Category = "REPARATION",
+            SubHeading = "Services système et Processus",
+            Icon = "⚙️",
+            Action = (log, ct) => RepairService.OpenServicesManagerDialog(log, ct),
+            Tags = new[] { "services", "spooler", "wuauserv", "sysmain", "démarrer", "arrêter", "processus", "msc" }
+        });
+
         // Sous-titre interne : Sous-système d'impression
         _allTools.Add(new ScriptTool
         {
@@ -471,6 +482,19 @@ public static class ToolRegistry
             Action = (log, ct) => RepairService.RepairIcons(log, ct),
             Tags = new[] { "icones", "miniatures", "cache", "iconcache", "thumbcache", "explorer" }
         });
+
+        // Sous-titre interne : Protection et Restauration du système
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_restore_point",
+            Name = "Points de Restauration Système",
+            Description = "Lister les points existants, créer un point de restauration nommé et lancer la restauration.",
+            Category = "REPARATION",
+            SubHeading = "Protection et Restauration du système",
+            Icon = "🔄",
+            Action = (log, ct) => RepairService.OpenRestorePointDialog(log, ct),
+            Tags = new[] { "restauration", "point", "sauvegarde", "checkpoint", "sécurité", "rstrui" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -478,67 +502,17 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterCleaningTools()
     {
-        // Sous-titre interne : Stockage temporaire OS ET Profils
+        // Sous-titre interne : Nettoyage et Maintenance Globale
         _allTools.Add(new ScriptTool
         {
-            Id = "clean_temp",
-            Name = "Purger les fichiers temp",
-            Description = "Purge des dossiers temporaires (Windows\\Temp et %TEMP%).",
+            Id = "clean_system_unified",
+            Name = "Nettoyage Système et Disque",
+            Description = "Centre interactif complet : assistant Cleanmgr, purge des temporaires (%TEMP%), corbeille, cache Windows Update, navigateurs et sélection personnalisée.",
             Category = "NETTOYAGE",
-            SubHeading = "Stockage temporaire OS ET Profils",
-            Icon = "📁",
-            Action = (log, ct) => CleaningService.CleanTemp(log, ct),
-            Tags = new[] { "temp", "temporaires", "purge", "fichiers" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "clean_wu_cache",
-            Name = "Purger téléchargements Windows Update",
-            Description = "Suppression du dossier SoftwareDistribution\\Download.",
-            Category = "NETTOYAGE",
-            SubHeading = "Stockage temporaire OS ET Profils",
-            Icon = "📦",
-            Action = (log, ct) => CleaningService.CleanWindowsUpdate(log, ct),
-            Tags = new[] { "windows update", "téléchargements", "softwaredistribution", "download", "purge" }
-        });
-
-        // Sous-titre interne : Navigateurs web et Explorateur
-        _allTools.Add(new ScriptTool
-        {
-            Id = "clean_browser_caches",
-            Name = "Nettoyer caches navigateurs et vignettes",
-            Description = "Nettoyage des caches (Chrome, Edge, Firefox, Brave) et vignettes.",
-            Category = "NETTOYAGE",
-            SubHeading = "Navigateurs web et Explorateur",
-            Icon = "🌐",
-            Action = (log, ct) => CleaningService.CleanBrowsers(log, ct),
-            Tags = new[] { "navigateurs", "cache", "chrome", "edge", "firefox", "brave", "vignettes", "miniatures" }
-        });
-
-        // Sous-titre interne : Disque système (Nettoyage natif)
-        _allTools.Add(new ScriptTool
-        {
-            Id = "clean_cleanmgr",
-            Name = "Outil nettoyage disque (Cleanmgr)",
-            Description = "Assistant de nettoyage de disque natif (cleanmgr.exe).",
-            Category = "NETTOYAGE",
-            SubHeading = "Disque système (Nettoyage natif)",
-            Icon = "🗑️",
-            Action = (log, ct) => CleaningService.CleanDisk(log, ct),
-            Tags = new[] { "cleanmgr", "disque", "nettoyage", "assistant" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "clean_full_unified",
-            Name = "Nettoyage complet unifié",
-            Description = "Purge en 1 clic : corbeille, logs, temporaires et cache DNS.",
-            Category = "NETTOYAGE",
-            SubHeading = "Disque système (Nettoyage natif)",
-            Icon = "✨",
-            Action = (log, ct) => CleaningService.CleanAll(log, ct),
-            Tags = new[] { "nettoyage", "unifié", "complet", "temp", "corbeille", "dns", "logs" }
+            SubHeading = "Nettoyage et Maintenance Globale",
+            Icon = "🧹",
+            Action = (log, ct) => CleaningService.OpenSystemCleanupDialog(log, ct),
+            Tags = new[] { "cleanmgr", "disque", "nettoyage", "système", "temp", "corbeille", "cache", "unifié", "assistant", "navigateurs", "dns" }
         });
 
         // Sous-titre interne : Magasin de composants Windows
@@ -546,14 +520,15 @@ public static class ToolRegistry
         {
             Id = "clean_winsxs",
             Name = "Nettoyage magasin WinSxS (DISM)",
-            Description = "Optimisation du dossier WinSxS (DISM /StartComponentCleanup /ResetBase).",
+            Description = "Optimisation approfondie du dossier WinSxS et purge des composants obsolètes (DISM /StartComponentCleanup /ResetBase).",
             Category = "NETTOYAGE",
             SubHeading = "Magasin de composants Windows",
-            Icon = "🧹",
+            Icon = "🛠️",
             Action = (log, ct) => CleaningService.CleanWinSxS(log, ct),
-            Tags = new[] { "winsxs", "dism", "optimisation", "cleanup", "resetbase", "espace" }
+            Tags = new[] { "winsxs", "dism", "optimisation", "cleanup", "resetbase", "espace", "composants" }
         });
     }
+
 
     // ─────────────────────────────────────────────────────────────────────────
     // CATÉGORIE 5 : 🔑 RÉCUPÉRATION D'IDENTIFIANTS ET SECRETS
@@ -632,38 +607,14 @@ public static class ToolRegistry
         // Sous-titre interne : Serveurs de noms de domaine (DNS)
         _allTools.Add(new ScriptTool
         {
-            Id = "net_dns_cloudflare",
-            Name = "Appliquer DNS Cloudflare",
-            Description = "Application des DNS Cloudflare (1.1.1.1 / 1.0.0.1).",
+            Id = "net_dns_manager",
+            Name = "Gestionnaire et Changeur de DNS",
+            Description = "Consulter le DNS actif, tester et appliquer en 1 clic (Cloudflare, Google, Quad9, DHCP).",
             Category = "RESEAU",
             SubHeading = "Serveurs de noms de domaine (DNS)",
-            Icon = "☁️",
-            Action = (log, ct) => DnsService.SetCloudflare(log, ct),
-            Tags = new[] { "dns", "cloudflare", "1.1.1.1", "rapide", "sécurisé" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "net_dns_google",
-            Name = "Appliquer DNS Google",
-            Description = "Application des DNS Google (8.8.8.8 / 8.8.4.4).",
-            Category = "RESEAU",
-            SubHeading = "Serveurs de noms de domaine (DNS)",
-            Icon = "🔍",
-            Action = (log, ct) => DnsService.SetGoogle(log, ct),
-            Tags = new[] { "dns", "google", "8.8.8.8", "configuration" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "net_dns_dhcp",
-            Name = "Restaurer DNS automatique (DHCP)",
-            Description = "Rétablissement du mode automatique (DHCP de la box).",
-            Category = "RESEAU",
-            SubHeading = "Serveurs de noms de domaine (DNS)",
-            Icon = "🔄",
-            Action = (log, ct) => DnsService.RestoreDhcp(log, ct),
-            Tags = new[] { "dns", "dhcp", "automatique", "box", "routeur", "restaurer" }
+            Icon = "🌐",
+            Action = (log, ct) => DnsService.OpenDnsManagerDialog(log, ct),
+            Tags = new[] { "dns", "cloudflare", "google", "quad9", "dhcp", "ipconfig", "changer", "réseau" }
         });
 
         // Sous-titre interne : Table de routage et Cache ARP
@@ -853,38 +804,14 @@ public static class ToolRegistry
         // Sous-titre interne : Gestionnaire de paquets (Winget)
         _allTools.Add(new ScriptTool
         {
-            Id = "upd_list_apps",
-            Name = "Lister les logiciels installés",
-            Description = "Liste de l'ensemble des logiciels installés (winget list).",
+            Id = "upd_winget_manager",
+            Name = "Gestionnaire de Paquets Winget",
+            Description = "Lister les logiciels, choisir les mises à niveau à appliquer ou tout mettre à jour en un clic.",
             Category = "MISES_A_JOUR",
             SubHeading = "Gestionnaire de paquets (Winget)",
-            Icon = "📋",
-            Action = (log, ct) => AppService.GetInstalledApps(log, ct),
-            Tags = new[] { "logiciels", "inventaire", "liste", "winget", "applications" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "upd_check_updates",
-            Name = "Vérifier mises à jour disponibles",
-            Description = "Détection des mises à jour disponibles (winget upgrade).",
-            Category = "MISES_A_JOUR",
-            SubHeading = "Gestionnaire de paquets (Winget)",
-            Icon = "🔍",
-            Action = (log, ct) => AppService.ListUpdates(log, ct),
-            Tags = new[] { "mises a jour", "vérifier", "winget", "disponibles", "obsolètes" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "upd_apply_all",
-            Name = "Mettre à jour tous les logiciels",
-            Description = "Mise à niveau automatique de toutes les applications (winget upgrade --all).",
-            Category = "MISES_A_JOUR",
-            SubHeading = "Gestionnaire de paquets (Winget)",
-            Icon = "🚀",
-            Action = (log, ct) => AppService.UpdateAll(log, ct),
-            Tags = new[] { "mise a jour", "upgrade", "all", "winget", "logiciels" }
+            Icon = "📦",
+            Action = (log, ct) => AppService.OpenWingetManagerDialog(log, ct),
+            Tags = new[] { "winget", "logiciels", "mises a jour", "upgrade", "inventaire", "paquets", "applications" }
         });
 
         // Sous-titre interne : Moteur antivirus Microsoft Defender
@@ -975,30 +902,30 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterPersonalizationTools()
     {
-        // Sous-titre interne : Panneau de configuration étendu
         _allTools.Add(new ScriptTool
         {
             Id = "tweak_godmode",
             Name = "Activer le God Mode",
-            Description = "Création du raccourci dossier God Mode.",
+            Description = "Création du raccourci dossier God Mode permettant d'accéder à tous les réglages avancés de Windows.",
             Category = "PERSONNALISATION",
-            SubHeading = "Panneau de configuration étendu",
+            SubHeading = "",
             Icon = "👑",
             Action = (log, ct) => PersonalizationService.CreateGodMode(log, ct),
-            Tags = new[] { "god mode", "panneau de configuration", "raccourci" }
+            Tags = new[] { "god mode", "panneau de configuration", "raccourci", "paramètres" }
         });
 
-        // Sous-titre interne : Explorateur Windows 11
         _allTools.Add(new ScriptTool
         {
             Id = "tweak_classic_context",
-            Name = "Menu contextuel Windows 10",
-            Description = "Rétablissement du menu clic droit classique Windows 10.",
+            Name = "Menu contextuel (Windows 10 / 11)",
+            Description = "Bascule interactive : activer le clic droit classique Windows 10 ou rétablir le menu d'origine Windows 11.",
             Category = "PERSONNALISATION",
-            SubHeading = "Explorateur Windows 11",
+            SubHeading = "",
             Icon = "🖱️",
-            Action = (log, ct) => PersonalizationService.SetClassicMenu(log, ct),
-            Tags = new[] { "menu contextuel", "windows 10", "clic droit", "windows 11" }
+            Action = (log, ct) => PersonalizationService.OpenContextMenuDialog(log, ct),
+            Tags = new[] { "menu contextuel", "windows 10", "windows 11", "clic droit", "classique", "moderne", "restaurer", "arriere" }
         });
     }
+
 }
+

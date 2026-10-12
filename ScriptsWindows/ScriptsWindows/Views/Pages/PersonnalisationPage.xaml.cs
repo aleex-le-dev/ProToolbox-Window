@@ -10,7 +10,7 @@ public partial class PersonnalisationPage : Page, ISectionPage
     public PersonnalisationPage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("PERSONNALISATION"));
+        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("PERSONNALISATION"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();

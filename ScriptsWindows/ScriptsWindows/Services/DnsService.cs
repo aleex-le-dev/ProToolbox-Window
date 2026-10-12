@@ -1,3 +1,4 @@
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -80,5 +81,18 @@ public class DnsService
         await CommandRunner.RunAsync($"netsh interface ip show dns \"{iface}\"", onOutput, ct);
         onOutput("--- DNS IPv6 ---");
         await CommandRunner.RunAsync($"netsh interface ipv6 show dns \"{iface}\"", onOutput, ct);
+    }
+
+    /// <summary>Ouvre l'interface interactive de gestion et changement des DNS.</summary>
+    public static async Task OpenDnsManagerDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.DnsManagerDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 }

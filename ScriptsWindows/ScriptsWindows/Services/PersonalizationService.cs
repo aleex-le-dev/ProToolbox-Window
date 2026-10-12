@@ -1,4 +1,5 @@
 using System.IO;
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -10,14 +11,35 @@ public class PersonalizationService
     public static async Task SetClassicMenu(Action<string> onOutput, CancellationToken ct = default)
     {
         await CommandRunner.RunAsync("reg add \"HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32\" /f /ve", onOutput, ct);
-        onOutput("[OK] Menu contextuel classique activé — redémarrez l'Explorateur");
+        onOutput("[OK] Menu contextuel classique activé");
     }
 
     // Menu contextuel moderne  (restore_modern)
     public static async Task SetModernMenu(Action<string> onOutput, CancellationToken ct = default)
     {
         await CommandRunner.RunAsync("reg delete \"HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\" /f", onOutput, ct);
-        onOutput("[OK] Menu contextuel moderne restauré — redémarrez l'Explorateur");
+        onOutput("[OK] Menu contextuel moderne restauré");
+    }
+
+    // Redémarrage de l'Explorateur Windows
+    public static async Task RestartExplorer(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Redémarrage de l'Explorateur Windows...");
+        await CommandRunner.RunAsync("taskkill /f /im explorer.exe & start explorer.exe", onOutput, ct);
+        onOutput("[OK] Explorateur Windows redémarré");
+    }
+
+    /// <summary>Ouvre la boîte de dialogue de configuration du menu contextuel (Windows 10 / Windows 11).</summary>
+    public static async Task OpenContextMenuDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.ContextMenuDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 
     // God Mode  (sys_god_mode)
