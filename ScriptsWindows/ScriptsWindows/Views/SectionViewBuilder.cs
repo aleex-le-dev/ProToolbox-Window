@@ -89,7 +89,11 @@ public static class SectionViewBuilder
         _                  => ("⚙️", string.IsNullOrWhiteSpace(category) ? "Général" : category)
     };
 
-    public static SectionController PopulateSections(Panel container, IEnumerable<ScriptTool> tools, bool showCategory = false)
+    /// <summary>
+    /// Construit la vue partitionnée par sous-titres/composants pour chaque page de catégorie.
+    /// Les sous-sections sont triées par ordre alphabétique et repliées par défaut en mode accordéon exclusif.
+    /// </summary>
+    public static SectionController PopulateSections(Panel container, IEnumerable<ScriptTool> tools)
     {
         container.Children.Clear();
         var controller = new SectionController();
@@ -97,48 +101,28 @@ public static class SectionViewBuilder
         var toolList = tools.ToList();
         if (toolList.Count == 0) return controller;
 
-        // Grouper et trier systématiquement les catégories et sous-catégories par ordre alphabétique
-        var groups = showCategory
-            ? toolList
-                .GroupBy(t => new { Category = t.Category ?? "AUTRE", SubHeading = string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading })
-                .Select(g => new
-                {
-                    Category = g.Key.Category,
-                    CategoryName = GetCategoryMeta(g.Key.Category).Name,
-                    SubHeading = g.Key.SubHeading,
-                    Tools = g.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
-                })
-                .OrderBy(g => g.CategoryName, StringComparer.CurrentCultureIgnoreCase)
-                .ThenBy(g => g.SubHeading, StringComparer.CurrentCultureIgnoreCase)
-                .ToList()
-            : toolList
-                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading)
-                .Select(g => new
-                {
-                    Category = g.First().Category ?? "",
-                    CategoryName = GetCategoryMeta(g.First().Category ?? "").Name,
-                    SubHeading = g.Key,
-                    Tools = g.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
-                })
-                .OrderBy(g => g.SubHeading, StringComparer.CurrentCultureIgnoreCase)
-                .ToList();
+        // Grouper par sous-catégorie et trier systématiquement par ordre alphabétique
+        var groups = toolList
+            .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading)
+            .Select(g => new
+            {
+                SubHeading = g.Key,
+                Tools = g.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
+            })
+            .OrderBy(g => g.SubHeading, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
 
         // Barre d'information discrète
-        if (groups.Count > 1 || showCategory)
+        if (groups.Count > 1)
         {
             var topBar = new DockPanel
             {
                 Margin = new Thickness(0, 0, 0, 12)
             };
 
-            var catCount = toolList.Select(t => t.Category).Distinct().Count();
-            var infoText = showCategory
-                ? $"{catCount} catégorie{(catCount > 1 ? "s" : "")} • {groups.Count} sous-catégorie{(groups.Count > 1 ? "s" : "")} ({toolList.Count} outil{(toolList.Count > 1 ? "s" : "")} favori{(toolList.Count > 1 ? "s" : "")})"
-                : $"{groups.Count} sous-catégories ({toolList.Count} outils au total)";
-
             var countInfo = new TextBlock
             {
-                Text = infoText,
+                Text = $"{groups.Count} sous-catégories ({toolList.Count} outils au total)",
                 FontSize = 12,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -193,7 +177,7 @@ public static class SectionViewBuilder
 
             dock.Children.Add(countBadge);
 
-            // Côté gauche : chevron + barre d'accent + badge catégorie (si actif) + titre de la sous-catégorie
+            // Côté gauche : chevron + barre d'accent + titre de la sous-catégorie
             var leftPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -219,44 +203,6 @@ public static class SectionViewBuilder
             };
             accentBar.SetResourceReference(Border.BackgroundProperty, "Accent");
 
-            leftPanel.Children.Add(chevron);
-            leftPanel.Children.Add(accentBar);
-
-            if (showCategory)
-            {
-                var (catIcon, catName) = GetCategoryMeta(group.Category);
-
-                var catBadge = new Border
-                {
-                    CornerRadius = new CornerRadius(6),
-                    Padding = new Thickness(7, 2, 7, 2),
-                    Margin = new Thickness(0, 0, 8, 0),
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                catBadge.SetResourceReference(Border.BackgroundProperty, "AccentDim");
-
-                var catText = new TextBlock
-                {
-                    Text = $"{catIcon} {catName}",
-                    FontSize = 11.5,
-                    FontWeight = FontWeights.SemiBold
-                };
-                catText.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
-                catBadge.Child = catText;
-                leftPanel.Children.Add(catBadge);
-
-                var sep = new TextBlock
-                {
-                    Text = "›",
-                    FontSize = 12,
-                    FontWeight = FontWeights.Bold,
-                    Margin = new Thickness(0, 0, 8, 0),
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                sep.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
-                leftPanel.Children.Add(sep);
-            }
-
             var titleBlock = new TextBlock
             {
                 Text = group.SubHeading,
@@ -266,6 +212,8 @@ public static class SectionViewBuilder
             };
             titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
 
+            leftPanel.Children.Add(chevron);
+            leftPanel.Children.Add(accentBar);
             leftPanel.Children.Add(titleBlock);
             dock.Children.Add(leftPanel);
 
@@ -282,10 +230,6 @@ public static class SectionViewBuilder
             {
                 var card = new ToolCard();
                 card.BindTool(tool);
-                if (showCategory)
-                {
-                    card.ShowCategoryBadge(true);
-                }
                 wrapPanel.Children.Add(card);
             }
 
@@ -328,6 +272,286 @@ public static class SectionViewBuilder
 
             sectionBox.Children.Add(headerBorder);
             sectionBox.Children.Add(wrapPanel);
+
+            container.Children.Add(sectionBox);
+        }
+
+        return controller;
+    }
+
+    /// <summary>
+    /// Construit la vue des favoris avec une ligne accordéon par catégorie (triée par ordre alphabétique).
+    /// À l'ouverture d'une catégorie, les sous-catégories et leurs scripts favoris sont affichés.
+    /// </summary>
+    public static SectionController PopulateFavoritesSections(Panel container, IEnumerable<ScriptTool> tools)
+    {
+        container.Children.Clear();
+        var controller = new SectionController();
+
+        var toolList = tools.ToList();
+        if (toolList.Count == 0) return controller;
+
+        // Grouper par Catégorie et trier alphabétiquement par nom français
+        var categoryGroups = toolList
+            .GroupBy(t => t.Category ?? "AUTRE")
+            .Select(cg =>
+            {
+                var meta = GetCategoryMeta(cg.Key);
+                return new
+                {
+                    CategoryKey   = cg.Key,
+                    CategoryIcon  = meta.Icon,
+                    CategoryName  = meta.Name,
+                    TotalCount    = cg.Count(),
+                    SubCategories = cg
+                        .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading)
+                        .Select(sg => new
+                        {
+                            SubHeading = sg.Key,
+                            Tools      = sg.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
+                        })
+                        .OrderBy(sg => sg.SubHeading, StringComparer.CurrentCultureIgnoreCase)
+                        .ToList()
+                };
+            })
+            .OrderBy(cg => cg.CategoryName, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+
+        // Barre d'information discrète
+        if (categoryGroups.Count > 0)
+        {
+            var topBar = new DockPanel
+            {
+                Margin = new Thickness(0, 0, 0, 14)
+            };
+
+            var countInfo = new TextBlock
+            {
+                Text = $"{categoryGroups.Count} catégorie{(categoryGroups.Count > 1 ? "s" : "")} avec des favoris ({toolList.Count} outil{(toolList.Count > 1 ? "s" : "")} au total)",
+                FontSize = 12,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            countInfo.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+            DockPanel.SetDock(countInfo, Dock.Left);
+            topBar.Children.Add(countInfo);
+
+            container.Children.Add(topBar);
+        }
+
+        for (int catIndex = 0; catIndex < categoryGroups.Count; catIndex++)
+        {
+            var catGroup = categoryGroups[catIndex];
+            int currentIndex = catIndex;
+
+            var sectionBox = new StackPanel
+            {
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+
+            // En-tête de catégorie (carte interactive d'accordéon)
+            var headerBorder = new Border
+            {
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(14, 11, 14, 11),
+                Cursor = Cursors.Hand,
+                BorderThickness = new Thickness(1)
+            };
+            headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
+            headerBorder.SetResourceReference(Border.BorderBrushProperty, "Border");
+
+            var dock = new DockPanel();
+
+            // Côté droit : badge du nombre d'outils favoris dans cette catégorie
+            var countBadge = new Border
+            {
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(9, 3, 9, 3),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            countBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
+            DockPanel.SetDock(countBadge, Dock.Right);
+
+            var countText = new TextBlock
+            {
+                Text = $"{catGroup.TotalCount} favori{(catGroup.TotalCount > 1 ? "s" : "")}",
+                FontSize = 11.5,
+                FontWeight = FontWeights.Medium
+            };
+            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+            countBadge.Child = countText;
+            dock.Children.Add(countBadge);
+
+            // Côté gauche : chevron + barre d'accent + icône + nom de la catégorie
+            var leftPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var chevron = new TextBlock
+            {
+                Text = "▶",
+                FontSize = 11,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            chevron.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
+
+            var accentBar = new Border
+            {
+                Width = 3.5,
+                Height = 16,
+                CornerRadius = new CornerRadius(2),
+                Margin = new Thickness(0, 0, 10, 0)
+            };
+            accentBar.SetResourceReference(Border.BackgroundProperty, "Accent");
+
+            var iconBlock = new TextBlock
+            {
+                Text = catGroup.CategoryIcon,
+                FontSize = 15,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var titleBlock = new TextBlock
+            {
+                Text = catGroup.CategoryName,
+                FontSize = 14,
+                FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+
+            leftPanel.Children.Add(chevron);
+            leftPanel.Children.Add(accentBar);
+            leftPanel.Children.Add(iconBlock);
+            leftPanel.Children.Add(titleBlock);
+            dock.Children.Add(leftPanel);
+
+            headerBorder.Child = dock;
+
+            // Panneau déroulant : sous-catégories et outils de la catégorie
+            var contentPanel = new StackPanel
+            {
+                Margin = new Thickness(8, 12, 0, 8),
+                Visibility = Visibility.Collapsed
+            };
+
+            foreach (var subCat in catGroup.SubCategories)
+            {
+                var subBox = new StackPanel
+                {
+                    Margin = new Thickness(0, 4, 0, 14)
+                };
+
+                // En-tête élégant de la sous-catégorie
+                var subHeader = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(4, 0, 0, 8),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var subBullet = new Border
+                {
+                    Width = 6,
+                    Height = 6,
+                    CornerRadius = new CornerRadius(3),
+                    Margin = new Thickness(0, 0, 8, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                subBullet.SetResourceReference(Border.BackgroundProperty, "Accent");
+
+                var subTitle = new TextBlock
+                {
+                    Text = subCat.SubHeading,
+                    FontSize = 13,
+                    FontWeight = FontWeights.SemiBold,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                subTitle.SetResourceReference(TextBlock.ForegroundProperty, "TextSecondary");
+
+                var subBadge = new Border
+                {
+                    CornerRadius = new CornerRadius(6),
+                    Padding = new Thickness(6, 1, 6, 1),
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                subBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
+
+                var subBadgeText = new TextBlock
+                {
+                    Text = $"{subCat.Tools.Count} outil{(subCat.Tools.Count > 1 ? "s" : "")}",
+                    FontSize = 10.5,
+                    FontWeight = FontWeights.Medium
+                };
+                subBadgeText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+                subBadge.Child = subBadgeText;
+
+                subHeader.Children.Add(subBullet);
+                subHeader.Children.Add(subTitle);
+                subHeader.Children.Add(subBadge);
+                subBox.Children.Add(subHeader);
+
+                // Cartes d'outils
+                var wrapPanel = new WrapPanel
+                {
+                    Margin = new Thickness(0, 2, 0, 0)
+                };
+
+                foreach (var tool in subCat.Tools)
+                {
+                    var card = new ToolCard();
+                    card.BindTool(tool);
+                    wrapPanel.Children.Add(card);
+                }
+
+                subBox.Children.Add(wrapPanel);
+                contentPanel.Children.Add(subBox);
+            }
+
+            // Action d'affichage de cette catégorie
+            void SetExpanded(bool expand)
+            {
+                contentPanel.Visibility = expand ? Visibility.Visible : Visibility.Collapsed;
+                chevron.Text = expand ? "▼" : "▶";
+
+                if (expand)
+                {
+                    headerBorder.SetResourceReference(Border.BorderBrushProperty, "AccentDim");
+                }
+                else
+                {
+                    headerBorder.SetResourceReference(Border.BorderBrushProperty, "Border");
+                }
+            }
+
+            // Enregistrer dans le contrôleur exclusif
+            controller.RegisterSection(SetExpanded);
+
+            // Effet hover visuel sur l'en-tête
+            headerBorder.MouseEnter += (s, e) =>
+            {
+                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCardHover");
+            };
+
+            headerBorder.MouseLeave += (s, e) =>
+            {
+                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
+            };
+
+            // Clic sur l'en-tête pour basculer (mode accordéon exclusif : ouvre la catégorie et ferme les autres)
+            headerBorder.MouseLeftButtonDown += (s, e) =>
+            {
+                e.Handled = true;
+                controller.Toggle(currentIndex);
+            };
+
+            sectionBox.Children.Add(headerBorder);
+            sectionBox.Children.Add(contentPanel);
 
             container.Children.Add(sectionBox);
         }

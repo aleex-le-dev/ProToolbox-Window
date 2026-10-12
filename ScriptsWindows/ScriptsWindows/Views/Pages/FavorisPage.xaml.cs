@@ -43,7 +43,7 @@ public partial class FavorisPage : Page, ISectionPage
         {
             EmptyState.Visibility = Visibility.Collapsed;
             ToolsPanel.Visibility = Visibility.Visible;
-            _controller = SectionViewBuilder.PopulateSections(ToolsPanel, favTools, showCategory: true);
+            _controller = SectionViewBuilder.PopulateFavoritesSections(ToolsPanel, favTools);
         }
     }
 
