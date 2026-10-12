@@ -193,7 +193,7 @@ public static class SectionViewBuilder
         "MATERIEL"         => ("🖥️", "Matériel"),
         "REPARATION"       => ("🔧", "Réparation"),
         "NETTOYAGE"        => ("🧹", "Nettoyage"),
-        "SECRETS"          => ("🔑", "Secrets & clés"),
+        "SECRETS"          => ("🔑", "Secrets et clés"),
         "RESEAU"           => ("🌐", "Réseau"),
         "DISQUE"           => ("💽", "Disque"),
         "APPLICATIONS"     => ("📦", "Applications"),

@@ -388,7 +388,7 @@
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🔑" Style="{StaticResource SidebarIcon}" />
-                                    <TextBlock Text="Secrets &amp; clés" VerticalAlignment="Center" />
+                                    <TextBlock Text="Secrets et clés" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>

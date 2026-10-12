@@ -375,7 +375,7 @@ if ($key) {
     public static async Task ScanSensitiveDocs(Action<string> onOutput, CancellationToken ct = default)
     {
         onOutput("═══════════════════════════════════════════════════════════════");
-        onOutput("  🔍 AUDIT DE SÉCURITÉ : CLÉS & DOCUMENTS SENSIBLES LOCAUX");
+        onOutput("  🔍 AUDIT DE SÉCURITÉ : CLÉS ET DOCUMENTS SENSIBLES LOCAUX");
         onOutput("═══════════════════════════════════════════════════════════════");
         onOutput("[i] Analyse des clés privées, configurations Cloud, jetons d'API et documents sensibles...");
 

@@ -51,9 +51,9 @@ public static class ThemeManager
         new AppTheme
         {
             Id = "obsidian",
-            Name = "Noir Pur OLED",
+            Name = "Noir pur oled",
             Icon = "🌙",
-            VisualStyle = "Noir absolu profond (#000000), contrastes tranchants & pureté OLED",
+            VisualStyle = "Noir absolu profond (#000000), contrastes tranchants et pureté OLED",
             BgDeep = Color.FromRgb(0, 0, 0),                 // Noir absolu pur 0,0,0
             BgDeepGradientEnd = Color.FromRgb(2, 2, 4),      // Noir profond
             BgSidebar = Color.FromRgb(6, 6, 8),              // Noir pur sidebar
@@ -80,9 +80,9 @@ public static class ThemeManager
         new AppTheme
         {
             Id = "light",
-            Name = "Clair Épuré",
+            Name = "Clair épuré",
             Icon = "☀️",
-            VisualStyle = "Interface blanche moderne, finitions sobres & contraste parfait",
+            VisualStyle = "Interface blanche moderne, finitions sobres et contraste parfait",
             BgDeep = Color.FromRgb(248, 250, 252),            // Blanc gris très doux (Slate 50)
             BgDeepGradientEnd = Color.FromRgb(241, 245, 249), // Slate 100
             BgSidebar = Color.FromRgb(255, 255, 255),         // Blanc pur

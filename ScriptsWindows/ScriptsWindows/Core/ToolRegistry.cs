@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using ScriptsWindows.Models;
@@ -17,17 +17,17 @@ public static class ToolRegistry
 
     static ToolRegistry()
     {
-        RegisterDiagnosticTools();       // Catégorie 1 : Diagnostic Matériel & Intégrité
-        RegisterHardwareTools();         // Catégorie 2 : Matériel & Périphériques
+        RegisterDiagnosticTools();       // Catégorie 1 : Diagnostic Matériel et Intégrité
+        RegisterHardwareTools();         // Catégorie 2 : Matériel et Périphériques
         RegisterRepairTools();           // Catégorie 3 : Réparation Intégrale
-        RegisterCleaningTools();         // Catégorie 4 : Nettoyage & Optimisation Espace
-        RegisterSecretsTools();          // Catégorie 5 : Récupération d'Identifiants & Secrets
-        RegisterNetworkTools();          // Catégorie 6 : Réseau & Configuration
-        RegisterDiskTools();             // Catégorie 7 : Disque Dur & Stockage
+        RegisterCleaningTools();         // Catégorie 4 : Nettoyage et Optimisation Espace
+        RegisterSecretsTools();          // Catégorie 5 : Récupération d'Identifiants et Secrets
+        RegisterNetworkTools();          // Catégorie 6 : Réseau et Configuration
+        RegisterDiskTools();             // Catégorie 7 : Disque Dur et Stockage
         RegisterAppInstallationTools();  // Catégorie 8 : Installation d'Applications
-        RegisterUpdatesTools();          // Catégorie 9 : Mises à Jour & Inventaire Logiciel
-        RegisterSecurityTools();         // Catégorie 10 : Surveillance, Sécurité & Événements
-        RegisterPersonalizationTools();  // Catégorie 11 : Personnalisation & Système
+        RegisterUpdatesTools();          // Catégorie 9 : Mises à Jour et Inventaire Logiciel
+        RegisterSecurityTools();         // Catégorie 10 : Surveillance, Sécurité et Événements
+        RegisterPersonalizationTools();  // Catégorie 11 : Personnalisation et Système
     }
 
     public static IReadOnlyList<ScriptTool> AllTools => _allTools;
@@ -82,7 +82,7 @@ public static class ToolRegistry
         ["clean_full_unified"] = "powershell Clear-RecycleBin && ipconfig /flushdns && del %TEMP%\\*",
         ["clean_winsxs"] = "dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase",
 
-        // ─── Secrets & Clés (5) ───
+        // ─── Secrets et Clés (5) ───
         ["sec_wifi_show"] = "netsh.exe wlan show profiles key=clear",
         ["sec_audit_sensitive"] = "AlexToolkit.exe (Audit C# approfondi .ssh, .aws, .env, documents secrets)",
         ["sec_win_key"] = "wmic.exe path softwarelicensingservice get OA3xOriginalProductKey",
@@ -149,18 +149,18 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 1 : 🔍 DIAGNOSTIC MATÉRIEL & INTÉGRITÉ
+    // CATÉGORIE 1 : 🔍 DIAGNOSTIC MATÉRIEL ET INTÉGRITÉ
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterDiagnosticTools()
     {
-        // Sous-titre interne : Carte mère & Processeur
+        // Sous-titre interne : Carte mère et Processeur
         _allTools.Add(new ScriptTool
         {
             Id = "diag_mobo",
-            Name = "Carte mère, BIOS & système",
+            Name = "Carte mère, BIOS et système",
             Description = "Modèle, fabricant, version BIOS via Get-CimInstance Win32_BaseBoard, Win32_BIOS.",
             Category = "DIAGNOSTIC",
-            SubHeading = "Carte mère & Processeur",
+            SubHeading = "Carte mère et Processeur",
             Icon = "🖥️",
             Action = (log, ct) => DiagnosticService.GetMotherboardBiosInfo(log, ct),
             Tags = new[] { "carte mère", "bios", "système", "uefi", "processeur", "modèle" }
@@ -169,10 +169,10 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_cpu",
-            Name = "CPU & températures",
+            Name = "CPU et températures",
             Description = "Cœurs, fréquence, charge CPU et sondes thermiques ACPI (MSAcpi_ThermalZoneTemperature).",
             Category = "DIAGNOSTIC",
-            SubHeading = "Carte mère & Processeur",
+            SubHeading = "Carte mère et Processeur",
             Icon = "🌡️",
             Action = (log, ct) => DiagnosticService.GetTemperatureReport(log, ct),
             Tags = new[] { "cpu", "température", "chaleur", "thermal", "fréquence", "cœurs" }
@@ -207,7 +207,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_volumes",
-            Name = "Disques - volumes & espace",
+            Name = "Disques - volumes et espace",
             Description = "Lecteurs, taux d'occupation et espace disponible (Get-Volume).",
             Category = "DIAGNOSTIC",
             SubHeading = "Stockage physique",
@@ -216,14 +216,14 @@ public static class ToolRegistry
             Tags = new[] { "volumes", "espace", "disque", "libre", "taille", "partitions" }
         });
 
-        // Sous-titre interne : Alimentation & Batterie
+        // Sous-titre interne : Alimentation et Batterie
         _allTools.Add(new ScriptTool
         {
             Id = "diag_battery",
-            Name = "Batterie - santé & usure",
+            Name = "Batterie - santé et usure",
             Description = "Tension/pourcentage direct et rapport d'usure (powercfg /batteryreport).",
             Category = "DIAGNOSTIC",
-            SubHeading = "Alimentation & Batterie",
+            SubHeading = "Alimentation et Batterie",
             Icon = "🔋",
             Action = (log, ct) => DiagnosticService.GetFullBatteryReport(log, ct),
             Tags = new[] { "batterie", "powercfg", "batteryreport", "santé", "usure", "tension" }
@@ -233,7 +233,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_network",
-            Name = "Carte réseau & connectivité",
+            Name = "Carte réseau et connectivité",
             Description = "Adaptateurs, débits négociés, adresses IP et test ping de connectivité.",
             Category = "DIAGNOSTIC",
             SubHeading = "Interface réseau",
@@ -257,7 +257,7 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 2 : 🖥️ MATÉRIEL & PÉRIPHÉRIQUES
+    // CATÉGORIE 2 : 🖥️ MATÉRIEL ET PÉRIPHÉRIQUES
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterHardwareTools()
     {
@@ -274,40 +274,40 @@ public static class ToolRegistry
             Tags = new[] { "ram", "mdsched", "test", "mémoire", "diagnostic" }
         });
 
-        // Sous-titre interne : Contrôleur graphique & Audio
+        // Sous-titre interne : Contrôleur graphique et Audio
         _allTools.Add(new ScriptTool
         {
             Id = "hw_dxdiag",
             Name = "Diagnostic matériel (DxDiag)",
             Description = "Diagnostic matériel DirectX, GPU et cartes audio (dxdiag.exe).",
             Category = "MATERIEL",
-            SubHeading = "Contrôleur graphique & Audio",
+            SubHeading = "Contrôleur graphique et Audio",
             Icon = "🎮",
             Action = (log, ct) => HardwareService.LaunchDxdiag(log, ct),
             Tags = new[] { "dxdiag", "gpu", "directx", "vram", "audio", "graphique" }
         });
 
-        // Sous-titre interne : Pilotes & Périphériques d'entrée/sortie
+        // Sous-titre interne : Pilotes et Périphériques d'entrée/sortie
         _allTools.Add(new ScriptTool
         {
             Id = "hw_devmgmt",
             Name = "Gestionnaire de périphériques",
             Description = "Gestionnaire de périphériques (devmgmt.msc).",
             Category = "MATERIEL",
-            SubHeading = "Pilotes & Périphériques d'entrée/sortie",
+            SubHeading = "Pilotes et Périphériques d'entrée/sortie",
             Icon = "🔌",
             Action = (log, ct) => HardwareService.LaunchDevmgmt(log, ct),
             Tags = new[] { "devmgmt", "périphériques", "drivers", "pilotes", "erreurs" }
         });
 
-        // Sous-titre interne : Banc d'essai & Performances globales
+        // Sous-titre interne : Banc d'essai et Performances globales
         _allTools.Add(new ScriptTool
         {
             Id = "hw_resmon",
             Name = "Moniteur de ressources (Resmon)",
             Description = "Moniteur de ressources en temps réel (resmon.exe).",
             Category = "MATERIEL",
-            SubHeading = "Banc d'essai & Performances globales",
+            SubHeading = "Banc d'essai et Performances globales",
             Icon = "📊",
             Action = (log, ct) => HardwareService.LaunchResmon(log, ct),
             Tags = new[] { "resmon", "ressources", "cpu", "ram", "disque", "réseau" }
@@ -319,7 +319,7 @@ public static class ToolRegistry
             Name = "Informations système (Msinfo32)",
             Description = "Vue d'ensemble du matériel et configuration Windows (msinfo32.exe).",
             Category = "MATERIEL",
-            SubHeading = "Banc d'essai & Performances globales",
+            SubHeading = "Banc d'essai et Performances globales",
             Icon = "ℹ️",
             Action = (log, ct) => HardwareService.LaunchMsinfo32(log, ct),
             Tags = new[] { "msinfo32", "matériel", "système", "os", "ressources" }
@@ -331,7 +331,7 @@ public static class ToolRegistry
             Name = "Benchmark global (WinSAT)",
             Description = "Benchmark complet CPU, RAM, GPU et disques (winsat formal).",
             Category = "MATERIEL",
-            SubHeading = "Banc d'essai & Performances globales",
+            SubHeading = "Banc d'essai et Performances globales",
             Icon = "⚙️",
             Action = (log, ct) => HardwareService.RunWinSat(log, ct),
             Tags = new[] { "benchmark", "winsat", "performance", "score", "cpu", "gpu", "ram", "disque" }
@@ -393,14 +393,14 @@ public static class ToolRegistry
             Tags = new[] { "pipeline", "curatif", "dism", "sfc", "global", "restauration" }
         });
 
-        // Sous-titre interne : Système de fichiers & Partitions
+        // Sous-titre interne : Système de fichiers et Partitions
         _allTools.Add(new ScriptTool
         {
             Id = "repair_chkdsk",
             Name = "Correction disque (CHKDSK)",
             Description = "Réparation des erreurs disques et secteurs (chkdsk C: /f /r).",
             Category = "REPARATION",
-            SubHeading = "Système de fichiers & Partitions",
+            SubHeading = "Système de fichiers et Partitions",
             Icon = "🔍",
             Action = (log, ct) => RepairService.RunChkdsk("C", log, ct),
             Tags = new[] { "chkdsk", "disque", "réparation", "ntfs", "erreurs" }
@@ -432,14 +432,14 @@ public static class ToolRegistry
             Tags = new[] { "windows update", "wu", "softwaredistribution", "catroot2", "reset", "mise a jour" }
         });
 
-        // Sous-titre interne : Pile réseau & Protocoles
+        // Sous-titre interne : Pile réseau et Protocoles
         _allTools.Add(new ScriptTool
         {
             Id = "repair_network_stack",
-            Name = "Réparation pile réseau & Winsock",
+            Name = "Réparation pile réseau et Winsock",
             Description = "Réinitialisation TCP/IP, Winsock, purge ARP et bail DHCP.",
             Category = "REPARATION",
-            SubHeading = "Pile réseau & Protocoles",
+            SubHeading = "Pile réseau et Protocoles",
             Icon = "🔌",
             Action = (log, ct) => NetworkService.ResetAll(log, ct),
             Tags = new[] { "réseau", "winsock", "tcp", "ip", "arp", "pile", "connexion" }
@@ -462,7 +462,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_uwp_store",
-            Name = "Réparation Microsoft Store & UWP",
+            Name = "Réparation Microsoft Store et UWP",
             Description = "Réenregistrement complet du Microsoft Store et paquets UWP.",
             Category = "REPARATION",
             SubHeading = "Plateforme d'applications universelles (UWP)",
@@ -475,7 +475,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "repair_icon_cache",
-            Name = "Reconstruction cache icônes & miniatures",
+            Name = "Reconstruction cache icônes et miniatures",
             Description = "Suppression de iconcache*.db / thumbcache*.db et relance d'Explorer.",
             Category = "REPARATION",
             SubHeading = "Interface graphique (Shell Windows)",
@@ -486,18 +486,18 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 4 : 🧹 NETTOYAGE & OPTIMISATION ESPACE
+    // CATÉGORIE 4 : 🧹 NETTOYAGE ET OPTIMISATION ESPACE
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterCleaningTools()
     {
-        // Sous-titre interne : Stockage temporaire OS & Profils
+        // Sous-titre interne : Stockage temporaire OS ET Profils
         _allTools.Add(new ScriptTool
         {
             Id = "clean_temp",
             Name = "Purger les fichiers temp",
             Description = "Purge des dossiers temporaires (Windows\\Temp et %TEMP%).",
             Category = "NETTOYAGE",
-            SubHeading = "Stockage temporaire OS & Profils",
+            SubHeading = "Stockage temporaire OS ET Profils",
             Icon = "📁",
             Action = (log, ct) => CleaningService.CleanTemp(log, ct),
             Tags = new[] { "temp", "temporaires", "purge", "fichiers" }
@@ -509,20 +509,20 @@ public static class ToolRegistry
             Name = "Purger téléchargements Windows Update",
             Description = "Suppression du dossier SoftwareDistribution\\Download.",
             Category = "NETTOYAGE",
-            SubHeading = "Stockage temporaire OS & Profils",
+            SubHeading = "Stockage temporaire OS ET Profils",
             Icon = "📦",
             Action = (log, ct) => CleaningService.CleanWindowsUpdate(log, ct),
             Tags = new[] { "windows update", "téléchargements", "softwaredistribution", "download", "purge" }
         });
 
-        // Sous-titre interne : Navigateurs web & Explorateur
+        // Sous-titre interne : Navigateurs web et Explorateur
         _allTools.Add(new ScriptTool
         {
             Id = "clean_browser_caches",
-            Name = "Nettoyer caches navigateurs & vignettes",
+            Name = "Nettoyer caches navigateurs et vignettes",
             Description = "Nettoyage des caches (Chrome, Edge, Firefox, Brave) et vignettes.",
             Category = "NETTOYAGE",
-            SubHeading = "Navigateurs web & Explorateur",
+            SubHeading = "Navigateurs web et Explorateur",
             Icon = "🌐",
             Action = (log, ct) => CleaningService.CleanBrowsers(log, ct),
             Tags = new[] { "navigateurs", "cache", "chrome", "edge", "firefox", "brave", "vignettes", "miniatures" }
@@ -568,7 +568,7 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 5 : 🔑 RÉCUPÉRATION D'IDENTIFIANTS & SECRETS
+    // CATÉGORIE 5 : 🔑 RÉCUPÉRATION D'IDENTIFIANTS ET SECRETS
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterSecretsTools()
     {
@@ -585,14 +585,14 @@ public static class ToolRegistry
             Tags = new[] { "wifi", "mot de passe", "clés", "clair", "sécurité" }
         });
 
-        // Sous-titre interne : Dossiers utilisateurs & Clés d'authentification
+        // Sous-titre interne : Dossiers utilisateurs et Clés d'authentification
         _allTools.Add(new ScriptTool
         {
             Id = "sec_pwd_generator",
             Name = "Générer mots de passe robustes",
             Description = "Génération de clés et mots de passe aléatoires sécurisés avec sauvegarde dans un dossier dédié.",
             Category = "SECRETS",
-            SubHeading = "Dossiers utilisateurs & Clés d'authentification",
+            SubHeading = "Dossiers utilisateurs et Clés d'authentification",
             Icon = "🔐",
             Action = (log, ct) => SecurityService.GenerateSecurePasswords(log, ct),
             Tags = new[] { "mot de passe", "génération", "aléatoire", "sécurité", "robuste", "mdp" }
@@ -603,7 +603,7 @@ public static class ToolRegistry
             Name = "Audit documents sensibles",
             Description = "Inventaire des clés SSH (.ssh), identifiants Cloud (.aws, .docker), fichiers .env et mots de passe.",
             Category = "SECRETS",
-            SubHeading = "Dossiers utilisateurs & Clés d'authentification",
+            SubHeading = "Dossiers utilisateurs et Clés d'authentification",
             Icon = "🔍",
             Action = (log, ct) => ExportService.ScanSensitiveDocs(log, ct),
             Tags = new[] { "audit", "documents", "ssh", "tokens", "secrets", "mots de passe" }
@@ -626,7 +626,7 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_browser_profiles",
-            Name = "Extraire l'historique web & profils",
+            Name = "Extraire l'historique web et profils",
             Description = "Extraction SQLite directe des 35 dernières pages visitées (Chrome, Edge, Brave, Firefox).",
             Category = "SECRETS",
             SubHeading = "Navigateurs web (Bases locales)",
@@ -637,7 +637,7 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 6 : 🌐 RÉSEAU & CONFIGURATION
+    // CATÉGORIE 6 : 🌐 RÉSEAU ET CONFIGURATION
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterNetworkTools()
     {
@@ -678,27 +678,27 @@ public static class ToolRegistry
             Tags = new[] { "dns", "dhcp", "automatique", "box", "routeur", "restaurer" }
         });
 
-        // Sous-titre interne : Table de routage & Cache ARP
+        // Sous-titre interne : Table de routage et Cache ARP
         _allTools.Add(new ScriptTool
         {
             Id = "net_arp_clear",
             Name = "Purger la table ARP",
             Description = "Purge complète de la table ARP (arp -d *).",
             Category = "RESEAU",
-            SubHeading = "Table de routage & Cache ARP",
+            SubHeading = "Table de routage et Cache ARP",
             Icon = "🛡️",
             Action = (log, ct) => NetworkService.ClearArp(log, ct),
             Tags = new[] { "arp", "purge", "table", "cache", "mac", "ip" }
         });
 
-        // Sous-titre interne : Carte sans fil & Environnement radio
+        // Sous-titre interne : Carte sans fil et Environnement radio
         _allTools.Add(new ScriptTool
         {
             Id = "net_wifi_scan",
             Name = "Scanner les réseaux Wi-Fi",
             Description = "Scan des bornes Wi-Fi avec puissance et canaux.",
             Category = "RESEAU",
-            SubHeading = "Carte sans fil & Environnement radio",
+            SubHeading = "Carte sans fil et Environnement radio",
             Icon = "📶",
             Action = (log, ct) => NetworkService.ScanWifi(log, ct),
             Tags = new[] { "wifi", "scan", "bornes", "puissance", "canaux", "wlan" }
@@ -710,7 +710,7 @@ public static class ToolRegistry
             Name = "Rapport Wi-Fi complet",
             Description = "Génération du rapport de diagnostic complet (netsh wlan show wlanreport).",
             Category = "RESEAU",
-            SubHeading = "Carte sans fil & Environnement radio",
+            SubHeading = "Carte sans fil et Environnement radio",
             Icon = "📊",
             Action = (log, ct) => DiagnosticService.GetWifiReport(log, ct),
             Tags = new[] { "wifi", "rapport", "html", "wlanreport", "historique" }
@@ -718,18 +718,18 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 7 : 💽 DISQUE DUR & STOCKAGE
+    // CATÉGORIE 7 : 💽 DISQUE DUR ET STOCKAGE
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterDiskTools()
     {
-        // Sous-titre interne : Tables de partitions & Volumes
+        // Sous-titre interne : Tables de partitions et Volumes
         _allTools.Add(new ScriptTool
         {
             Id = "disk_mgmt_gui",
             Name = "Gestionnaire de disques (GUI)",
             Description = "Console de gestion des partitions (diskmgmt.msc).",
             Category = "DISQUE",
-            SubHeading = "Tables de partitions & Volumes",
+            SubHeading = "Tables de partitions et Volumes",
             Icon = "💽",
             Action = (log, ct) => DiskService.LaunchDiskManagement(log, ct),
             Tags = new[] { "diskmgmt", "gestionnaire", "partitions", "volumes", "msc" }
@@ -741,20 +741,20 @@ public static class ToolRegistry
             Name = "Console de formatage DISKPART",
             Description = "Invite de commandes DISKPART en mode administrateur.",
             Category = "DISQUE",
-            SubHeading = "Tables de partitions & Volumes",
+            SubHeading = "Tables de partitions et Volumes",
             Icon = "💻",
             Action = (log, ct) => DiskService.LaunchDiskpart(log, ct),
             Tags = new[] { "diskpart", "formatage", "cmd", "partitions", "admin" }
         });
 
-        // Sous-titre interne : Supports Flash & Mécaniques (SSD / HDD)
+        // Sous-titre interne : Supports Flash et Mécaniques (SSD / HDD)
         _allTools.Add(new ScriptTool
         {
             Id = "disk_defrag_gui",
             Name = "Défragmenteur de disque (GUI)",
             Description = "Défragmenteur de disque Windows (dfrgui.exe).",
             Category = "DISQUE",
-            SubHeading = "Supports Flash & Mécaniques (SSD / HDD)",
+            SubHeading = "Supports Flash et Mécaniques (SSD / HDD)",
             Icon = "🛠️",
             Action = (log, ct) => DiskService.LaunchDefragGui(log, ct),
             Tags = new[] { "défragmenteur", "dfrgui", "optimisation", "disque", "lecteurs" }
@@ -763,23 +763,23 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "disk_trim_opt",
-            Name = "Optimisation disque & TRIM SSD",
+            Name = "Optimisation disque et TRIM SSD",
             Description = "Commande d'optimisation TRIM pour SSD (defrag /O).",
             Category = "DISQUE",
-            SubHeading = "Supports Flash & Mécaniques (SSD / HDD)",
+            SubHeading = "Supports Flash et Mécaniques (SSD / HDD)",
             Icon = "⚡",
             Action = (log, ct) => DiskService.OptimizeDrives(log, ct),
             Tags = new[] { "trim", "ssd", "defrag", "optimisation", "disque" }
         });
 
-        // Sous-titre interne : Sécurité & Chiffrement de volume
+        // Sous-titre interne : Sécurité et Chiffrement de volume
         _allTools.Add(new ScriptTool
         {
             Id = "disk_bitlocker",
             Name = "État chiffrement BitLocker",
             Description = "État de protection et de chiffrement des disques (manage-bde).",
             Category = "DISQUE",
-            SubHeading = "Sécurité & Chiffrement de volume",
+            SubHeading = "Sécurité et Chiffrement de volume",
             Icon = "🔒",
             Action = (log, ct) => DiagnosticService.CheckBitLocker(log, ct),
             Tags = new[] { "bitlocker", "chiffrement", "sécurité", "volumes", "manage-bde" }
@@ -804,14 +804,14 @@ public static class ToolRegistry
             Tags = new[] { "chrome", "google", "navigateur", "web", "winget" }
         });
 
-        // Sous-titre interne : Multimédia & Documents
+        // Sous-titre interne : Multimédia et Documents
         _allTools.Add(new ScriptTool
         {
             Id = "app_install_vlc",
             Name = "Installer VLC Media Player",
             Description = "Installation de VLC Media Player via Winget.",
             Category = "APPLICATIONS",
-            SubHeading = "Multimédia & Documents",
+            SubHeading = "Multimédia et Documents",
             Icon = "🎬",
             Action = (log, ct) => AppService.InstallVlc(log, ct),
             Tags = new[] { "vlc", "vidéo", "médias", "musique", "winget" }
@@ -823,20 +823,20 @@ public static class ToolRegistry
             Name = "Installer Sumatra PDF",
             Description = "Installation du lecteur PDF léger Sumatra.",
             Category = "APPLICATIONS",
-            SubHeading = "Multimédia & Documents",
+            SubHeading = "Multimédia et Documents",
             Icon = "📄",
             Action = (log, ct) => AppService.InstallSumatraPdf(log, ct),
             Tags = new[] { "sumatra", "pdf", "lecteur", "winget" }
         });
 
-        // Sous-titre interne : Utilitaires de compression & Système
+        // Sous-titre interne : Utilitaires de compression et Système
         _allTools.Add(new ScriptTool
         {
             Id = "app_install_7zip",
             Name = "Installer 7-Zip",
             Description = "Installation de 7-Zip via Winget.",
             Category = "APPLICATIONS",
-            SubHeading = "Utilitaires de compression & Système",
+            SubHeading = "Utilitaires de compression et Système",
             Icon = "🗜️",
             Action = (log, ct) => AppService.Install7Zip(log, ct),
             Tags = new[] { "7zip", "archive", "compression", "winget", "installer" }
@@ -848,7 +848,7 @@ public static class ToolRegistry
             Name = "Installer PowerShell 7",
             Description = "Installation de PowerShell 7 via Winget.",
             Category = "APPLICATIONS",
-            SubHeading = "Utilitaires de compression & Système",
+            SubHeading = "Utilitaires de compression et Système",
             Icon = "⚡",
             Action = (log, ct) => AppService.InstallPs7(log, ct),
             Tags = new[] { "powershell", "ps7", "terminal", "winget", "microsoft" }
@@ -869,7 +869,7 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 9 : 🔄 MISES À JOUR & INVENTAIRE LOGICIEL
+    // CATÉGORIE 9 : 🔄 MISES À JOUR ET INVENTAIRE LOGICIEL
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterUpdatesTools()
     {
@@ -925,31 +925,31 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 10 : 🛡️ SURVEILLANCE, SÉCURITÉ & ÉVÉNEMENTS
+    // CATÉGORIE 10 : 🛡️ SURVEILLANCE, SÉCURITÉ ET ÉVÉNEMENTS
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterSecurityTools()
     {
-        // Sous-titre interne : Mémoire vive & Processus système
+        // Sous-titre interne : Mémoire vive et Processus système
         _allTools.Add(new ScriptTool
         {
             Id = "sec_top_ram",
-            Name = "Top processus & charge RAM",
+            Name = "Top processus et charge RAM",
             Description = "Top 10 des applications les plus gourmandes en RAM.",
             Category = "SECURITE",
-            SubHeading = "Mémoire vive & Processus système",
+            SubHeading = "Mémoire vive et Processus système",
             Icon = "📈",
             Action = (log, ct) => DiagnosticService.GetRamUsage(log, ct),
             Tags = new[] { "processus", "ram", "charge", "consommation", "top" }
         });
 
-        // Sous-titre interne : Journaux d'événements & Noyau Windows
+        // Sous-titre interne : Journaux d'événements et Noyau Windows
         _allTools.Add(new ScriptTool
         {
             Id = "sec_event_errors",
-            Name = "Journal erreurs critiques & plantages",
+            Name = "Journal erreurs critiques et plantages",
             Description = "Analyse des erreurs critiques récentes et BSOD dans le journal Système.",
             Category = "SECURITE",
-            SubHeading = "Journaux d'événements & Noyau Windows",
+            SubHeading = "Journaux d'événements et Noyau Windows",
             Icon = "⚠️",
             Action = (log, ct) => DiagnosticService.GetEventLog(log, ct),
             Tags = new[] { "erreurs", "journal", "plantages", "bsod", "critiques", "logs" }
@@ -961,7 +961,7 @@ public static class ToolRegistry
             Name = "Moniteur de fiabilité (Perfmon)",
             Description = "Historique de fiabilité et plantages du système (perfmon /rel).",
             Category = "SECURITE",
-            SubHeading = "Journaux d'événements & Noyau Windows",
+            SubHeading = "Journaux d'événements et Noyau Windows",
             Icon = "📉",
             Action = (log, ct) => DiagnosticService.LaunchReliabilityMonitor(log, ct),
             Tags = new[] { "fiabilité", "perfmon", "crashs", "historique", "plantages" }
@@ -994,7 +994,7 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 11 : 🎨 PERSONNALISATION & SYSTÈME
+    // CATÉGORIE 11 : 🎨 PERSONNALISATION ET SYSTÈME
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterPersonalizationTools()
     {

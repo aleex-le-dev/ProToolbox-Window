@@ -42,4 +42,17 @@
     <PackageReference Include="ModernWpfUI" Version="0.9.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Date de génération / build automatique injectée à la compilation -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildTimestamp</_Parameter1>
+      <_Parameter2>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm"))</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <!-- Copie automatique du binaire autonome vers la racine du dépôt lors de la publication -->
+  <Target Name="CopyRootExeOnPublish" AfterTargets="Publish">
+    <Copy SourceFiles="$(PublishDir)AlexToolkit.exe" DestinationFolder="$(MSBuildThisFileDirectory)..\..\" SkipUnchangedFiles="false" ContinueOnError="true" />
+  </Target>
+
 </Project>

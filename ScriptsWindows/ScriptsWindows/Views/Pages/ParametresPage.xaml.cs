@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
@@ -29,7 +30,59 @@ public partial class ParametresPage : Page, ISectionPage
     {
         UpdateThemeState();
         TxtHierarchyPreview.Text = GenerateHierarchyText();
+        UpdateBuildInfo();
         _ = LoadSystemSpecsAsync();
+    }
+
+    private void UpdateBuildInfo()
+    {
+        try
+        {
+            var assembly = typeof(ParametresPage).Assembly;
+            var ver = assembly.GetName().Version;
+            string versionStr = ver != null ? $"v{ver.Major}.{ver.Minor}.{ver.Build}" : "v4.1.0";
+
+            string buildDateStr = GetBuildDate(assembly);
+            string rawLabel = TxtAppBuildInfo.Text;
+            string prefix = !string.IsNullOrWhiteSpace(rawLabel) && rawLabel.Contains("...")
+                ? rawLabel.Replace("...", "").Trim()
+                : "Dernière mise à jour le :";
+
+            TxtAppBuildInfo.Text = $"{prefix} {buildDateStr}";
+        }
+        catch
+        {
+            TxtAppBuildInfo.Text = $"Dernière mise à jour le : {DateTime.Now:dd/MM/yyyy}";
+        }
+    }
+
+    private static string GetBuildDate(Assembly assembly)
+    {
+        try
+        {
+            var metaAttr = assembly
+                .GetCustomAttributes(typeof(AssemblyMetadataAttribute), false)
+                .OfType<AssemblyMetadataAttribute>()
+                .FirstOrDefault(a => a.Key == "BuildTimestamp");
+
+            if (!string.IsNullOrWhiteSpace(metaAttr?.Value) && DateTime.TryParse(metaAttr.Value, out var dt))
+            {
+                return dt.ToString("dd/MM/yyyy à HH:mm");
+            }
+        }
+        catch { }
+
+        try
+        {
+            var exePath = Environment.ProcessPath;
+            if (!string.IsNullOrEmpty(exePath) && File.Exists(exePath))
+            {
+                return File.GetLastWriteTime(exePath).ToString("dd/MM/yyyy à HH:mm");
+            }
+        }
+        catch { }
+
+        return DateTime.Now.ToString("dd/MM/yyyy à HH:mm");
     }
 
     public void ResetSections()
@@ -48,7 +101,7 @@ public partial class ParametresPage : Page, ISectionPage
         var current = ThemeManager.CurrentTheme;
         TxtThemeIcon.Text = current.Icon;
         TxtThemeName.Text = current.Name;
-        var nextName = current.Id == "light" ? "Noir Pur OLED" : "Clair Épuré";
+        var nextName = current.Id == "light" ? "Noir pur oled" : "Clair épuré";
         BtnToggleTheme.ToolTip = $"Thème actif : {current.Name}\nCliquez pour basculer vers {nextName}";
     }
 
@@ -57,10 +110,10 @@ public partial class ParametresPage : Page, ISectionPage
     {
         await Task.Run(() =>
         {
-            // Machine & Utilisateur
+            // Machine et Utilisateur
             string machine = $"{Environment.MachineName} (Session : {Environment.UserName})";
 
-            // OS & Build
+            // OS et Build
             var osVersion = Environment.OSVersion.Version;
             string osName = osVersion.Build >= 22000 ? "Windows 11" : "Windows 10";
             string osArch = Environment.Is64BitOperatingSystem ? "64 bits" : "32 bits";
@@ -107,7 +160,7 @@ public partial class ParametresPage : Page, ISectionPage
             }
             catch { }
 
-            // Privilèges & PowerShell
+            // Privilèges et PowerShell
             bool isAdmin = false;
             try
             {
@@ -187,7 +240,7 @@ public partial class ParametresPage : Page, ISectionPage
     public static string GenerateHierarchyText()
     {
         var sb = new StringBuilder();
-        sb.AppendLine("=== ALEX TOOLKIT — STRUCTURE DES MODULES, SCRIPTS & COMMANDES ===");
+        sb.AppendLine("=== ALEX TOOLKIT — STRUCTURE DES MODULES, SCRIPTS ET COMMANDES ===");
         sb.AppendLine();
 
         var categories = ToolRegistry.AllTools
@@ -228,7 +281,7 @@ public partial class ParametresPage : Page, ISectionPage
     public static string GenerateMarkdownText()
     {
         var sb = new StringBuilder();
-        sb.AppendLine("# Alex Toolkit — Structure des modules, scripts & commandes");
+        sb.AppendLine("# Alex Toolkit — Structure des modules, scripts et commandes");
         sb.AppendLine();
 
         var categories = ToolRegistry.AllTools
