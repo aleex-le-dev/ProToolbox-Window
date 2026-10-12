@@ -218,7 +218,7 @@ public static class SectionViewBuilder
         "REPARATION"       => "Centres interactifs d'intégrité DISM/SFC, CHKDSK, gestionnaire de services et Store UWP",
         "RESEAU"           => "Centre de contrôle unifié, diagnostic, changement DNS, scanners LAN/Wi-Fi et analyse des flux",
         "SECRETS"          => "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web",
-        "SECURITE"         => "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources",
+        "SECURITE"         => "Centre unifié de surveillance, protection Defender, erreurs BSOD et charge mémoire",
         _                  => "Outils système Windows"
     };
 

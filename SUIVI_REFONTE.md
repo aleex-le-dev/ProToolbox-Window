@@ -64,7 +64,13 @@
        - *Rapport de Santé Wi-Fi (Graphique)* (`WifiReportDialog.xaml`) : visionneuse interactive intégrée du rapport officiel Windows avec graphiques des 3 derniers jours, export HTML et ouverture plein écran.
     3. 🖥️ **Cartographie LAN et Surveillance des Flux** :
        - *Scanner Réseau Local (LAN Graphique)* (`LanScannerDialog.xaml`) : détection interactive des appareils connectés sur la Box avec ping en direct et copie rapide d'IP.
-       - *Moniteur des Connexions TCP Actives* (`TcpConnectionsDialog.xaml`) : visualiseur filtrable des connexions établies avec logiciels émetteurs, ports et états.
+- **🛡️ Surveillance, Sécurité et Événements (`SecuritePage.xaml.cs`)** :
+  - Restructurée en **2 sous-catégories accordéons** modernes et épurées (doublons console absorbés par le Centre) :
+    1. 🛡️ **Centre de Sécurité et Surveillance** :
+       - *Centre de Surveillance et Sécurité* (`SecurityCenterDialog.xaml` avec 3 onglets interactifs : Protection Defender temps réel, Journal Erreurs/Crashs BSOD 24h, et Top 15 Processus RAM avec jauges).
+    2. ⚡ **Actions et Outils Rapides** :
+       - *Analyse rapide Defender* (scan mémoire et exécutables sensibles en 1 clic direct).
+       - *Moniteur de fiabilité (Perfmon)* (historique visuel de stabilité au fil du temps en 1 clic direct).
 
 ---
 

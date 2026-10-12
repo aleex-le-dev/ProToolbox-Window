@@ -1,3 +1,4 @@
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -284,5 +285,18 @@ Set-Content -Path $path -Value $eicar -NoNewline
 Write-Output ""[i] Fichier EICAR créé : $path""
 Write-Output '[i] Votre antivirus devrait le détecter et le supprimer immédiatement'
 ", onOutput, ct);
+    }
+
+    /// <summary>Ouvre l'interface interactive unifiée du Centre de Surveillance et Sécurité.</summary>
+    public static async Task OpenSecurityCenterDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.SecurityCenterDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 }

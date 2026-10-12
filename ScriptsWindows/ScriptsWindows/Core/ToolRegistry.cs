@@ -780,67 +780,40 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterSecurityTools()
     {
-        // Sous-titre interne : Mémoire vive et Processus système
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_top_ram",
-            Name = "Top processus et charge RAM",
-            Description = "Top 10 des applications les plus gourmandes en RAM.",
+            Id = "sec_center",
+            Name = "Centre de Surveillance et Sécurité",
+            Description = "Interface unifiée tout-en-un : état Defender, scan antivirus, erreurs critiques BSOD et consommation RAM des processus.",
             Category = "SECURITE",
-            SubHeading = "Mémoire vive et Processus système",
-            Icon = "📈",
-            Action = (log, ct) => DiagnosticService.GetRamUsage(log, ct),
-            Tags = new[] { "processus", "ram", "charge", "consommation", "top" }
-        });
-
-        // Sous-titre interne : Journaux d'événements et Noyau Windows
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_event_errors",
-            Name = "Journal erreurs critiques et plantages",
-            Description = "Analyse des erreurs critiques récentes et BSOD dans le journal Système.",
-            Category = "SECURITE",
-            SubHeading = "Journaux d'événements et Noyau Windows",
-            Icon = "⚠️",
-            Action = (log, ct) => DiagnosticService.GetEventLog(log, ct),
-            Tags = new[] { "erreurs", "journal", "plantages", "bsod", "critiques", "logs" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_perfmon_rel",
-            Name = "Moniteur de fiabilité (Perfmon)",
-            Description = "Historique de fiabilité et plantages du système (perfmon /rel).",
-            Category = "SECURITE",
-            SubHeading = "Journaux d'événements et Noyau Windows",
-            Icon = "📉",
-            Action = (log, ct) => DiagnosticService.LaunchReliabilityMonitor(log, ct),
-            Tags = new[] { "fiabilité", "perfmon", "crashs", "historique", "plantages" }
-        });
-
-        // Sous-titre interne : Protection antivirale (Defender)
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_defender_status",
-            Name = "État Windows Defender",
-            Description = "État de protection en temps réel de Defender.",
-            Category = "SECURITE",
-            SubHeading = "Protection antivirale (Defender)",
-            Icon = "🩺",
-            Action = (log, ct) => DiagnosticService.GetDefenderStatus(log, ct),
-            Tags = new[] { "defender", "état", "protection", "temps réel", "sécurité" }
+            SubHeading = "Centre de Sécurité et Surveillance",
+            Icon = "🛡️",
+            Action = (log, ct) => SecurityService.OpenSecurityCenterDialog(log, ct),
+            Tags = new[] { "centre", "sécurité", "defender", "antivirus", "protection", "temps réel", "erreurs", "bsod", "ram", "processus", "surveillance" }
         });
 
         _allTools.Add(new ScriptTool
         {
             Id = "sec_defender_quickscan",
             Name = "Analyse rapide Defender",
-            Description = "Analyse antivirus rapide (Start-MpScan -ScanType QuickScan).",
+            Description = "Lancement immédiat d'une analyse antivirus rapide des fichiers et mémoire système.",
             Category = "SECURITE",
-            SubHeading = "Protection antivirale (Defender)",
-            Icon = "🛡️",
+            SubHeading = "Actions et Outils Rapides",
+            Icon = "⚡",
             Action = (log, ct) => SecurityService.DefenderQuickScan(log, ct),
-            Tags = new[] { "defender", "scan", "antivirus", "rapide", "analyse" }
+            Tags = new[] { "defender", "scan", "antivirus", "rapide", "analyse", "virus" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_perfmon_rel",
+            Name = "Moniteur de fiabilité (Perfmon)",
+            Description = "Historique graphique de la fiabilité et des plantages du système au fil des semaines.",
+            Category = "SECURITE",
+            SubHeading = "Actions et Outils Rapides",
+            Icon = "📉",
+            Action = (log, ct) => DiagnosticService.LaunchReliabilityMonitor(log, ct),
+            Tags = new[] { "fiabilité", "perfmon", "crashs", "historique", "plantages" }
         });
     }
 
