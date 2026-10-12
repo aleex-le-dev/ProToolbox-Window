@@ -141,9 +141,25 @@
                     </Border>
                 </Border>
 
-                <!-- Navigation principale -->
-                <ScrollViewer DockPanel.Dock="Top"
-                              VerticalScrollBarVisibility="Auto"
+                <!-- Section basse ancrée en bas de la barre latérale : Paramètres -->
+                <Border DockPanel.Dock="Bottom"
+                        BorderBrush="{DynamicResource Border}"
+                        BorderThickness="0,1,0,0"
+                        Padding="8,8,8,8">
+                    <Button x:Name="NavParametres"
+                            Style="{StaticResource SidebarItem}"
+                            Click="NavParametres_Click">
+                        <DockPanel LastChildFill="True">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="⚙️" Style="{StaticResource SidebarIcon}" />
+                                <TextBlock Text="Paramètres" VerticalAlignment="Center" FontWeight="Medium" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Button>
+                </Border>
+
+                <!-- Navigation principale défilable -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="8,0,8,0">
 

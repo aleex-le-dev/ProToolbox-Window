@@ -82,7 +82,7 @@ public partial class MainWindow : Window
             string[] categories =
             {
                 "APPLICATIONS", "DIAGNOSTIC", "DISQUE", "MATERIEL", "MISES_A_JOUR",
-                "NETTOYAGE", "PERSONNALISATION", "REPARATION", "RESEAU", "SECRETS", "SECURITE"
+                "NETTOYAGE", "PERSONNALISATION", "REPARATION", "RESEAU", "SECRETS", "SECURITE", "PARAMETRES"
             };
             foreach (var cat in categories)
             {
@@ -222,6 +222,7 @@ public partial class MainWindow : Window
             "MISES_A_JOUR"     => new MisesAJourPage(),
             "SECURITE"         => new SecuritePage(),
             "PERSONNALISATION" => new PersonnalisationPage(),
+            "PARAMETRES"       => new ParametresPage(),
             _                  => new FavorisPage()
         };
 
@@ -231,6 +232,9 @@ public partial class MainWindow : Window
 
     private void NavFavoris_Click(object sender, RoutedEventArgs e)
         => NavigateTo((Button)sender, GetOrCreatePage("FAVORIS"), "Mes favoris", "Vos outils préférés accessibles rapidement");
+
+    private void NavParametres_Click(object sender, RoutedEventArgs e)
+        => NavigateTo((Button)sender, GetOrCreatePage("PARAMETRES"), "Paramètres", "Configuration générale et structure des outils");
 
     private void NavCategory_Click(object sender, RoutedEventArgs e)
     {
