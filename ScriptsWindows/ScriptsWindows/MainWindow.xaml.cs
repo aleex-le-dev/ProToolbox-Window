@@ -136,8 +136,6 @@ public partial class MainWindow : Window
         OutputPanel.Visibility = Visibility.Collapsed;
     }
 
-    private void BtnClearOutput_Click(object sender, RoutedEventArgs e)
-        => OutputBox.Document.Blocks.Clear();
 
     private void BtnZoomIn_Click(object sender, RoutedEventArgs e)
         => AdjustOutputFontSize(1);
