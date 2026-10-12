@@ -10,7 +10,7 @@ public partial class SecretsPage : Page, ISectionPage
     public SecretsPage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("SECRETS"));
+        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("SECRETS"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();

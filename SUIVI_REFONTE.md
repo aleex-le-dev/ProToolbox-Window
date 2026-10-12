@@ -97,6 +97,42 @@
     - **Affichage direct** : la carte de l'outil est affichée directement sur la page sans sous-catégorie ni bandeau d'accordéon superflu.
     - Anciens scripts individuels 1-clic supprimés de la page pour une interface 100% épurée et sans doublons.
 
+- **🖥️ Matériel et Périphériques (`MaterielPage.xaml.cs`)** :
+  - Gestionnaire de périphériques retiré de cette section (déjà accessible en 1 clic dans le Centre de Diagnostic unifié, onglet Outils/Actions).
+  - Bascule en **affichage direct** (`PopulateDirect`) en grille pour les 3 outils restants :
+    1. ⚙️ *Benchmark global (WinSAT)*
+    2. ⚡ *Rapport d'efficacité énergétique*
+    3. ⚡ **Plans d'alimentation (Normal / Performances)** (`PowerPlanDialog.xaml`) :
+       - **Bascule interactive & réversible** : détection en temps réel du plan actif avec badge vert.
+       - **Choix du mode** : lister tous les profils installés sur la machine avec bouton d'activation par profil.
+       - **Raccourcis 1 clic** :
+         - ⚖️ *Mode Normal (Équilibré)* : retour immédiat au plan par défaut Windows.
+         - 🚀 *Hautes Performances* : pour le plein potentiel du CPU.
+         - ⚡ *Performances Ultimes* : déblocage et activation du scheme ultime sans restriction.
+
+- **💽 Disque Dur et Stockage (`DisquePage.xaml.cs`)** :
+  - Doublon console `disk_trim_opt` supprimé (déjà pris en charge graphiquement par `dfrgui.exe`).
+  - Ajout du **Gestionnaire de disques officiel Windows** (`diskmgmt.msc`).
+  - Restructuration en **2 sous-catégories symétriques et équilibrées** :
+    1. 💻 **Volumes et Partitions** : Gestionnaire de disques (GUI) + Console de formatage DISKPART.
+    2. ⚡ **Maintenance et Chiffrement** : Optimisation & Défragmentation (GUI) + Gestion et Chiffrement BitLocker.
+
+- **🔄 Mises à Jour et Inventaire Logiciel (`MisesAJourPage.xaml.cs`)** :
+  - Doublon `upd_defender_sigs` supprimé (centralisé dans Sécurité).
+  - Bascule en **affichage direct** (`PopulateDirect`) avec le **Gestionnaire de Paquets Winget** en pleine page sans accordéon superflu.
+
+- **🧹 Nettoyage et Optimisation Espace (`NettoyagePage.xaml.cs`)** :
+  - Doublon console `clean_winsxs` supprimé (intégré au Centre de Nettoyage).
+  - Bascule en **affichage direct** (`PopulateDirect`) avec le **Centre de Nettoyage Système et Disque**.
+
+- **🔑 Récupération d'Identifiants et Secrets (`SecretsPage.xaml.cs`)** :
+  - Suppression des 4 accordéons isolés d'un seul outil.
+  - Bascule en **affichage direct** (`PopulateDirect`) en grille moderne regroupant les 5 outils de secrets.
+
+- **🔍 Diagnostic Matériel et Intégrité (`DiagnosticPage.xaml.cs`)** :
+  - Doublon `diag_battery` retiré (déjà disponible dans l'onglet 4 du Centre de Diagnostic avec génération HTML).
+  - Organisation épurée : Centre de Diagnostic unifié (5 onglets) + DxDiag et Gestionnaire de démarrage rapide.
+
 ---
 
 ## 🚀 Résultat de Publication

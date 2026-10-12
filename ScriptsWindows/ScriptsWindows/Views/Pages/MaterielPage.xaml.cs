@@ -10,7 +10,7 @@ public partial class MaterielPage : Page, ISectionPage
     public MaterielPage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("MATERIEL"));
+        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("MATERIEL"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();

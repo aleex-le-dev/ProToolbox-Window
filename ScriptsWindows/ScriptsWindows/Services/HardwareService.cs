@@ -1,3 +1,4 @@
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -160,6 +161,18 @@ if ($dev) {
     }
 
     // Plans d'alimentation
+    public static async Task OpenPowerPlanDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.PowerPlanDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
     public static async Task SetPowerPlan(string guid, string name, Action<string> onOutput, CancellationToken ct = default)
     {
         await CommandRunner.RunAsync($"powercfg /setactive {guid}", onOutput, ct);

@@ -10,7 +10,7 @@ public partial class MisesAJourPage : Page, ISectionPage
     public MisesAJourPage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("MISES_A_JOUR"));
+        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("MISES_A_JOUR"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();

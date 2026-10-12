@@ -10,7 +10,7 @@ public partial class NettoyagePage : Page, ISectionPage
     public NettoyagePage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("NETTOYAGE"));
+        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("NETTOYAGE"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();
