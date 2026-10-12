@@ -223,11 +223,10 @@ public static class SectionViewBuilder
             // Enregistrer dans le contrôleur exclusif
             controller.RegisterSection(SetExpanded);
 
-            // Ouverture automatique au survol de la sous-catégorie
+            // Effet hover visuel sur l'en-tête
             headerBorder.MouseEnter += (s, e) =>
             {
                 headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCardHover");
-                controller.ExpandOnly(currentIndex);
             };
 
             headerBorder.MouseLeave += (s, e) =>
@@ -235,7 +234,7 @@ public static class SectionViewBuilder
                 headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
             };
 
-            // Clic optionnel pour basculer / replier si souhaité
+            // Clic sur l'en-tête pour basculer (mode accordéon exclusif : ouvre la section et ferme les autres)
             headerBorder.MouseLeftButtonDown += (s, e) =>
             {
                 e.Handled = true;
