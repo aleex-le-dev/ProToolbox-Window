@@ -164,19 +164,6 @@ public partial class ParametresPage : Page, ISectionPage
         }
     }
 
-    private void BtnCopyMarkdown_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var md = GenerateMarkdownText();
-            Clipboard.SetText(md);
-            ShowCopyFeedback("✅ Liste Markdown copiée dans le presse-papiers !");
-        }
-        catch (Exception ex)
-        {
-            ShowCopyFeedback($"❌ Erreur de copie : {ex.Message}");
-        }
-    }
 
     private void ShowCopyFeedback(string message)
     {

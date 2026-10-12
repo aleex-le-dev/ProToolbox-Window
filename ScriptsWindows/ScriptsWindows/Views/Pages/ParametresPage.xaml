@@ -63,25 +63,6 @@
                     <!-- En-tête de la carte -->
                     <DockPanel LastChildFill="True" Margin="0,0,0,16">
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button x:Name="BtnCopyMarkdown"
-                                    Content="📝 Copier en Markdown"
-                                    Background="{DynamicResource BgInput}"
-                                    BorderBrush="{DynamicResource Border}"
-                                    BorderThickness="1"
-                                    Foreground="{DynamicResource TextSecondary}"
-                                    Padding="12,8,12,8"
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Cursor="Hand"
-                                    Margin="0,0,10,0"
-                                    ToolTip="Copier la liste au format Markdown avec les exécutables et commandes"
-                                    Click="BtnCopyMarkdown_Click">
-                                <Button.Resources>
-                                    <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="8"/>
-                                    </Style>
-                                </Button.Resources>
-                            </Button>
 
                             <Button x:Name="BtnCopyHierarchy"
                                     Content="📋 Copier l'arborescence (1 clic)"
