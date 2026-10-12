@@ -126,7 +126,11 @@
                                           Fill="#FBBF24"
                                           Stroke="#D97706"
                                           StrokeThickness="1.0"
-                                          Stretch="Uniform" />
+                                          Stretch="Uniform">
+                                        <Path.Effect>
+                                            <DropShadowEffect Color="#F59E0B" BlurRadius="6" ShadowDepth="0" Opacity="0.85" />
+                                        </Path.Effect>
+                                    </Path>
                                 </Viewbox>
                                 <TextBlock Text="Favoris" VerticalAlignment="Center" FontWeight="Medium" />
                             </StackPanel>
