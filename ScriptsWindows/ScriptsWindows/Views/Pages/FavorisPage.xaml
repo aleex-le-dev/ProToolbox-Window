@@ -6,38 +6,6 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24,16,24,24">
 
-            <!-- En-tête des favoris avec compteur dynamique -->
-            <Border x:Name="HeaderPanel"
-                    Margin="0,0,0,16"
-                    Padding="16,12,16,12"
-                    Background="{DynamicResource BgCard}"
-                    BorderBrush="{DynamicResource Border}"
-                    BorderThickness="1"
-                    CornerRadius="10">
-                <DockPanel>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock FontFamily="Segoe MDL2 Assets"
-                                   FontSize="16"
-                                   Text="&#xE735;"
-                                   Foreground="#FBBF24"
-                                   Margin="0,0,8,0"
-                                   VerticalAlignment="Center" />
-                        <TextBlock x:Name="TxtFavCount"
-                                   Text="Vos raccourcis rapides"
-                                   FontSize="13.5"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextPrimary}"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <TextBlock DockPanel.Dock="Right"
-                               Text="Cliquez sur l'étoile d'un script pour l'épingler"
-                               FontSize="12"
-                               Foreground="{DynamicResource TextMuted}"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"/>
-                </DockPanel>
-            </Border>
-
             <!-- Info si pas de favoris -->
             <Border x:Name="EmptyState"
                     Background="{DynamicResource BgCard}"
@@ -77,14 +45,8 @@
                 </StackPanel>
             </Border>
 
-            <!-- Grille des cartes favoris -->
-            <ItemsControl x:Name="FavorisGrid">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+            <!-- Organisation par sous-titres de composants -->
+            <StackPanel x:Name="ToolsPanel" />
         </StackPanel>
     </ScrollViewer>
 </Page>

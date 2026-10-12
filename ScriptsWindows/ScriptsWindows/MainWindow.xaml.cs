@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -37,11 +38,40 @@ public partial class MainWindow : Window
         ThemeManager.ApplyTheme(ThemeManager.CurrentTheme);
         UpdateThemeButtonState();
 
+        // Initialisation des compteurs de scripts pour chaque catégorie et les favoris
+        UpdateCategoryCounts();
+        FavoritesManager.FavoriteChanged += (_, _) =>
+        {
+            Dispatcher.InvokeAsync(UpdateFavoritesCount);
+        };
+
         // Démarrer sur la page Favoris
         NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "Mes Favoris", "Vos outils préférés accessibles rapidement");
 
         // Préchauffage asynchrone de toutes les pages (0 ms de délai au clic)
         Dispatcher.InvokeAsync(WarmupPages, DispatcherPriority.Background);
+    }
+
+    private void UpdateCategoryCounts()
+    {
+        UpdateFavoritesCount();
+
+        Badge_DIAGNOSTIC.Text       = ToolRegistry.GetByCategory("DIAGNOSTIC").Count().ToString();
+        Badge_MATERIEL.Text         = ToolRegistry.GetByCategory("MATERIEL").Count().ToString();
+        Badge_REPARATION.Text       = ToolRegistry.GetByCategory("REPARATION").Count().ToString();
+        Badge_NETTOYAGE.Text        = ToolRegistry.GetByCategory("NETTOYAGE").Count().ToString();
+        Badge_SECRETS.Text          = ToolRegistry.GetByCategory("SECRETS").Count().ToString();
+        Badge_RESEAU.Text           = ToolRegistry.GetByCategory("RESEAU").Count().ToString();
+        Badge_DISQUE.Text           = ToolRegistry.GetByCategory("DISQUE").Count().ToString();
+        Badge_APPLICATIONS.Text     = ToolRegistry.GetByCategory("APPLICATIONS").Count().ToString();
+        Badge_MISES_A_JOUR.Text     = ToolRegistry.GetByCategory("MISES_A_JOUR").Count().ToString();
+        Badge_SECURITE.Text         = ToolRegistry.GetByCategory("SECURITE").Count().ToString();
+        Badge_PERSONNALISATION.Text = ToolRegistry.GetByCategory("PERSONNALISATION").Count().ToString();
+    }
+
+    private void UpdateFavoritesCount()
+    {
+        Badge_FAVORIS.Text = ToolRegistry.GetFavorites().Count().ToString();
     }
 
     private void WarmupPages()
