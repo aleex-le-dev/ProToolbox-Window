@@ -112,7 +112,7 @@
                     </Border>
 
                     <!-- Zone de prévisualisation arborescente -->
-                    <Border Background="{DynamicResource TerminalBg}"
+                    <Border Background="{DynamicResource BgInput}"
                             BorderBrush="{DynamicResource Border}"
                             BorderThickness="1"
                             CornerRadius="8"

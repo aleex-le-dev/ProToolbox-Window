@@ -109,6 +109,8 @@ public static class ThemeManager
     private static int _currentIndex = 0; // Démarre sur 0 = Noir Pur OLED
     private static string? _lastAppliedThemeId;
 
+    public static event EventHandler<AppTheme>? ThemeChanged;
+
     public static AppTheme CurrentTheme => AvailableThemes[_currentIndex];
 
     public static AppTheme NextTheme()
@@ -122,6 +124,14 @@ public static class ThemeManager
     {
         if (_lastAppliedThemeId == theme.Id) return;
         _lastAppliedThemeId = theme.Id;
+
+        try
+        {
+            ModernWpf.ThemeManager.Current.ApplicationTheme = theme.Id == "light"
+                ? ModernWpf.ApplicationTheme.Light
+                : ModernWpf.ApplicationTheme.Dark;
+        }
+        catch { }
 
         var res = Application.Current.Resources;
 
@@ -184,6 +194,8 @@ public static class ThemeManager
         // Terminal
         res["TerminalBg"]   = MakeBrush(theme.TerminalBg);
         res["TerminalText"] = MakeBrush(theme.TerminalText);
+
+        ThemeChanged?.Invoke(null, theme);
     }
 
     private static SolidColorBrush MakeBrush(Color color)

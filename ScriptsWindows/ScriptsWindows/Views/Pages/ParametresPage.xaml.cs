@@ -22,6 +22,7 @@ public partial class ParametresPage : Page, ISectionPage
     {
         InitializeComponent();
         Loaded += ParametresPage_Loaded;
+        ThemeManager.ThemeChanged += (_, _) => UpdateThemeState();
     }
 
     private void ParametresPage_Loaded(object sender, RoutedEventArgs e)

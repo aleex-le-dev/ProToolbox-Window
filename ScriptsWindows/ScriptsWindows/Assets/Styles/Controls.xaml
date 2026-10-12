@@ -108,7 +108,7 @@
         <Setter Property="FontFamily"  Value="{StaticResource FontMain}" />
         <Setter Property="FontSize"    Value="{StaticResource FontSizeXS}" />
         <Setter Property="FontWeight"  Value="SemiBold" />
-        <Setter Property="Foreground"  Value="{StaticResource TextMuted}" />
+        <Setter Property="Foreground"  Value="{DynamicResource TextMuted}" />
         <Setter Property="Margin"      Value="0,16,0,6" />
     </Style>
 
@@ -125,7 +125,7 @@
     <Style x:Key="SubtitleText" TargetType="TextBlock">
         <Setter Property="FontFamily"  Value="{StaticResource FontMain}" />
         <Setter Property="FontSize"    Value="{StaticResource FontSizeSM}" />
-        <Setter Property="Foreground"  Value="{StaticResource TextSecondary}" />
+        <Setter Property="Foreground"  Value="{DynamicResource TextSecondary}" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
