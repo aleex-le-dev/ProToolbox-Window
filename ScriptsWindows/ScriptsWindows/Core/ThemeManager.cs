@@ -18,6 +18,7 @@ public class AppTheme
     public required Color BgSidebar { get; init; }
     public required Color BgCard { get; init; }
     public required Color BgCardHover { get; init; }
+    public required Color BgInput { get; init; }
 
     // Couleurs d'accent et bordures
     public required Color Accent { get; init; }
@@ -26,12 +27,12 @@ public class AppTheme
     public required Color Border { get; init; }
     public required Color BorderAccent { get; init; }
 
-    // Couleurs de texte pour adapter tous les thèmes (sombre, clair, couleur)
+    // Couleurs de texte pour adapter tous les thèmes
     public required Color TextPrimary { get; init; }
     public required Color TextSecondary { get; init; }
     public required Color TextMuted { get; init; }
 
-    // Effets visuels (Glassmorphism & Neon Glow)
+    // Effets visuels des cartes
     public required Color ShadowColor { get; init; }
     public required double ShadowOpacity { get; init; }
     public required double ShadowBlur { get; init; }
@@ -46,119 +47,36 @@ public static class ThemeManager
 {
     public static readonly List<AppTheme> AvailableThemes = new()
     {
-        // 1. AERO GLASS (Transparence givrée & Reflets bleutés)
-        new AppTheme
-        {
-            Id = "glass",
-            Name = "Aero Glass",
-            Icon = "💎",
-            VisualStyle = "Verre fumé translucide, bordures givrées & reflets cristallins",
-            BgDeep = Color.FromRgb(8, 13, 26),
-            BgDeepGradientEnd = Color.FromRgb(21, 34, 60),
-            BgSidebar = Color.FromArgb(195, 14, 22, 42),      // Translucide verre givré
-            BgCard = Color.FromArgb(140, 28, 44, 76),         // Verre fumé translucide
-            BgCardHover = Color.FromArgb(200, 40, 62, 104),
-            Accent = Color.FromRgb(56, 189, 248),             // Cyan glacier éclatant
-            AccentHover = Color.FromRgb(125, 211, 252),
-            AccentDim = Color.FromArgb(110, 14, 165, 233),
-            Border = Color.FromArgb(130, 147, 197, 253),      // Reflet givré blanc-bleuté
-            BorderAccent = Color.FromRgb(96, 165, 250),
-            TextPrimary = Color.FromRgb(248, 250, 252),
-            TextSecondary = Color.FromRgb(203, 213, 225),
-            TextMuted = Color.FromRgb(148, 163, 184),
-            ShadowColor = Color.FromRgb(56, 189, 248),
-            ShadowOpacity = 0.32,
-            ShadowBlur = 20,
-            CardBorderThickness = 1.2,
-            TerminalBg = Color.FromArgb(240, 6, 10, 18),
-            TerminalText = Color.FromRgb(186, 230, 253)
-        },
-
-        // 2. THÈME COULEUR (Vibrance violette, magenta & rose coucher de soleil)
-        new AppTheme
-        {
-            Id = "color",
-            Name = "Thème Couleur",
-            Icon = "🌈",
-            VisualStyle = "Palette riche améthyste, violet profond & halos fuchsia chaleureux",
-            BgDeep = Color.FromRgb(24, 9, 43),                // Violet profond nuit
-            BgDeepGradientEnd = Color.FromRgb(46, 8, 84),     // Améthyste impérial
-            BgSidebar = Color.FromArgb(235, 31, 10, 56),      // Teinte violette chaude
-            BgCard = Color.FromArgb(210, 45, 18, 77),         // Cartes violettes chatoyantes
-            BgCardHover = Color.FromArgb(245, 66, 27, 110),
-            Accent = Color.FromRgb(244, 63, 94),              // Rose corail vibrant
-            AccentHover = Color.FromRgb(251, 113, 133),
-            AccentDim = Color.FromArgb(130, 244, 63, 94),
-            Border = Color.FromArgb(150, 168, 85, 247),       // Ligne violette lumineuse
-            BorderAccent = Color.FromRgb(236, 72, 153),       // Fuchsia vif
-            TextPrimary = Color.FromRgb(255, 241, 242),
-            TextSecondary = Color.FromRgb(251, 207, 232),
-            TextMuted = Color.FromRgb(192, 132, 252),
-            ShadowColor = Color.FromRgb(236, 72, 153),
-            ShadowOpacity = 0.40,
-            ShadowBlur = 22,
-            CardBorderThickness = 1.4,
-            TerminalBg = Color.FromArgb(245, 21, 5, 36),
-            TerminalText = Color.FromRgb(254, 215, 170)
-        },
-
-        // 3. CLAIR ÉPURÉ (Thème lumineux pur & contrasté)
+        // 1. CLAIR ÉPURÉ (PAR DÉFAUT)
         new AppTheme
         {
             Id = "light",
             Name = "Clair Épuré",
             Icon = "☀️",
             VisualStyle = "Interface blanche moderne, finitions sobres & contraste parfait",
-            BgDeep = Color.FromRgb(241, 245, 249),            // Gris perle doux
-            BgDeepGradientEnd = Color.FromRgb(226, 232, 240),
-            BgSidebar = Color.FromRgb(255, 255, 255),         // Sidebar blanche pure
-            BgCard = Color.FromRgb(255, 255, 255),            // Cartes blanches pures
-            BgCardHover = Color.FromRgb(248, 250, 252),
+            BgDeep = Color.FromRgb(248, 250, 252),            // Blanc gris très doux (Slate 50)
+            BgDeepGradientEnd = Color.FromRgb(241, 245, 249), // Slate 100
+            BgSidebar = Color.FromRgb(255, 255, 255),         // Blanc pur
+            BgCard = Color.FromRgb(255, 255, 255),            // Blanc pur
+            BgCardHover = Color.FromRgb(241, 245, 249),       // Survol subtil
+            BgInput = Color.FromRgb(241, 245, 249),           // Fond des badges
             Accent = Color.FromRgb(37, 99, 235),              // Bleu royal moderne
             AccentHover = Color.FromRgb(29, 78, 216),
-            AccentDim = Color.FromArgb(60, 37, 99, 235),
-            Border = Color.FromRgb(203, 213, 225),            // Bordures douces
+            AccentDim = Color.FromArgb(40, 37, 99, 235),      // Voile bleuté léger
+            Border = Color.FromRgb(226, 232, 240),            // Bordures douces
             BorderAccent = Color.FromRgb(59, 130, 246),
-            TextPrimary = Color.FromRgb(15, 23, 42),          // Texte foncé très lisible
-            TextSecondary = Color.FromRgb(51, 65, 85),
-            TextMuted = Color.FromRgb(100, 116, 139),
+            TextPrimary = Color.FromRgb(15, 23, 42),          // Texte principal foncé très lisible
+            TextSecondary = Color.FromRgb(71, 85, 105),       // Texte secondaire
+            TextMuted = Color.FromRgb(148, 163, 184),         // Texte atténué
             ShadowColor = Color.FromRgb(15, 23, 42),
-            ShadowOpacity = 0.08,
+            ShadowOpacity = 0.06,
             ShadowBlur = 10,
             CardBorderThickness = 1.0,
             TerminalBg = Color.FromRgb(15, 23, 42),           // Terminal foncé contrasté
             TerminalText = Color.FromRgb(248, 250, 252)
         },
 
-        // 4. CYBERPUNK NÉON (Noir OLED & Halos Cyan/Rose)
-        new AppTheme
-        {
-            Id = "neon",
-            Name = "Cyberpunk Néon",
-            Icon = "⚡",
-            VisualStyle = "Noir carbone OLED, lueurs néon cyan & contrastes tranchants",
-            BgDeep = Color.FromRgb(7, 6, 10),
-            BgDeepGradientEnd = Color.FromRgb(21, 13, 36),
-            BgSidebar = Color.FromArgb(240, 13, 11, 20),
-            BgCard = Color.FromArgb(200, 24, 18, 38),
-            BgCardHover = Color.FromArgb(245, 38, 27, 61),
-            Accent = Color.FromRgb(6, 182, 212),              // Cyan électrique
-            AccentHover = Color.FromRgb(103, 232, 249),
-            AccentDim = Color.FromArgb(120, 6, 182, 212),
-            Border = Color.FromArgb(160, 6, 182, 212),        // Bordure néon cyan
-            BorderAccent = Color.FromRgb(244, 63, 94),        // Rose néon
-            TextPrimary = Color.FromRgb(248, 250, 252),
-            TextSecondary = Color.FromRgb(165, 243, 252),
-            TextMuted = Color.FromRgb(103, 232, 249),
-            ShadowColor = Color.FromRgb(6, 182, 212),
-            ShadowOpacity = 0.45,
-            ShadowBlur = 22,
-            CardBorderThickness = 1.4,
-            TerminalBg = Color.FromArgb(245, 5, 5, 8),
-            TerminalText = Color.FromRgb(103, 232, 249)
-        },
-
-        // 5. NOIR PUR OLED (Vrai noir absolu #000000 - Deep Black)
+        // 2. NOIR PUR OLED (Vrai noir absolu #000000 - Deep Black)
         new AppTheme
         {
             Id = "obsidian",
@@ -166,14 +84,15 @@ public static class ThemeManager
             Icon = "🖤",
             VisualStyle = "Noir absolu profond (#000000), contrastes tranchants & pureté OLED",
             BgDeep = Color.FromRgb(0, 0, 0),                 // Noir absolu pur 0,0,0
-            BgDeepGradientEnd = Color.FromRgb(4, 4, 6),      // Noir profond
-            BgSidebar = Color.FromRgb(8, 8, 10),             // Noir pur sidebar
-            BgCard = Color.FromRgb(16, 16, 20),              // Noir intense contrasté
-            BgCardHover = Color.FromRgb(26, 26, 34),
+            BgDeepGradientEnd = Color.FromRgb(2, 2, 4),      // Noir profond
+            BgSidebar = Color.FromRgb(6, 6, 8),              // Noir pur sidebar
+            BgCard = Color.FromRgb(14, 14, 18),              // Noir intense contrasté
+            BgCardHover = Color.FromRgb(24, 24, 30),
+            BgInput = Color.FromRgb(24, 24, 30),             // Fond des badges
             Accent = Color.FromRgb(99, 102, 241),
             AccentHover = Color.FromRgb(129, 140, 248),
-            AccentDim = Color.FromArgb(80, 99, 102, 241),
-            Border = Color.FromRgb(28, 28, 36),              // Filet sombre très discret
+            AccentDim = Color.FromArgb(70, 99, 102, 241),
+            Border = Color.FromRgb(32, 32, 42),              // Filet sombre discret
             BorderAccent = Color.FromRgb(99, 102, 241),
             TextPrimary = Color.FromRgb(255, 255, 255),      // Blanc pur éclatant sur fond noir
             TextSecondary = Color.FromRgb(160, 165, 178),
@@ -187,7 +106,7 @@ public static class ThemeManager
         }
     };
 
-    private static int _currentIndex = 0;
+    private static int _currentIndex = 0; // Démarre sur 0 = Clair Épuré
     private static string? _lastAppliedThemeId;
 
     public static AppTheme CurrentTheme => AvailableThemes[_currentIndex];
@@ -217,7 +136,7 @@ public static class ThemeManager
         res["BorderColor"]      = theme.Border;
         res["BorderAccentColor"]= theme.BorderAccent;
 
-        // Couleurs de texte (indispensables pour thème clair et couleur)
+        // Couleurs de texte
         res["TextPrimaryColor"]   = theme.TextPrimary;
         res["TextSecondaryColor"] = theme.TextSecondary;
         res["TextMutedColor"]     = theme.TextMuted;
@@ -227,6 +146,7 @@ public static class ThemeManager
         res["BgSidebar"]   = MakeBrush(theme.BgSidebar);
         res["BgCard"]      = MakeBrush(theme.BgCard);
         res["BgCardHover"] = MakeBrush(theme.BgCardHover);
+        res["BgInput"]     = MakeBrush(theme.BgInput);
         res["Accent"]      = MakeBrush(theme.Accent);
         res["AccentHover"] = MakeBrush(theme.AccentHover);
         res["AccentDim"]   = MakeBrush(theme.AccentDim);

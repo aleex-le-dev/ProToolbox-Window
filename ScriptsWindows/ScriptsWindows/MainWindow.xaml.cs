@@ -105,7 +105,9 @@ public partial class MainWindow : Window
         var current = ThemeManager.CurrentTheme;
         TxtThemeIcon.Text = current.Icon;
         TxtThemeName.Text = current.Name;
-        BtnTheme.ToolTip  = $"Thème actif : {current.Name} ({current.VisualStyle})\nCliquez pour basculer vers le thème suivant";
+
+        var nextThemeName = current.Id == "light" ? "Noir Pur OLED" : "Clair Épuré";
+        BtnTheme.ToolTip  = $"Thème actif : {current.Name}\nCliquez pour basculer vers {nextThemeName}";
     }
 
     // ─── Console Terminal Latéral ────────────────────────────────────
