@@ -1,4 +1,4 @@
-# 🛠️ Alex Toolkit — AleexLeDev (v4.0 WPF)
+# 🛠️ Alex Toolkit — AleexLeDev
 
 > Outil tout-en-un de diagnostic, réparation, optimisation et maintenance Windows 10/11.
 

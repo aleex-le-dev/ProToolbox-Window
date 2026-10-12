@@ -1,7 +1,7 @@
 @echo off
 setlocal
 echo ========================================================
-echo   Compilation de Alex Toolkit v4.0 (C# / WPF)
+echo   Compilation de Alex Toolkit
 echo ========================================================
 echo.
 

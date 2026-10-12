@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Title="Alex Toolkit — AleexLeDev v4.0"
         Height="780" Width="1320"
         MinHeight="600" MinWidth="960"
         WindowStartupLocation="CenterScreen"
@@ -48,10 +47,6 @@
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimary}"
                                    Margin="0,4,0,0" />
-                        <TextBlock Text="v4.0 — Edition Windows"
-                                   FontSize="11"
-                                   Foreground="{DynamicResource TextMuted}"
-                                   Margin="0,2,0,0" />
                     </StackPanel>
                 </Border>
 

@@ -160,19 +160,6 @@ public partial class ParametresPage : Page, ISectionPage
             }
             catch { }
 
-            // Privilèges et PowerShell
-            bool isAdmin = false;
-            try
-            {
-                using var identity = WindowsIdentity.GetCurrent();
-                var principal = new WindowsPrincipal(identity);
-                isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
-            }
-            catch { }
-
-            string adminLabel = isAdmin ? "🛡️ Administrateur" : "Utilisateur standard";
-            string ps = $"{adminLabel} • Windows PowerShell 5.1";
-
             Dispatcher.InvokeAsync(() =>
             {
                 TxtSpecMachine.Text = machine;
@@ -180,7 +167,6 @@ public partial class ParametresPage : Page, ISectionPage
                 TxtSpecCPU.Text = cpu;
                 TxtSpecRAM.Text = ram;
                 TxtSpecDisk.Text = disk;
-                TxtSpecPowerShell.Text = ps;
             });
         });
     }

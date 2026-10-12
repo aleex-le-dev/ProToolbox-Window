@@ -159,10 +159,21 @@
                         </StackPanel>
                     </DockPanel>
 
-                    <!-- Grille des spécifications du PC -->
-                    <UniformGrid Columns="2" Margin="0,0,0,0">
+                    <!-- Grille des spécifications du PC (5 cartes) -->
+                    <Grid Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
                         <!-- Nom Machine et Session -->
-                        <Border Background="{DynamicResource BgDeep}"
+                        <Border Grid.Row="0" Grid.Column="0"
+                                Background="{DynamicResource BgDeep}"
                                 BorderBrush="{DynamicResource Border}"
                                 BorderThickness="1"
                                 CornerRadius="8"
@@ -175,7 +186,8 @@
                         </Border>
 
                         <!-- Système d'exploitation -->
-                        <Border Background="{DynamicResource BgDeep}"
+                        <Border Grid.Row="0" Grid.Column="1"
+                                Background="{DynamicResource BgDeep}"
                                 BorderBrush="{DynamicResource Border}"
                                 BorderThickness="1"
                                 CornerRadius="8"
@@ -188,7 +200,8 @@
                         </Border>
 
                         <!-- Processeur (CPU) -->
-                        <Border Background="{DynamicResource BgDeep}"
+                        <Border Grid.Row="1" Grid.Column="0"
+                                Background="{DynamicResource BgDeep}"
                                 BorderBrush="{DynamicResource Border}"
                                 BorderThickness="1"
                                 CornerRadius="8"
@@ -201,7 +214,8 @@
                         </Border>
 
                         <!-- Mémoire vive (RAM) -->
-                        <Border Background="{DynamicResource BgDeep}"
+                        <Border Grid.Row="1" Grid.Column="1"
+                                Background="{DynamicResource BgDeep}"
                                 BorderBrush="{DynamicResource Border}"
                                 BorderThickness="1"
                                 CornerRadius="8"
@@ -214,31 +228,19 @@
                         </Border>
 
                         <!-- Stockage système (C:) -->
-                        <Border Background="{DynamicResource BgDeep}"
+                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                Background="{DynamicResource BgDeep}"
                                 BorderBrush="{DynamicResource Border}"
                                 BorderThickness="1"
                                 CornerRadius="8"
                                 Padding="14,12,14,12"
-                                Margin="0,0,6,0">
+                                Margin="0,0,0,0">
                             <StackPanel>
                                 <TextBlock Text="💽 Disque système (C:)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
                                 <TextBlock x:Name="TxtSpecDisk" Text="Chargement..." FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
                             </StackPanel>
                         </Border>
-
-                        <!-- Droits et PowerShell -->
-                        <Border Background="{DynamicResource BgDeep}"
-                                BorderBrush="{DynamicResource Border}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="14,12,14,12"
-                                Margin="6,0,0,0">
-                            <StackPanel>
-                                <TextBlock Text="🛡️ Privilèges et moteur PowerShell" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
-                                <TextBlock x:Name="TxtSpecPowerShell" Text="Chargement..." FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
-                            </StackPanel>
-                        </Border>
-                    </UniformGrid>
+                    </Grid>
                 </StackPanel>
             </Border>
 
