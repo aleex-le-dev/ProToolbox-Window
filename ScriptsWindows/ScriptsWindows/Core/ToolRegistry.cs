@@ -62,17 +62,13 @@ public static class ToolRegistry
         ["hw_winsat"] = "winsat.exe formal",
         ["hw_power_perf"] = "powercfg.exe -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61",
 
-        // ─── Réparation (10) ───
-        ["repair_dism_check"] = "dism.exe /Online /Cleanup-Image /ScanHealth",
-        ["repair_dism_restore"] = "dism.exe /Online /Cleanup-Image /RestoreHealth",
-        ["repair_pipeline"] = "dism.exe /RestoreHealth && sfc.exe /scannow",
-        ["repair_chkdsk"] = "chkdsk.exe C: /f /r",
+        // ─── Réparation (6) ───
+        ["repair_system_integrity"] = "AlexToolkit.exe (Centre d'intégrité Windows : DISM Scan/Restore et SFC)",
+        ["repair_chkdsk"] = "chkdsk.exe (Interface interactive de réparation de disque NTFS)",
+        ["repair_services_manager"] = "AlexToolkit.exe (Gestionnaire des services Windows : Spouleur, Windows Update...)",
+        ["repair_restore_point"] = "AlexToolkit.exe (Points de restauration système Windows)",
+        ["repair_apps_shell"] = "AlexToolkit.exe (Réparation Store UWP, wsreset et cache d'icônes Explorer)",
         ["repair_export_drivers"] = "dism.exe /Online /Export-Driver /Destination:C:\\DriversBackup",
-        ["repair_wu"] = "net stop wuauserv && ren SoftwareDistribution && net start wuauserv",
-        ["repair_network_stack"] = "netsh.exe int ip reset && netsh.exe winsock reset && ipconfig.exe /flushdns",
-        ["repair_spooler"] = "net stop spooler && del %systemroot%\\System32\\spool\\printers\\* /Q && net start spooler",
-        ["repair_uwp_store"] = "wsreset.exe && powershell Add-AppxPackage",
-        ["repair_icon_cache"] = "taskkill.exe /f /im explorer.exe && del %localappdata%\\IconCache.db && start explorer.exe",
 
         // ─── Nettoyage (2) ───
         ["clean_system_unified"] = "AlexToolkit.exe (Interface interactive : Cleanmgr, temporaires, corbeille, caches et WinSxS)",
@@ -342,158 +338,88 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterRepairTools()
     {
-        // Sous-titre interne : Magasin d'images Windows (Component Store)
         _allTools.Add(new ScriptTool
         {
-            Id = "repair_dism_check",
-            Name = "Vérification DISM (ScanHealth)",
-            Description = "Vérification de corruption du magasin (DISM /ScanHealth).",
+            Id = "repair_system_integrity",
+            Name = "Centre d'intégrité Windows (DISM & SFC)",
+            Description = "Diagnostic et réparation de l'image Windows : ScanHealth, RestoreHealth, SFC scannow ou cure complète.",
             Category = "REPARATION",
-            SubHeading = "Magasin d'images Windows (Component Store)",
-            Icon = "🔎",
-            Action = (log, ct) => RepairService.RunDismCheck(log, ct),
-            Tags = new[] { "dism", "checkhealth", "scanhealth", "corruption", "image" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "repair_dism_restore",
-            Name = "Restauration DISM (RestoreHealth)",
-            Description = "Réparation en ligne du magasin (DISM /RestoreHealth).",
-            Category = "REPARATION",
-            SubHeading = "Magasin d'images Windows (Component Store)",
+            SubHeading = "Intégrité Système et Disque",
             Icon = "🩺",
-            Action = (log, ct) => RepairService.RunDismRestore(log, ct),
-            Tags = new[] { "dism", "restorehealth", "image", "windows", "réparation" }
+            Action = (log, ct) => RepairService.OpenSystemIntegrityDialog(log, ct),
+            Tags = new[] { "dism", "sfc", "intégrité", "image", "réparation", "scanhealth", "restorehealth", "scannow", "curatif", "corruption" }
         });
 
-        _allTools.Add(new ScriptTool
-        {
-            Id = "repair_pipeline",
-            Name = "Pipeline curatif global (DISM + SFC)",
-            Description = "Exécution enchaînée DISM RestoreHealth puis sfc /scannow.",
-            Category = "REPARATION",
-            SubHeading = "Magasin d'images Windows (Component Store)",
-            Icon = "🩹",
-            Action = (log, ct) => RepairService.RunCurativePipeline(log, ct),
-            Tags = new[] { "pipeline", "curatif", "dism", "sfc", "global", "restauration" }
-        });
-
-        // Sous-titre interne : Système de fichiers et Partitions
         _allTools.Add(new ScriptTool
         {
             Id = "repair_chkdsk",
             Name = "Vérification et Réparation CHKDSK",
             Description = "Choisir le lecteur et lancer une analyse (lecture seule, correction /f ou réparation complète /r).",
             Category = "REPARATION",
-            SubHeading = "Système de fichiers et Partitions",
+            SubHeading = "Intégrité Système et Disque",
             Icon = "🔍",
             Action = (log, ct) => RepairService.OpenChkdskDialog(log, ct),
             Tags = new[] { "chkdsk", "disque", "réparation", "ntfs", "erreurs", "secteurs" }
         });
 
-        // Sous-titre interne : Pilotes de périphériques
-        _allTools.Add(new ScriptTool
-        {
-            Id = "repair_export_drivers",
-            Name = "Sauvegarder pilotes système (DISM)",
-            Description = "Export et sauvegarde de tous les pilotes système vers un dossier au choix (DISM /Export-Driver).",
-            Category = "REPARATION",
-            SubHeading = "Pilotes de périphériques",
-            Icon = "💾",
-            Action = (log, ct) => ExportService.ExportDrivers(log, ct),
-            Tags = new[] { "pilotes", "drivers", "backup", "sauvegarde", "dism" }
-        });
-
-        // Sous-titre interne : Services de mise à jour Windows
-        _allTools.Add(new ScriptTool
-        {
-            Id = "repair_wu",
-            Name = "Réinitialisation Windows Update",
-            Description = "Réinitialisation intégrale des composants WU (SoftwareDistribution/Catroot2).",
-            Category = "REPARATION",
-            SubHeading = "Services de mise à jour Windows",
-            Icon = "🔄",
-            Action = (log, ct) => RepairService.ResetWindowsUpdate(log, ct),
-            Tags = new[] { "windows update", "wu", "softwaredistribution", "catroot2", "reset", "mise a jour" }
-        });
-
-        // Sous-titre interne : Pile réseau et Protocoles
-        _allTools.Add(new ScriptTool
-        {
-            Id = "repair_network_stack",
-            Name = "Réparation pile réseau et Winsock",
-            Description = "Réinitialisation TCP/IP, Winsock, purge ARP et bail DHCP.",
-            Category = "REPARATION",
-            SubHeading = "Pile réseau et Protocoles",
-            Icon = "🔌",
-            Action = (log, ct) => NetworkService.ResetAll(log, ct),
-            Tags = new[] { "réseau", "winsock", "tcp", "ip", "arp", "pile", "connexion" }
-        });
-
-        // Sous-titre interne : Services système et Processus
         _allTools.Add(new ScriptTool
         {
             Id = "repair_services_manager",
             Name = "Gestionnaire des Services Windows",
             Description = "Piloter, démarrer, arrêter ou redémarrer les services clés (Spouleur, Windows Update, SysMain, Télémétrie...).",
             Category = "REPARATION",
-            SubHeading = "Services système et Processus",
+            SubHeading = "Services et Impression",
             Icon = "⚙️",
             Action = (log, ct) => RepairService.OpenServicesManagerDialog(log, ct),
             Tags = new[] { "services", "spooler", "wuauserv", "sysmain", "démarrer", "arrêter", "processus", "msc" }
         });
 
-        // Sous-titre interne : Sous-système d'impression
         _allTools.Add(new ScriptTool
         {
             Id = "repair_spooler",
-            Name = "Déblocage spouleur d'impression",
-            Description = "Purge de spool\\PRINTERS et relance du spouleur d'impression.",
+            Name = "Déblocage et Purge file d'impression",
+            Description = "Arrête le spouleur, supprime tous les travaux bloqués dans PRINTERS et redémarre l'impression.",
             Category = "REPARATION",
-            SubHeading = "Sous-système d'impression",
+            SubHeading = "Services et Impression",
             Icon = "🖨️",
             Action = (log, ct) => RepairService.FixPrintSpooler(log, ct),
-            Tags = new[] { "spouleur", "imprimante", "print", "spooler", "déblocage", "purge" }
+            Tags = new[] { "spooler", "impression", "imprimante", "file", "bloquée", "vider", "purge", "documents", "travaux", "attente" }
         });
 
-        // Sous-titre interne : Plateforme d'applications universelles (UWP)
         _allTools.Add(new ScriptTool
         {
-            Id = "repair_uwp_store",
-            Name = "Réparation Microsoft Store et UWP",
-            Description = "Réenregistrement complet du Microsoft Store et paquets UWP.",
+            Id = "repair_apps_shell",
+            Name = "Réparation Store UWP & Interface",
+            Description = "Réinitialiser le Microsoft Store (wsreset), réenregistrer les paquets applicatifs et reconstruire le cache d'icônes.",
             Category = "REPARATION",
-            SubHeading = "Plateforme d'applications universelles (UWP)",
+            SubHeading = "Applications et Interface Windows",
             Icon = "🏬",
-            Action = (log, ct) => RepairService.RepairWindowsStore(log, ct),
-            Tags = new[] { "store", "microsoft store", "uwp", "wsreset", "applications", "paquets" }
+            Action = (log, ct) => RepairService.OpenAppsShellRepairDialog(log, ct),
+            Tags = new[] { "store", "microsoft store", "uwp", "wsreset", "icones", "miniatures", "cache", "explorer", "applications" }
         });
 
-        // Sous-titre interne : Interface graphique (Shell Windows)
-        _allTools.Add(new ScriptTool
-        {
-            Id = "repair_icon_cache",
-            Name = "Reconstruction cache icônes et miniatures",
-            Description = "Suppression de iconcache*.db / thumbcache*.db et relance d'Explorer.",
-            Category = "REPARATION",
-            SubHeading = "Interface graphique (Shell Windows)",
-            Icon = "🖼️",
-            Action = (log, ct) => RepairService.RepairIcons(log, ct),
-            Tags = new[] { "icones", "miniatures", "cache", "iconcache", "thumbcache", "explorer" }
-        });
-
-        // Sous-titre interne : Protection et Restauration du système
         _allTools.Add(new ScriptTool
         {
             Id = "repair_restore_point",
             Name = "Points de Restauration Système",
             Description = "Lister les points existants, créer un point de restauration nommé et lancer la restauration.",
             Category = "REPARATION",
-            SubHeading = "Protection et Restauration du système",
+            SubHeading = "Sauvegarde et Restauration",
             Icon = "🔄",
             Action = (log, ct) => RepairService.OpenRestorePointDialog(log, ct),
             Tags = new[] { "restauration", "point", "sauvegarde", "checkpoint", "sécurité", "rstrui" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_export_drivers",
+            Name = "Sauvegarder pilotes système (DISM)",
+            Description = "Export et sauvegarde de tous les pilotes système vers un dossier au choix (DISM /Export-Driver).",
+            Category = "REPARATION",
+            SubHeading = "Sauvegarde et Restauration",
+            Icon = "💾",
+            Action = (log, ct) => ExportService.ExportDrivers(log, ct),
+            Tags = new[] { "pilotes", "drivers", "backup", "sauvegarde", "dism" }
         });
     }
 
@@ -604,55 +530,88 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterNetworkTools()
     {
-        // Sous-titre interne : Serveurs de noms de domaine (DNS)
+        _allTools.Add(new ScriptTool
+        {
+            Id = "net_center",
+            Name = "Centre de Contrôle Réseau",
+            Description = "Interface unifiée tout-en-un : diagnostic en direct, gestionnaire DNS, dépannage de connexion et scanners.",
+            Category = "RESEAU",
+            SubHeading = "",
+            Icon = "🌐",
+            Action = (log, ct) => NetworkService.OpenNetworkCenterDialog(log, ct),
+            Tags = new[] { "centre", "réseau", "diagnostic", "dns", "triage", "reset", "wifi", "lan", "ip", "connectivité", "internet" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "net_reset_all",
+            Name = "Dépannage & Grand Reset Réseau",
+            Description = "Protocole curatif complet en 7 étapes : purge DNS/ARP, réinitialisation Winsock et TCP/IP, renouvellement IP.",
+            Category = "RESEAU",
+            SubHeading = "",
+            Icon = "⚡",
+            Action = (log, ct) => NetworkService.ResetAll(log, ct),
+            Tags = new[] { "reset", "réinitialiser", "dépannage", "connexion", "coupure", "winsock", "tcpip", "dhcp", "arp", "flushdns" }
+        });
+
         _allTools.Add(new ScriptTool
         {
             Id = "net_dns_manager",
             Name = "Gestionnaire et Changeur de DNS",
             Description = "Consulter le DNS actif, tester et appliquer en 1 clic (Cloudflare, Google, Quad9, DHCP).",
             Category = "RESEAU",
-            SubHeading = "Serveurs de noms de domaine (DNS)",
-            Icon = "🌐",
+            SubHeading = "",
+            Icon = "🛡️",
             Action = (log, ct) => DnsService.OpenDnsManagerDialog(log, ct),
-            Tags = new[] { "dns", "cloudflare", "google", "quad9", "dhcp", "ipconfig", "changer", "réseau" }
+            Tags = new[] { "dns", "cloudflare", "google", "quad9", "dhcp", "ipconfig", "changer", "serveurs", "sécurité" }
         });
 
-        // Sous-titre interne : Table de routage et Cache ARP
         _allTools.Add(new ScriptTool
         {
-            Id = "net_arp_clear",
-            Name = "Purger la table ARP",
-            Description = "Purge complète de la table ARP (arp -d *).",
+            Id = "net_lan_scan",
+            Name = "Scanner Réseau Local (LAN)",
+            Description = "Découvrir tous les appareils et machines connectés sur la Box ou le sous-réseau local (IP et noms d'hôtes).",
             Category = "RESEAU",
-            SubHeading = "Table de routage et Cache ARP",
-            Icon = "🛡️",
-            Action = (log, ct) => NetworkService.ClearArp(log, ct),
-            Tags = new[] { "arp", "purge", "table", "cache", "mac", "ip" }
+            SubHeading = "",
+            Icon = "🖥️",
+            Action = (log, ct) => NetworkService.ScanLan(log, ct),
+            Tags = new[] { "lan", "scan", "découverte", "machines", "hotes", "adresses", "ip", "box", "routeur" }
         });
 
-        // Sous-titre interne : Carte sans fil et Environnement radio
         _allTools.Add(new ScriptTool
         {
             Id = "net_wifi_scan",
             Name = "Scanner les réseaux Wi-Fi",
-            Description = "Scan des bornes Wi-Fi avec puissance et canaux.",
+            Description = "Analyse et inventaire des bornes sans fil environnantes avec puissance du signal en % et canaux (BSSID).",
             Category = "RESEAU",
-            SubHeading = "Carte sans fil et Environnement radio",
+            SubHeading = "",
             Icon = "📶",
             Action = (log, ct) => NetworkService.ScanWifi(log, ct),
-            Tags = new[] { "wifi", "scan", "bornes", "puissance", "canaux", "wlan" }
+            Tags = new[] { "wifi", "scan", "bornes", "puissance", "canaux", "wlan", "ssid", "signal" }
         });
 
         _allTools.Add(new ScriptTool
         {
             Id = "net_wifi_report",
-            Name = "Rapport Wi-Fi complet",
-            Description = "Génération du rapport de diagnostic complet (netsh wlan show wlanreport).",
+            Name = "Rapport Wi-Fi complet (wlanreport)",
+            Description = "Génération du rapport officiel Windows de diagnostic sans fil et ouverture automatique dans le navigateur.",
             Category = "RESEAU",
-            SubHeading = "Carte sans fil et Environnement radio",
+            SubHeading = "",
             Icon = "📊",
             Action = (log, ct) => DiagnosticService.GetWifiReport(log, ct),
-            Tags = new[] { "wifi", "rapport", "html", "wlanreport", "historique" }
+            Tags = new[] { "wifi", "rapport", "html", "wlanreport", "historique", "santé", "déconnexions" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "net_flux_analysis",
+            Name = "Connexions et Flux TCP Actifs",
+            Description = "Afficher les connexions TCP établies en direct avec identification du processus Windows correspondant.",
+            Category = "RESEAU",
+            SubHeading = "",
+            Icon = "🔍",
+            Action = (log, ct) => NetworkService.AnalyzeFlux(log, ct),
+            Tags = new[] { "connexions", "flux", "tcp", "ports", "processus", "netstat", "ip", "écoute" }
         });
     }
 

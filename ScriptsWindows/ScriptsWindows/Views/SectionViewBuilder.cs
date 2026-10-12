@@ -215,7 +215,7 @@ public static class SectionViewBuilder
         "MISES_A_JOUR"     => "Inventaire applicatif, mise à niveau winget et signatures Defender",
         "NETTOYAGE"        => "Centre interactif de nettoyage de disque, caches, corbeille et magasin WinSxS",
         "PERSONNALISATION" => "God Mode et rétablissement du menu contextuel classique Windows 10",
-        "REPARATION"       => "CHKDSK, spouleur, pipeline DISM+SFC, cache icônes et Windows Update",
+        "REPARATION"       => "Centres interactifs d'intégrité DISM/SFC, CHKDSK, gestionnaire de services et Store UWP",
         "RESEAU"           => "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions",
         "SECRETS"          => "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web",
         "SECURITE"         => "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources",

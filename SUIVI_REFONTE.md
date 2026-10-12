@@ -44,11 +44,28 @@
   5. 👑 **Obsidian Luxury** : Noir OLED pur, filets d'or chaud, contrastes métalliques haute précision.
 - Effets dynamiques intégrés sur [`ToolCard.xaml`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows/ScriptsWindows/Views/Controls/ToolCard.xaml) : `DropShadowEffect` réactif (couleur, rayon et opacité selon le thème) et biseau personnalisé `CardBorderThickness`.
 
+### 3. Centres Unifiés & Modernisation des Catégories
+- **📦 Gestionnaire de Paquets Winget (`WingetUpdatesDialog.xaml`)** : Sélection interactive des logiciels à mettre à jour, sélection globale, détection et fallback `--force` en cas de conflit de portée.
+- **🧹 Nettoyage Système & Disque (`SystemCleanupDialog.xaml`)** : Assistant Cleanmgr, purge des fichiers temporaires (%TEMP%), corbeille, cache Windows Update, navigateurs et sélection personnalisée.
+- **🎨 Personnalisation (`ContextMenuDialog.xaml`)** : Bascule interactive entre le clic droit classique Windows 10 et moderne Windows 11 avec redémarrage d'Explorer.
+- **🔧 Réparation Intégrale (`ReparationPage.xaml.cs`)** :
+  - Restructurée en **4 sous-catégories accordéons** élégantes via `PopulateSections` :
+    1. 🩺 **Intégrité Système et Disque** : Centre d'intégrité DISM/SFC (`SystemIntegrityDialog.xaml`) & Analyse CHKDSK (`ChkdskDialog.xaml`).
+    2. ⚙️ **Services et Impression** : Gestionnaire des Services Windows (`ServicesManagerDialog.xaml`) & Déblocage / Purge file d'impression (`FixPrintSpooler`).
+    3. 🏬 **Applications et Interface Windows** : Réparation Store UWP & Interface (`AppsShellRepairDialog.xaml`).
+    4. 🔄 **Sauvegarde et Restauration** : Points de Restauration Système (`RestorePointDialog.xaml`) & Sauvegarder pilotes DISM.
+- **🌐 Centre de Contrôle Réseau (`NetworkCenterDialog.xaml`)** :
+  - **🩺 Onglet 1 - Diagnostic & Triage** : Interface active, IP locale, passerelle, DNS et tests en direct (ping Box, résolution DNS, accès Internet).
+  - **🌐 Onglet 2 - Serveurs DNS** : Sélecteur d'adaptateur et presets instantanés Cloudflare (1.1.1.1), Google (8.8.8.8), Quad9 (9.9.9.9) et DHCP automatique avec purge DNS.
+  - **⚡ Onglet 3 - Dépannage & Reset** : Redémarrage des cartes, purge DNS/ARP, renouvellement DHCP, réinitialisation TCP/IP & Winsock et Grand Reset en 7 étapes.
+  - **🔍 Onglet 4 - Scanners & Outils** : Scan des bornes Wi-Fi avec signal/canaux, rapport officiel Windows wlanreport, découverte LAN des machines locales, analyse des connexions TCP actives.
+  - **Grille directe fluide** : `ReseauPage` migrée vers `PopulateDirect` (accès instantané aux outils).
+
 ---
 
 ## 🚀 Résultat de Publication
 
-- **Fichier exécutable unique** : [`ScriptsWindows.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows.exe) (à la racine)
-- **Taille** : **3,65 Mo** (autonome, sans installeur lourd)
+- **Fichier exécutable unique** : [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe) (à la racine)
+- **Taille** : **~3,7 Mo** (autonome, sans installeur lourd)
 - **Architecture** : Windows x64
 - **Manifeste** : Élévation automatique UAC Administrateur requise

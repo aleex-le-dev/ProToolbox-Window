@@ -1,3 +1,4 @@
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -125,5 +126,18 @@ Get-NetAdapter | ForEach-Object {
     Write-Output ""  Type    : $($_.MediaType)""
 }
 ", onOutput, ct);
+    }
+
+    /// <summary>Ouvre l'interface interactive unifiée du Centre de Contrôle Réseau.</summary>
+    public static async Task OpenNetworkCenterDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.NetworkCenterDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 }

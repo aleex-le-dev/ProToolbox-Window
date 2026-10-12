@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ScriptsWindows.Core;
+using ScriptsWindows.Services;
 
 namespace ScriptsWindows.Views.Controls;
 
@@ -106,12 +107,36 @@ if ($s) {{
             BtnStart.IsEnabled   = !isRunning;
             BtnStop.IsEnabled    = isRunning;
             BtnRestart.IsEnabled = isRunning;
+            BtnPurgeSpooler.Visibility = item.Name.Equals("spooler", StringComparison.OrdinalIgnoreCase)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
             TxtFeedback.Text     = $"État de {item.DisplayName} mis à jour.";
         }
         catch (Exception ex)
         {
             TxtServiceStatus.Text = "Erreur";
             TxtFeedback.Text = ex.Message;
+        }
+    }
+
+    private async void BtnPurgeSpooler_Click(object sender, RoutedEventArgs e)
+    {
+        BtnPurgeSpooler.IsEnabled = false;
+        TxtFeedback.Text = "Purge de la file d'attente d'impression en cours...";
+        try
+        {
+            await RepairService.FixPrintSpooler(_onOutput, _ct);
+            TxtFeedback.Text = "File d'attente purgée et spouleur relancé.";
+            await RefreshSelectedServiceStatusAsync();
+        }
+        catch (Exception ex)
+        {
+            _onOutput($"[ERR] Échec de la purge de la file d'impression : {ex.Message}");
+            TxtFeedback.Text = $"Erreur : {ex.Message}";
+        }
+        finally
+        {
+            BtnPurgeSpooler.IsEnabled = true;
         }
     }
 

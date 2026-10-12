@@ -271,4 +271,31 @@ Write-Output '[OK] Lien ouvert dans le navigateur'
             dialog.ShowDialog();
         });
     }
+
+    /// <summary>Ouvre le Centre d'Intégrité et Réparation Système (DISM &amp; SFC).</summary>
+    public static async Task OpenSystemIntegrityDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.SystemIntegrityDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
+    /// <summary>Ouvre l'interface de réparation du Microsoft Store, des applications UWP et de l'interface.</summary>
+    public static async Task OpenAppsShellRepairDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.AppsShellRepairDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
 }
+
