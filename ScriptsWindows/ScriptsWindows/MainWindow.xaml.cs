@@ -38,7 +38,7 @@ public partial class MainWindow : Window
         UpdateThemeButtonState();
 
         // Démarrer sur la page Favoris
-        NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+        NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "Mes Favoris", "Vos outils préférés accessibles rapidement");
 
         // Préchauffage asynchrone de toutes les pages (0 ms de délai au clic)
         Dispatcher.InvokeAsync(WarmupPages, DispatcherPriority.Background);
@@ -184,7 +184,7 @@ public partial class MainWindow : Window
     }
 
     private void NavFavoris_Click(object sender, RoutedEventArgs e)
-        => NavigateTo((Button)sender, GetOrCreatePage("FAVORIS"), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+        => NavigateTo((Button)sender, GetOrCreatePage("FAVORIS"), "Mes Favoris", "Vos outils préférés accessibles rapidement");
 
     private void NavCategory_Click(object sender, RoutedEventArgs e)
     {
@@ -205,7 +205,7 @@ public partial class MainWindow : Window
             "MISES_A_JOUR"     => ("🔄 Mises à Jour & Inventaire Logiciel", "Inventaire applicatif, mise à niveau winget et signatures Defender"),
             "SECURITE"         => ("🛡️ Surveillance, Sécurité & Événements", "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources"),
             "PERSONNALISATION" => ("🎨 Personnalisation & Système", "God Mode et rétablissement du menu contextuel classique Windows 10"),
-            _                  => ("⭐ Mes Favoris", "Vos outils préférés accessibles rapidement")
+            _                  => ("Mes Favoris", "Vos outils préférés accessibles rapidement")
         };
 
         NavigateTo(btn, page, title, subtitle);
@@ -276,7 +276,7 @@ public partial class MainWindow : Window
             if (_activeNavBtn != null)
                 NavCategory_Click(_activeNavBtn, new RoutedEventArgs());
             else
-                NavigateTo(NavFavoris, new FavorisPage(), "⭐ Mes Favoris", "Vos outils préférés accessibles rapidement");
+                NavigateTo(NavFavoris, new FavorisPage(), "Mes Favoris", "Vos outils préférés accessibles rapidement");
         }
     }
 

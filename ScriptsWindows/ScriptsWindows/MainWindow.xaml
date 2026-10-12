@@ -253,7 +253,7 @@
                     
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
                         <TextBlock x:Name="PageTitle"
-                                   Text="⭐ Mes Favoris"
+                                   Text="Mes Favoris"
                                    Style="{StaticResource TitleText}"
                                    FontSize="20" />
                         <TextBlock x:Name="PageSubtitle"
