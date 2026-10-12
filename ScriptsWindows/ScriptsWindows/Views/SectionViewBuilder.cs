@@ -215,18 +215,20 @@ public static class SectionViewBuilder
             {
                 CornerRadius = new CornerRadius(8),
                 Padding = new Thickness(8, 2, 8, 2),
+                BorderThickness = new Thickness(1),
                 VerticalAlignment = VerticalAlignment.Center
             };
             countBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
+            countBadge.SetResourceReference(Border.BorderBrushProperty, "Border");
             DockPanel.SetDock(countBadge, Dock.Right);
 
             var countText = new TextBlock
             {
                 Text = $"{group.Tools.Count} outil{(group.Tools.Count > 1 ? "s" : "")}",
                 FontSize = 11,
-                FontWeight = FontWeights.Medium
+                FontWeight = FontWeights.SemiBold
             };
-            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
             countBadge.Child = countText;
 
             dock.Children.Add(countBadge);
@@ -420,18 +422,20 @@ public static class SectionViewBuilder
             {
                 CornerRadius = new CornerRadius(8),
                 Padding = new Thickness(9, 3, 9, 3),
+                BorderThickness = new Thickness(1),
                 VerticalAlignment = VerticalAlignment.Center
             };
             countBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
+            countBadge.SetResourceReference(Border.BorderBrushProperty, "Border");
             DockPanel.SetDock(countBadge, Dock.Right);
 
             var countText = new TextBlock
             {
                 Text = $"{catGroup.TotalCount} favori{(catGroup.TotalCount > 1 ? "s" : "")}",
                 FontSize = 11.5,
-                FontWeight = FontWeights.Medium
+                FontWeight = FontWeights.SemiBold
             };
-            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
             countBadge.Child = countText;
             dock.Children.Add(countBadge);
 
@@ -533,18 +537,20 @@ public static class SectionViewBuilder
                 {
                     CornerRadius = new CornerRadius(6),
                     Padding = new Thickness(6, 1, 6, 1),
+                    BorderThickness = new Thickness(1),
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 };
                 subBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
+                subBadge.SetResourceReference(Border.BorderBrushProperty, "Border");
 
                 var subBadgeText = new TextBlock
                 {
                     Text = $"{subCat.Tools.Count} outil{(subCat.Tools.Count > 1 ? "s" : "")}",
                     FontSize = 10.5,
-                    FontWeight = FontWeights.Medium
+                    FontWeight = FontWeights.SemiBold
                 };
-                subBadgeText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+                subBadgeText.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
                 subBadge.Child = subBadgeText;
 
                 subHeader.Children.Add(subBullet);

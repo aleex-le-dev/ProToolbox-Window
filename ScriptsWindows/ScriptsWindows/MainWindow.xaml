@@ -125,14 +125,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_FAVORIS"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock FontFamily="Segoe MDL2 Assets"
@@ -159,14 +161,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_APPLICATIONS"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="📦" Style="{StaticResource SidebarIcon}" />
@@ -179,14 +183,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_DIAGNOSTIC"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                  </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🔍" Style="{StaticResource SidebarIcon}" />
@@ -199,14 +205,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_DISQUE"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="💽" Style="{StaticResource SidebarIcon}" />
@@ -219,14 +227,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_MATERIEL"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🖥️" Style="{StaticResource SidebarIcon}" />
@@ -239,14 +249,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_MISES_A_JOUR"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🔄" Style="{StaticResource SidebarIcon}" />
@@ -259,14 +271,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_NETTOYAGE"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🧹" Style="{StaticResource SidebarIcon}" />
@@ -279,14 +293,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_PERSONNALISATION"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🎨" Style="{StaticResource SidebarIcon}" />
@@ -299,14 +315,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_REPARATION"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🔧" Style="{StaticResource SidebarIcon}" />
@@ -319,14 +337,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_RESEAU"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🌐" Style="{StaticResource SidebarIcon}" />
@@ -339,14 +359,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_SECRETS"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🔑" Style="{StaticResource SidebarIcon}" />
@@ -359,14 +381,16 @@
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
                                         CornerRadius="8"
-                                        Padding="6,2"
+                                        Padding="7,2"
                                         VerticalAlignment="Center">
                                     <TextBlock x:Name="Badge_SECURITE"
                                                Text="0"
                                                FontSize="11"
                                                FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextMuted}" />
+                                               Foreground="{DynamicResource TextPrimary}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🛡️" Style="{StaticResource SidebarIcon}" />
