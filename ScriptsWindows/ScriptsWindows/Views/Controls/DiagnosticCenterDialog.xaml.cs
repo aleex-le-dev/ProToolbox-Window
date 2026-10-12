@@ -419,6 +419,12 @@ $nets = @(Get-NetIPConfiguration | Where-Object { $_.IPv4Address } | ForEach-Obj
         TxtFeedback.Text = "Informations système ouvertes.";
     }
 
+    private void BtnDxdiag_Click(object sender, RoutedEventArgs e)
+    {
+        CommandRunner.StartProcess("dxdiag.exe");
+        TxtFeedback.Text = "Outil de diagnostic DirectX (DxDiag) ouvert.";
+    }
+
     private void BtnDevmgmt_Click(object sender, RoutedEventArgs e)
     {
         CommandRunner.StartProcess("devmgmt.msc");

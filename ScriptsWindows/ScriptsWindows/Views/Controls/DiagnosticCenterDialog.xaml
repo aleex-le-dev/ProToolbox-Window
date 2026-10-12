@@ -439,10 +439,12 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Content="📊 Informations (msinfo32)" Style="{StaticResource ActionButton}" Margin="0,0,4,0" Click="BtnMsinfo_Click"/>
-                            <Button Grid.Column="1" Content="⚙️ Périphériques (devmgmt)" Style="{StaticResource ActionButton}" Margin="4,0,4,0" Click="BtnDevmgmt_Click"/>
-                            <Button Grid.Column="2" Content="📈 Moniteur (resmon)" Style="{StaticResource ActionButton}" Margin="4,0,0,0" Click="BtnResmon_Click"/>
+                            <Button Grid.Column="0" Content="📊 Infos (msinfo32)" Style="{StaticResource ActionButton}" Margin="0,0,3,0" Padding="6,6" FontSize="11" Click="BtnMsinfo_Click"/>
+                            <Button Grid.Column="1" Content="🎮 Vidéo (dxdiag)" Style="{StaticResource ActionButton}" Margin="3,0,3,0" Padding="6,6" FontSize="11" Click="BtnDxdiag_Click"/>
+                            <Button Grid.Column="2" Content="⚙️ Matériel (devmgmt)" Style="{StaticResource ActionButton}" Margin="3,0,3,0" Padding="6,6" FontSize="11" Click="BtnDevmgmt_Click"/>
+                            <Button Grid.Column="3" Content="📈 Moniteur (resmon)" Style="{StaticResource ActionButton}" Margin="3,0,0,0" Padding="6,6" FontSize="11" Click="BtnResmon_Click"/>
                         </Grid>
 
                         <!-- Action 4 : Générer rapport texte complet -->

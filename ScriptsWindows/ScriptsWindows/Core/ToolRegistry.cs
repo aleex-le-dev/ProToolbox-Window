@@ -43,18 +43,16 @@ public static class ToolRegistry
 
     private static readonly Dictionary<string, string> CommandMap = new(StringComparer.OrdinalIgnoreCase)
     {
-        // ─── Diagnostic (3) ───
+        // ─── Diagnostic (4) ───
         ["diag_center"] = "AlexToolkit.exe (Centre de diagnostic unifié : carte mère, BIOS, CPU, RAM, disques S.M.A.R.T., batterie, réseau)",
+        ["diag_dxdiag"] = "dxdiag.exe",
         ["diag_startup_manager"] = "AlexToolkit.exe (Gestionnaire des programmes au démarrage de Windows)",
         ["diag_battery"] = "powercfg.exe /batteryreport",
 
-        // ─── Matériel (7) ───
-        ["hw_mdsched"] = "mdsched.exe",
-        ["hw_dxdiag"] = "dxdiag.exe",
+        // ─── Matériel (4) ───
         ["hw_devmgmt"] = "devmgmt.msc",
-        ["hw_resmon"] = "resmon.exe",
-        ["hw_msinfo"] = "msinfo32.exe",
         ["hw_winsat"] = "winsat.exe formal",
+        ["hw_powercfg_energy"] = "powercfg.exe /energy /output energy-report.html",
         ["hw_power_perf"] = "powercfg.exe -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61",
 
         // ─── Réparation (6) ───
@@ -150,6 +148,18 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
+            Id = "diag_dxdiag",
+            Name = "Diagnostic matériel (DxDiag)",
+            Description = "Diagnostic complet DirectX, carte graphique GPU et périphériques audio (dxdiag.exe).",
+            Category = "DIAGNOSTIC",
+            SubHeading = "Outils et Actions Rapides",
+            Icon = "🎮",
+            Action = (log, ct) => HardwareService.LaunchDxdiag(log, ct),
+            Tags = new[] { "dxdiag", "gpu", "directx", "vram", "audio", "graphique", "diagnostic" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
             Id = "diag_startup_manager",
             Name = "Gestionnaire des Programmes au Démarrage",
             Description = "Visualiser les logiciels qui se lancent avec Windows et désactiver les éléments superflus.",
@@ -178,82 +188,55 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterHardwareTools()
     {
-        // Sous-titre interne : Mémoire vive (RAM)
-        _allTools.Add(new ScriptTool
-        {
-            Id = "hw_mdsched",
-            Name = "Diagnostic mémoire (mdsched)",
-            Description = "Outil de diagnostic mémoire Windows au redémarrage (mdsched.exe).",
-            Category = "MATERIEL",
-            SubHeading = "Mémoire vive (RAM)",
-            Icon = "🧠",
-            Action = (log, ct) => HardwareService.RunRamTest(log, ct),
-            Tags = new[] { "ram", "mdsched", "test", "mémoire", "diagnostic" }
-        });
-
-        // Sous-titre interne : Contrôleur graphique et Audio
-        _allTools.Add(new ScriptTool
-        {
-            Id = "hw_dxdiag",
-            Name = "Diagnostic matériel (DxDiag)",
-            Description = "Diagnostic matériel DirectX, GPU et cartes audio (dxdiag.exe).",
-            Category = "MATERIEL",
-            SubHeading = "Contrôleur graphique et Audio",
-            Icon = "🎮",
-            Action = (log, ct) => HardwareService.LaunchDxdiag(log, ct),
-            Tags = new[] { "dxdiag", "gpu", "directx", "vram", "audio", "graphique" }
-        });
-
-        // Sous-titre interne : Pilotes et Périphériques d'entrée/sortie
+        // Sous-titre interne : Périphériques et Pilotes
         _allTools.Add(new ScriptTool
         {
             Id = "hw_devmgmt",
             Name = "Gestionnaire de périphériques",
-            Description = "Gestionnaire de périphériques (devmgmt.msc).",
+            Description = "Gestionnaire de périphériques officiel Windows (devmgmt.msc).",
             Category = "MATERIEL",
-            SubHeading = "Pilotes et Périphériques d'entrée/sortie",
+            SubHeading = "Périphériques et Pilotes",
             Icon = "🔌",
             Action = (log, ct) => HardwareService.LaunchDevmgmt(log, ct),
             Tags = new[] { "devmgmt", "périphériques", "drivers", "pilotes", "erreurs" }
         });
 
-        // Sous-titre interne : Banc d'essai et Performances globales
-        _allTools.Add(new ScriptTool
-        {
-            Id = "hw_resmon",
-            Name = "Moniteur de ressources (Resmon)",
-            Description = "Moniteur de ressources en temps réel (resmon.exe).",
-            Category = "MATERIEL",
-            SubHeading = "Banc d'essai et Performances globales",
-            Icon = "📊",
-            Action = (log, ct) => HardwareService.LaunchResmon(log, ct),
-            Tags = new[] { "resmon", "ressources", "cpu", "ram", "disque", "réseau" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "hw_msinfo",
-            Name = "Informations système (Msinfo32)",
-            Description = "Vue d'ensemble du matériel et configuration Windows (msinfo32.exe).",
-            Category = "MATERIEL",
-            SubHeading = "Banc d'essai et Performances globales",
-            Icon = "ℹ️",
-            Action = (log, ct) => HardwareService.LaunchMsinfo32(log, ct),
-            Tags = new[] { "msinfo32", "matériel", "système", "os", "ressources" }
-        });
-
+        // Sous-titre interne : Performances et Alimentation
         _allTools.Add(new ScriptTool
         {
             Id = "hw_winsat",
             Name = "Benchmark global (WinSAT)",
             Description = "Benchmark complet CPU, RAM, GPU et disques (winsat formal).",
             Category = "MATERIEL",
-            SubHeading = "Banc d'essai et Performances globales",
+            SubHeading = "Performances et Alimentation",
             Icon = "⚙️",
             Action = (log, ct) => HardwareService.RunWinSat(log, ct),
             Tags = new[] { "benchmark", "winsat", "performance", "score", "cpu", "gpu", "ram", "disque" }
         });
 
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_powercfg_energy",
+            Name = "Rapport d'efficacité énergétique",
+            Description = "Analyse matérielle de consommation d'énergie sur 60 secondes avec rapport officiel (powercfg /energy).",
+            Category = "MATERIEL",
+            SubHeading = "Performances et Alimentation",
+            Icon = "⚡",
+            Action = (log, ct) => HardwareService.RunPowercfgEnergy(log, ct),
+            Tags = new[] { "énergie", "consommation", "powercfg", "batterie", "matériel", "rapport" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_power_perf",
+            Name = "Activer le mode Performances Élevées",
+            Description = "Bascule matérielle immédiate vers le plan d'alimentation hautes performances de Windows.",
+            Category = "MATERIEL",
+            SubHeading = "Performances et Alimentation",
+            Icon = "🚀",
+            Action = (log, ct) => HardwareService.SetPlanHigh(log, ct),
+            Tags = new[] { "performance", "alimentation", "powercfg", "vitesse", "cpu", "boost" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────

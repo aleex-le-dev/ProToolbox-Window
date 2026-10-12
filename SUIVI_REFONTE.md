@@ -51,8 +51,13 @@
     2. 🧠 **CPU & RAM** : Processeur, cœurs/threads, fréquence, sondes thermiques et détail des barrettes de RAM (slots, type DDR, fréquence, capacité).
     3. 💾 **Stockage & S.M.A.R.T.** : État de santé des disques physiques (NVMe, SSD, HDD), jauges d'espace libre et d'occupation des volumes.
     4. 🔋 **Batterie & Réseau** : Niveau %, statut secteur/décharge, tension, autonomie estimée, cartes réseau actives (IP, Passerelle, DNS) et test Ping direct.
-    5. ⚡ **Outils & Actions** : Accès direct au gestionnaire de démarrage, analyse SFC, msinfo32, devmgmt, resmon et mdsched.
-  - Outils rapides 1-clic conservés : Gestionnaire des programmes au démarrage (`StartupManagerDialog.xaml`) et rapport complet de batterie HTML.
+    5. ⚡ **Outils & Actions** : Accès direct au gestionnaire de démarrage, analyse SFC, msinfo32, dxdiag, devmgmt, resmon et mdsched.
+  - Outils rapides 1-clic : Diagnostic matériel DirectX / GPU (`diag_dxdiag`, déplacé depuis Matériel), Gestionnaire des programmes au démarrage (`StartupManagerDialog.xaml`) et rapport complet de batterie HTML.
+- **🖥️ Matériel et Périphériques (`MaterielPage.xaml.cs`)** :
+  - Épuration des doublons de diagnostic (`mdsched`, `msinfo32`, `resmon` absorbés par le Centre de Diagnostic).
+  - Restructurée en outils de gestion physique et banc d'essai :
+    1. 🔌 **Périphériques et Pilotes** : Gestionnaire de périphériques officiel (`devmgmt.msc`).
+    2. 🚀 **Performances et Alimentation** : Benchmark global WinSAT (`winsat formal`), Rapport d'efficacité énergétique 60s (`powercfg /energy`) et Activation immédiate du mode Performances Élevées.
 - **📦 Gestionnaire de Paquets Winget (`WingetUpdatesDialog.xaml`)** : Sélection interactive des logiciels à mettre à jour, sélection globale, détection et fallback `--force` en cas de conflit de portée.
 - **🧹 Nettoyage Système & Disque (`SystemCleanupDialog.xaml`)** : Assistant Cleanmgr, purge des fichiers temporaires (%TEMP%), corbeille, cache Windows Update, navigateurs et sélection personnalisée.
 - **🎨 Personnalisation (`ContextMenuDialog.xaml`)** : Bascule interactive entre le clic droit classique Windows 10 et moderne Windows 11 avec redémarrage d'Explorer.
