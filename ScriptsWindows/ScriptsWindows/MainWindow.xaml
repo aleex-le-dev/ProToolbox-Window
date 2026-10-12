@@ -33,26 +33,55 @@
 
                 <!-- Logo / Header -->
                 <Border DockPanel.Dock="Top"
-                        Padding="16,20,16,16"
+                        Padding="16,18,16,16"
                         BorderBrush="{DynamicResource Border}"
                         BorderThickness="0,0,0,1">
-                    <StackPanel>
-                        <TextBlock Text="⚡ ALEEXLEDEV"
-                                   FontFamily="{StaticResource FontMain}"
-                                   FontSize="11"
-                                   FontWeight="Bold"
-                                   Foreground="{DynamicResource Accent}" />
-                        <TextBlock Text="Alex Toolkit"
-                                   FontFamily="{StaticResource FontMain}"
-                                   FontSize="15"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextPrimary}"
-                                   Margin="0,4,0,0" />
-                        <TextBlock Text="v4.0 — Edition Windows"
-                                   FontSize="11"
-                                   Foreground="{DynamicResource TextMuted}"
-                                   Margin="0,2,0,0" />
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="⚡ ALEEXLEDEV"
+                                       FontFamily="{StaticResource FontMain}"
+                                       FontSize="11"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource Accent}" />
+                            <TextBlock Text="Alex Toolkit"
+                                       FontFamily="{StaticResource FontMain}"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimary}"
+                                       Margin="0,3,0,0" />
+                            <TextBlock Text="v4.0 — Edition Windows"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource TextMuted}"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+
+                        <!-- Bouton Thème proche du titre -->
+                        <Button x:Name="BtnTheme"
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Click="BtnTheme_Click"
+                                Background="{DynamicResource BgCard}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
+                                Width="36" Height="36"
+                                Cursor="Hand"
+                                ToolTip="Changer de thème">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock x:Name="TxtThemeIcon" Text="🌙" FontSize="15" FontFamily="{StaticResource FontEmoji}" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock x:Name="TxtThemeName" Visibility="Collapsed" Text="Noir Pur OLED" />
+                            </Grid>
+                        </Button>
+                    </Grid>
                 </Border>
 
                 <!-- Barre de recherche moderne avec watermark -->
@@ -422,13 +451,7 @@
                     BorderBrush="{DynamicResource Border}"
                     BorderThickness="0,0,0,1"
                     Padding="24,14,24,14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center">
                         <TextBlock x:Name="PageTitle"
                                    Text="Mes Favoris"
                                    Style="{StaticResource TitleText}"
@@ -438,29 +461,6 @@
                                    Style="{StaticResource SubtitleText}"
                                    Margin="0,3,0,0" />
                     </StackPanel>
-                    
-                    <!-- Actions du Header : Sélecteur Thème -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button x:Name="BtnTheme"
-                                Click="BtnTheme_Click"
-                                Background="{DynamicResource BgCard}"
-                                BorderBrush="{DynamicResource Border}"
-                                BorderThickness="1"
-                                Padding="10,6,12,6"
-                                Cursor="Hand"
-                                ToolTip="Changer de style / thème">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </Button.Resources>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock x:Name="TxtThemeIcon" Text="🌙" FontSize="13" FontFamily="{StaticResource FontEmoji}" Foreground="{DynamicResource TextPrimary}" Margin="0,0,6,0" VerticalAlignment="Center" />
-                                <TextBlock x:Name="TxtThemeName" Text="Noir Pur OLED" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Grid>
             </Border>
 
             <!-- Zone de contenu des pages (transparente pour laisser voir le fond immersif) -->
