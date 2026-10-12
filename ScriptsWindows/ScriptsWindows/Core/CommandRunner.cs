@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace ScriptsWindows.Core;
@@ -30,6 +31,12 @@ public class CommandRunner
 
     private static Encoding GetSafeEncoding(string command)
     {
+        // SFC émet obligatoirement en Unicode (UTF-16 LE) sous Windows
+        if (command.Contains("sfc", StringComparison.OrdinalIgnoreCase))
+        {
+            return Encoding.Unicode;
+        }
+
         // Winget et PowerShell émettent généralement en UTF-8
         if (command.Contains("winget", StringComparison.OrdinalIgnoreCase) ||
             command.Contains("powershell", StringComparison.OrdinalIgnoreCase))
@@ -44,6 +51,82 @@ public class CommandRunner
         catch
         {
             return Encoding.UTF8;
+        }
+    }
+
+    /// <summary>
+    /// Lit un flux de façon asynchrone et émet chaque ligne immédiatement.
+    /// Gère à la fois les fins de ligne standard (\n, \r\n) et les retours chariot seuls (\r)
+    /// couramment utilisés par les outils à progression en direct (SFC, DISM, winget, curl).
+    /// </summary>
+    private static async Task ReadStreamLinesAsync(StreamReader reader, Action<string> onOutput, CancellationToken ct)
+    {
+        var buffer = new char[512];
+        var currentLine = new StringBuilder();
+        bool lastWasCr = false;
+
+        while (true)
+        {
+            int read;
+            try
+            {
+                read = await reader.ReadAsync(buffer.AsMemory(0, buffer.Length), ct);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+
+            if (read <= 0) break;
+
+            for (int i = 0; i < read; i++)
+            {
+                char c = buffer[i];
+
+                if (c == '\r')
+                {
+                    lastWasCr = true;
+                    string line = currentLine.ToString().Trim();
+                    currentLine.Clear();
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        onOutput(line);
+                    }
+                }
+                else if (c == '\n')
+                {
+                    if (lastWasCr)
+                    {
+                        // Séquence \r\n : déjà émise lors du \r
+                        lastWasCr = false;
+                        continue;
+                    }
+                    lastWasCr = false;
+                    string line = currentLine.ToString().Trim();
+                    currentLine.Clear();
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        onOutput(line);
+                    }
+                }
+                else
+                {
+                    lastWasCr = false;
+                    if (c != '\0')
+                    {
+                        currentLine.Append(c);
+                    }
+                }
+            }
+        }
+
+        if (currentLine.Length > 0)
+        {
+            string remaining = currentLine.ToString().Trim();
+            if (!string.IsNullOrEmpty(remaining))
+            {
+                onOutput(remaining);
+            }
         }
     }
 
@@ -66,19 +149,10 @@ public class CommandRunner
         };
 
         using var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
-
-        proc.OutputDataReceived += (_, e) =>
-        {
-            if (e.Data != null) onOutput(e.Data);
-        };
-        proc.ErrorDataReceived += (_, e) =>
-        {
-            if (e.Data != null) onOutput($"[ERR] {e.Data}");
-        };
-
         proc.Start();
-        proc.BeginOutputReadLine();
-        proc.BeginErrorReadLine();
+
+        var outputTask = ReadStreamLinesAsync(proc.StandardOutput, onOutput, ct);
+        var errorTask  = ReadStreamLinesAsync(proc.StandardError, line => onOutput($"[ERR] {line}"), ct);
 
         using var reg = ct.CanBeCanceled ? ct.Register(() =>
         {
@@ -87,7 +161,7 @@ public class CommandRunner
 
         try
         {
-            await proc.WaitForExitAsync(ct);
+            await Task.WhenAll(outputTask, errorTask, proc.WaitForExitAsync(ct));
         }
         catch (OperationCanceledException)
         {

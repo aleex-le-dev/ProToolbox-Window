@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ScriptsWindows.Models;
@@ -109,7 +109,7 @@ public static class ToolRegistry
         ["app_install_sumatra"] = "winget.exe install SumatraPDF.SumatraPDF --silent",
         ["app_install_7zip"] = "winget.exe install 7zip.7zip --silent",
         ["app_install_pwsh"] = "winget.exe install Microsoft.PowerShell --silent",
-        ["app_open_office"] = "start https://officecdn.microsoft.com / setup.exe",
+        ["app_open_office"] = "start https://drive.google.com/file/d/1wf1eqVkXIM0f0R2963Ee4RKK-a_rgWld/view?usp=drive_link",
 
         // ─── Mises à jour (4) ───
         ["upd_list_apps"] = "winget.exe list",
@@ -858,8 +858,8 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "app_open_office",
-            Name = "Télécharger Microsoft Office 2024",
-            Description = "Accès à l'installateur officiel Microsoft Office.",
+            Name = "Télécharger Microsoft Office",
+            Description = "Téléchargement de l'installateur Microsoft Office via Google Drive.",
             Category = "APPLICATIONS",
             SubHeading = "Bureautique",
             Icon = "💼",

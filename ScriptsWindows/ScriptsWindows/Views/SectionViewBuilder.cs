@@ -185,22 +185,41 @@ public static class SectionViewBuilder
     }
 
     /// <summary>
-    /// Fournit l'icône et le nom d'affichage français pour une catégorie donnée.
+    /// Fournit l'icône et le nom d'affichage français complet pour une catégorie donnée.
     /// </summary>
     public static (string Icon, string Name) GetCategoryMeta(string category) => (category ?? "").ToUpperInvariant() switch
     {
-        "DIAGNOSTIC"       => ("🔍", "Diagnostic"),
-        "MATERIEL"         => ("🖥️", "Matériel"),
-        "REPARATION"       => ("🔧", "Réparation"),
-        "NETTOYAGE"        => ("🧹", "Nettoyage"),
-        "SECRETS"          => ("🔑", "Secrets et clés"),
-        "RESEAU"           => ("🌐", "Réseau"),
-        "DISQUE"           => ("💽", "Disque"),
-        "APPLICATIONS"     => ("📦", "Applications"),
-        "MISES_A_JOUR"     => ("🔄", "Mises à jour"),
-        "SECURITE"         => ("🛡️", "Sécurité"),
-        "PERSONNALISATION" => ("🎨", "Personnalisation"),
+        "APPLICATIONS"     => ("📦", "Installation d'applications"),
+        "DIAGNOSTIC"       => ("🔍", "Diagnostic matériel et intégrité"),
+        "DISQUE"           => ("💽", "Disque dur et stockage"),
+        "MATERIEL"         => ("🖥️", "Matériel et périphériques"),
+        "MISES_A_JOUR"     => ("🔄", "Mises à jour et inventaire logiciel"),
+        "NETTOYAGE"        => ("🧹", "Nettoyage et optimisation d'espace"),
+        "PERSONNALISATION" => ("🎨", "Personnalisation et système"),
+        "REPARATION"       => ("🔧", "Réparation intégrale"),
+        "RESEAU"           => ("🌐", "Réseau et configuration"),
+        "SECRETS"          => ("🔑", "Récupération d'identifiants et secrets"),
+        "SECURITE"         => ("🛡️", "Surveillance, sécurité et événements"),
         _                  => ("⚙️", string.IsNullOrWhiteSpace(category) ? "Général" : FormatFrenchTitle(category))
+    };
+
+    /// <summary>
+    /// Fournit le sous-titre explicatif officiel pour chaque catégorie.
+    /// </summary>
+    public static string GetCategorySubtitle(string category) => (category ?? "").ToUpperInvariant() switch
+    {
+        "APPLICATIONS"     => "Installation automatisée de navigateurs, lecteurs et utilitaires via winget",
+        "DIAGNOSTIC"       => "Analyse carte mère, CPU, RAM, disques physiques, batterie et réseau",
+        "DISQUE"           => "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker",
+        "MATERIEL"         => "Outils de diagnostic mémoire, GPU/DxDiag, périphériques et benchmarks",
+        "MISES_A_JOUR"     => "Inventaire applicatif, mise à niveau winget et signatures Defender",
+        "NETTOYAGE"        => "Nettoyage unifié, magasins WinSxS, caches navigateurs, temp et cleanmgr",
+        "PERSONNALISATION" => "God Mode et rétablissement du menu contextuel classique Windows 10",
+        "REPARATION"       => "CHKDSK, spouleur, pipeline DISM+SFC, cache icônes et Windows Update",
+        "RESEAU"           => "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions",
+        "SECRETS"          => "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web",
+        "SECURITE"         => "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources",
+        _                  => "Outils système Windows"
     };
 
     /// <summary>

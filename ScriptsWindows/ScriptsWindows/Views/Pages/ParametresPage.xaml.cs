@@ -87,6 +87,7 @@ public partial class ParametresPage : Page, ISectionPage
 
     public void ResetSections()
     {
+        TxtHierarchyPreview.Text = GenerateHierarchyText();
     }
 
     // ─── Thème ────────────────────────────────────────────────────────
@@ -241,7 +242,7 @@ public partial class ParametresPage : Page, ISectionPage
             sb.AppendLine($"{icon} {name.ToUpperInvariant()} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
 
             var subGroups = catGroup
-                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : SectionViewBuilder.FormatFrenchTitle(t.SubHeading))
+                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading.Trim())
                 .OrderBy(sg => sg.Key);
 
             foreach (var sub in subGroups)
@@ -283,7 +284,7 @@ public partial class ParametresPage : Page, ISectionPage
             sb.AppendLine();
 
             var subGroups = catGroup
-                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : SectionViewBuilder.FormatFrenchTitle(t.SubHeading))
+                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading.Trim())
                 .OrderBy(sg => sg.Key);
 
             foreach (var sub in subGroups)

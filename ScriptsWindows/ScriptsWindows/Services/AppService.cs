@@ -38,9 +38,9 @@ public class AppService
 
     public static async Task InstallOffice(Action<string> onOutput, CancellationToken ct = default)
     {
-        onOutput("[i] Ouverture du lien de téléchargement Microsoft Office 2024...");
-        CommandRunner.OpenUrl("https://go.microsoft.com/fwlink/?linkid=2264705");
-        onOutput("[OK] Lien ouvert dans le navigateur");
+        onOutput("[i] Ouverture du lien de téléchargement Microsoft Office...");
+        CommandRunner.OpenUrl("https://drive.google.com/file/d/1wf1eqVkXIM0f0R2963Ee4RKK-a_rgWld/view?usp=drive_link");
+        onOutput("[OK] Lien Google Drive ouvert dans le navigateur");
         await Task.CompletedTask;
     }
 

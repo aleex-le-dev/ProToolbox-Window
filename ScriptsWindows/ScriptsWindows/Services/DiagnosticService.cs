@@ -169,8 +169,25 @@ if ($bat) {
         default { ""Inconnu ($($bat.BatteryStatus))"" }
     }
     Write-Output ""[BATTERIE] Statut : $status""
-    Write-Output ""[BATTERIE] Autonomie estimée : $($bat.EstimatedRunTime) minutes""
-    Write-Output ""[BATTERIE] Tension : $($bat.DesignVoltage) mV""
+
+    $runtime = if ($bat.EstimatedRunTime -and $bat.EstimatedRunTime -lt 60000 -and $bat.EstimatedRunTime -gt 0) {
+        $h = [math]::Floor($bat.EstimatedRunTime / 60)
+        $m = $bat.EstimatedRunTime % 60
+        if ($h -gt 0) { ""$h h $m min ($($bat.EstimatedRunTime) minutes)"" } else { ""$m minutes"" }
+    } elseif ($bat.BatteryStatus -eq 2 -or $bat.BatteryStatus -eq 3) {
+        'Alimentation secteur (illimitée)'
+    } else {
+        'Évaluation en cours...'
+    }
+    Write-Output ""[BATTERIE] Autonomie estimée : $runtime""
+
+    $voltage = if ($bat.DesignVoltage -and $bat.DesignVoltage -gt 0) {
+        $v = [math]::Round($bat.DesignVoltage / 1000.0, 2)
+        ""$v V ($($bat.DesignVoltage) mV)""
+    } else {
+        'Non disponible'
+    }
+    Write-Output ""[BATTERIE] Tension : $voltage""
 } else {
     Write-Output '[!] Aucune batterie détectée (PC fixe ou non supporté)'
 }

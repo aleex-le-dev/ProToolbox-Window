@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ScriptsWindows.Core;
+using ScriptsWindows.Views;
 using ScriptsWindows.Views.Pages;
 
 namespace ScriptsWindows;
@@ -223,21 +224,9 @@ public partial class MainWindow : Window
         var tag = btn.Tag?.ToString() ?? "";
         var page = GetOrCreatePage(tag);
 
-        var (title, subtitle) = tag switch
-        {
-            "APPLICATIONS"     => ("📦 Installation d'applications", "Installation automatisée de navigateurs, lecteurs et utilitaires via winget"),
-            "DIAGNOSTIC"       => ("🔍 Diagnostic matériel et intégrité", "Analyse carte mère, CPU, RAM, disques physiques, batterie et réseau"),
-            "DISQUE"           => ("💽 Disque dur et stockage", "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker"),
-            "MATERIEL"         => ("🖥️ Matériel et périphériques", "Outils de diagnostic mémoire, GPU/DxDiag, périphériques et benchmarks"),
-            "MISES_A_JOUR"     => ("🔄 Mises à jour et inventaire logiciel", "Inventaire applicatif, mise à niveau winget et signatures Defender"),
-            "NETTOYAGE"        => ("🧹 Nettoyage et optimisation d'espace", "Nettoyage unifié, magasins WinSxS, caches navigateurs, temp et cleanmgr"),
-            "PERSONNALISATION" => ("🎨 Personnalisation et système", "God Mode et rétablissement du menu contextuel classique Windows 10"),
-            "REPARATION"       => ("🔧 Réparation intégrale", "CHKDSK, spouleur, pipeline DISM+SFC, cache icônes et Windows Update"),
-            "RESEAU"           => ("🌐 Réseau et configuration", "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions"),
-            "SECRETS"          => ("🔑 Récupération d'identifiants et secrets", "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web"),
-            "SECURITE"         => ("🛡️ Surveillance, sécurité et événements", "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources"),
-            _                  => ("Mes favoris", "Vos outils préférés accessibles rapidement")
-        };
+        var (icon, name) = SectionViewBuilder.GetCategoryMeta(tag);
+        string title = $"{icon} {name}";
+        string subtitle = SectionViewBuilder.GetCategorySubtitle(tag);
 
         NavigateTo(btn, page, title, subtitle);
     }
@@ -339,7 +328,7 @@ public partial class MainWindow : Window
             para.Inlines.Add(new Run(line) { Foreground = brush });
             OutputBox.Document.Blocks.Add(para);
             OutputBox.ScrollToEnd();
-        }, DispatcherPriority.Background);
+        }, DispatcherPriority.Normal);
     }
 
     public void SetRunning(bool isRunning)

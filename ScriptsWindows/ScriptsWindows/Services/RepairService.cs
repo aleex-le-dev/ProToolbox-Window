@@ -13,6 +13,7 @@ public class RepairService
     {
         onOutput("[i] Lancement de SFC /scannow — cette opération peut prendre 5-15 minutes...");
         await CommandRunner.RunAsync("sfc /scannow", onOutput, ct);
+        onOutput("[OK] Analyse et vérification SFC terminées.");
     }
 
     // Pipeline Curatif Global (DISM + SFC)
