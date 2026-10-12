@@ -45,6 +45,14 @@
 - Effets dynamiques intégrés sur [`ToolCard.xaml`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows/ScriptsWindows/Views/Controls/ToolCard.xaml) : `DropShadowEffect` réactif (couleur, rayon et opacité selon le thème) et biseau personnalisé `CardBorderThickness`.
 
 ### 3. Centres Unifiés & Modernisation des Catégories
+- **🔍 Diagnostic Matériel et Intégrité (`DiagnosticPage.xaml.cs`)** :
+  - **Centre de Diagnostic Matériel et Système (`DiagnosticCenterDialog.xaml`)** :
+    1. 🖥️ **Système & BIOS** : Identité complète de la machine (Nom, Fabricant, Modèle), Windows et Build, Carte mère et version / date du BIOS/UEFI.
+    2. 🧠 **CPU & RAM** : Processeur, cœurs/threads, fréquence, sondes thermiques et détail des barrettes de RAM (slots, type DDR, fréquence, capacité).
+    3. 💾 **Stockage & S.M.A.R.T.** : État de santé des disques physiques (NVMe, SSD, HDD), jauges d'espace libre et d'occupation des volumes.
+    4. 🔋 **Batterie & Réseau** : Niveau %, statut secteur/décharge, tension, autonomie estimée, cartes réseau actives (IP, Passerelle, DNS) et test Ping direct.
+    5. ⚡ **Outils & Actions** : Accès direct au gestionnaire de démarrage, analyse SFC, msinfo32, devmgmt, resmon et mdsched.
+  - Outils rapides 1-clic conservés : Gestionnaire des programmes au démarrage (`StartupManagerDialog.xaml`) et rapport complet de batterie HTML.
 - **📦 Gestionnaire de Paquets Winget (`WingetUpdatesDialog.xaml`)** : Sélection interactive des logiciels à mettre à jour, sélection globale, détection et fallback `--force` en cas de conflit de portée.
 - **🧹 Nettoyage Système & Disque (`SystemCleanupDialog.xaml`)** : Assistant Cleanmgr, purge des fichiers temporaires (%TEMP%), corbeille, cache Windows Update, navigateurs et sélection personnalisée.
 - **🎨 Personnalisation (`ContextMenuDialog.xaml`)** : Bascule interactive entre le clic droit classique Windows 10 et moderne Windows 11 avec redémarrage d'Explorer.

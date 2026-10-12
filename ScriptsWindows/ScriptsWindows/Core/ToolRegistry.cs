@@ -43,15 +43,10 @@ public static class ToolRegistry
 
     private static readonly Dictionary<string, string> CommandMap = new(StringComparer.OrdinalIgnoreCase)
     {
-        // ─── Diagnostic (8) ───
-        ["diag_mobo"] = "powershell Get-CimInstance Win32_BaseBoard, Win32_BIOS",
-        ["diag_cpu"] = "powershell Get-CimInstance Win32_Processor / MSAcpi",
-        ["diag_ram"] = "powershell Get-CimInstance Win32_PhysicalMemory",
-        ["diag_smart"] = "powershell Get-PhysicalDisk",
-        ["diag_volumes"] = "powershell Get-Volume",
+        // ─── Diagnostic (3) ───
+        ["diag_center"] = "AlexToolkit.exe (Centre de diagnostic unifié : carte mère, BIOS, CPU, RAM, disques S.M.A.R.T., batterie, réseau)",
+        ["diag_startup_manager"] = "AlexToolkit.exe (Gestionnaire des programmes au démarrage de Windows)",
         ["diag_battery"] = "powercfg.exe /batteryreport",
-        ["diag_network"] = "powershell Get-NetAdapter, Test-NetConnection",
-        ["diag_sfc"] = "sfc.exe /scannow",
 
         // ─── Matériel (7) ───
         ["hw_mdsched"] = "mdsched.exe",
@@ -141,107 +136,40 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterDiagnosticTools()
     {
-        // Sous-titre interne : Carte mère et Processeur
         _allTools.Add(new ScriptTool
         {
-            Id = "diag_mobo",
-            Name = "Carte mère, BIOS et système",
-            Description = "Modèle, fabricant, version BIOS via Get-CimInstance Win32_BaseBoard, Win32_BIOS.",
+            Id = "diag_center",
+            Name = "Centre de Diagnostic Matériel et Système",
+            Description = "Interface unifiée tout-en-un : audit complet de la carte mère, BIOS, CPU, RAM, santé S.M.A.R.T., batterie et réseau.",
             Category = "DIAGNOSTIC",
-            SubHeading = "Carte mère et Processeur",
-            Icon = "🖥️",
-            Action = (log, ct) => DiagnosticService.GetMotherboardBiosInfo(log, ct),
-            Tags = new[] { "carte mère", "bios", "système", "uefi", "processeur", "modèle" }
+            SubHeading = "Centre de Diagnostic et Audit",
+            Icon = "🔍",
+            Action = (log, ct) => DiagnosticService.OpenDiagnosticCenterDialog(log, ct),
+            Tags = new[] { "centre", "diagnostic", "matériel", "système", "cpu", "ram", "disques", "smart", "batterie", "bios", "carte mère", "réseau" }
         });
 
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_cpu",
-            Name = "CPU et températures",
-            Description = "Cœurs, fréquence, charge CPU et sondes thermiques ACPI (MSAcpi_ThermalZoneTemperature).",
-            Category = "DIAGNOSTIC",
-            SubHeading = "Carte mère et Processeur",
-            Icon = "🌡️",
-            Action = (log, ct) => DiagnosticService.GetTemperatureReport(log, ct),
-            Tags = new[] { "cpu", "température", "chaleur", "thermal", "fréquence", "cœurs" }
-        });
-
-        // Sous-titre interne : Mémoire vive (RAM)
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_ram",
-            Name = "RAM - audit matériel",
-            Description = "Vitesse, constructeur, slots et capacité par barrette (Win32_PhysicalMemory).",
-            Category = "DIAGNOSTIC",
-            SubHeading = "Mémoire vive (RAM)",
-            Icon = "🧠",
-            Action = (log, ct) => DiagnosticService.CheckRam(log, ct),
-            Tags = new[] { "ram", "mémoire", "slots", "mhz", "vitesse", "constructeur", "ddr" }
-        });
-
-        // Sous-titre interne : Stockage physique
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_smart",
-            Name = "Disques - santé S.M.A.R.T. et espace",
-            Description = "État de santé S.M.A.R.T. en %, type de disque et espace libre/occupé par lecteur.",
-            Category = "DIAGNOSTIC",
-            SubHeading = "Stockage physique",
-            Icon = "💾",
-            Action = (log, ct) => DiskService.GetDisksHealthAndStorage(log, ct),
-            Tags = new[] { "smart", "santé", "disques", "espace", "volumes", "ssd", "nvme", "hdd", "usure", "libre" }
-        });
-
-        // Sous-titre interne : Alimentation et Batterie
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_battery",
-            Name = "Batterie - santé et usure",
-            Description = "Tension/pourcentage direct et rapport d'usure (powercfg /batteryreport).",
-            Category = "DIAGNOSTIC",
-            SubHeading = "Alimentation et Batterie",
-            Icon = "🔋",
-            Action = (log, ct) => DiagnosticService.GetFullBatteryReport(log, ct),
-            Tags = new[] { "batterie", "powercfg", "batteryreport", "santé", "usure", "tension" }
-        });
-
-        // Sous-titre interne : Interface réseau
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_network",
-            Name = "Carte réseau et connectivité",
-            Description = "Adaptateurs, débits négociés, adresses IP et test ping de connectivité.",
-            Category = "DIAGNOSTIC",
-            SubHeading = "Interface réseau",
-            Icon = "🌐",
-            Action = (log, ct) => DiagnosticService.DiagNetwork(log, ct),
-            Tags = new[] { "réseau", "ping", "connectivité", "ip", "passerelle", "interface", "débit" }
-        });
-
-        // Sous-titre interne : Fichiers système Windows
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_sfc",
-            Name = "Scan intégrité système (SFC)",
-            Description = "Contrôle d'intégrité des fichiers protégés (sfc /scannow).",
-            Category = "DIAGNOSTIC",
-            SubHeading = "Fichiers système Windows",
-            Icon = "🛡️",
-            Action = (log, ct) => RepairService.RunSfc(log, ct),
-            Tags = new[] { "sfc", "scannow", "intégrité", "fichiers", "système" }
-        });
-
-        // Sous-titre interne : Démarrage et Processus système
         _allTools.Add(new ScriptTool
         {
             Id = "diag_startup_manager",
             Name = "Gestionnaire des Programmes au Démarrage",
             Description = "Visualiser les logiciels qui se lancent avec Windows et désactiver les éléments superflus.",
             Category = "DIAGNOSTIC",
-            SubHeading = "Démarrage et Processus système",
+            SubHeading = "Outils et Actions Rapides",
             Icon = "🚀",
             Action = (log, ct) => DiagnosticService.OpenStartupManagerDialog(log, ct),
             Tags = new[] { "démarrage", "startup", "boot", "programmes", "applications", "accélérer", "taskmgr" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "diag_battery",
+            Name = "Batterie - santé et usure",
+            Description = "Tension/pourcentage direct et rapport d'usure complet (powercfg /batteryreport).",
+            Category = "DIAGNOSTIC",
+            SubHeading = "Outils et Actions Rapides",
+            Icon = "🔋",
+            Action = (log, ct) => DiagnosticService.GetFullBatteryReport(log, ct),
+            Tags = new[] { "batterie", "powercfg", "batteryreport", "santé", "usure", "tension" }
         });
     }
 

@@ -9,6 +9,19 @@ namespace ScriptsWindows.Services;
 /// </summary>
 public class DiagnosticService
 {
+    /// <summary>Ouvre le Centre de Diagnostic Matériel et Système interactif.</summary>
+    public static async Task OpenDiagnosticCenterDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.DiagnosticCenterDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
     // ────────────────────────────────────────────────────────────────
     //  RAPPORT SYSTÈME COMPLET  (sys_report)
     //  Équivalent : powershell Get-ComputerInfo + WMI queries
