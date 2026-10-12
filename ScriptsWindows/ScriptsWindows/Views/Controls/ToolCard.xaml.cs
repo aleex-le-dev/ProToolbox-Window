@@ -12,15 +12,13 @@ namespace ScriptsWindows.Views.Controls;
 public partial class ToolCard : UserControl
 {
     // ── Brushes précalculés pour l'étoile des favoris ──────────
-    private static readonly SolidColorBrush BrushFavGoldFill   = new(Color.FromRgb(251, 191, 36)); // Or éclatant
-    private static readonly SolidColorBrush BrushFavGoldStroke = new(Color.FromRgb(217, 119, 6));  // Filet or contrasté
-    private static readonly SolidColorBrush BrushFavEmptyStroke= new(Color.FromRgb(148, 163, 184)); // Gris ardoise épuré
+    private static readonly SolidColorBrush BrushFavGold  = new(Color.FromRgb(251, 191, 36)); // Or éclatant #FBBF24
+    private static readonly SolidColorBrush BrushFavMuted = new(Color.FromRgb(148, 163, 184)); // Gris ardoise épuré
 
     static ToolCard()
     {
-        BrushFavGoldFill.Freeze();
-        BrushFavGoldStroke.Freeze();
-        BrushFavEmptyStroke.Freeze();
+        BrushFavGold.Freeze();
+        BrushFavMuted.Freeze();
     }
 
     // ── Champs ───────────────────────────────────────────────────────
@@ -54,33 +52,19 @@ public partial class ToolCard : UserControl
         if (_tool == null) return;
         bool isFav = FavoritesManager.IsFavorite(_tool.Id);
 
-        // Strictement la même taille 20x20 qu'elle soit jaune ou non
-        FavViewbox.Width = 20;
-        FavViewbox.Height = 20;
-
         if (isFav)
         {
-            // Étoile jaune/dorée : même taille exacte, remplie d'or pur
-            PathFav.Fill = BrushFavGoldFill;
-            PathFav.Stroke = BrushFavGoldStroke;
-            PathFav.StrokeThickness = 1.0;
-            PathFav.Effect = new System.Windows.Media.Effects.DropShadowEffect
-            {
-                Color = Color.FromRgb(245, 158, 11),
-                BlurRadius = 6,
-                ShadowDepth = 0,
-                Opacity = 0.85
-            };
-            BtnFavorite.ToolTip = "⭐ Retirer des favoris";
+            // Étoile pleine officielle Windows (Segoe MDL2 Assets \uE735 = FavoriteStar)
+            TxtFavIcon.Text       = "\uE735";
+            TxtFavIcon.Foreground = BrushFavGold;
+            BtnFavorite.ToolTip   = "⭐ Retirer des favoris";
         }
         else
         {
-            // Étoile non-jaune (vide) : même taille exacte, contour épuré
-            PathFav.Fill = Brushes.Transparent;
-            PathFav.Stroke = BrushFavEmptyStroke;
-            PathFav.StrokeThickness = 1.5;
-            PathFav.Effect = null;
-            BtnFavorite.ToolTip = "☆ Ajouter aux favoris";
+            // Étoile contour officielle Windows (Segoe MDL2 Assets \uE734 = FavoriteStarOutline)
+            TxtFavIcon.Text       = "\uE734";
+            TxtFavIcon.Foreground = BrushFavMuted;
+            BtnFavorite.ToolTip   = "☆ Ajouter aux favoris";
         }
     }
 

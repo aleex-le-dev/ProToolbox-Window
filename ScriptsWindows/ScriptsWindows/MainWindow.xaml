@@ -121,17 +121,12 @@
                                 Style="{StaticResource SidebarItem}"
                                 Click="NavFavoris_Click">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Viewbox Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center">
-                                    <Path Data="M 12,2 L 15.09,8.26 L 22,9.27 L 17,14.14 L 18.18,21.02 L 12,17.77 L 5.82,21.02 L 7,14.14 L 2,9.27 Z"
-                                          Fill="#FBBF24"
-                                          Stroke="#D97706"
-                                          StrokeThickness="1.0"
-                                          Stretch="Uniform">
-                                        <Path.Effect>
-                                            <DropShadowEffect Color="#F59E0B" BlurRadius="6" ShadowDepth="0" Opacity="0.85" />
-                                        </Path.Effect>
-                                    </Path>
-                                </Viewbox>
+                                <TextBlock FontFamily="Segoe MDL2 Assets"
+                                           FontSize="15"
+                                           Text="&#xE735;"
+                                           Foreground="#FBBF24"
+                                           Margin="0,0,10,0"
+                                           VerticalAlignment="Center" />
                                 <TextBlock Text="Favoris" VerticalAlignment="Center" FontWeight="Medium" />
                             </StackPanel>
                         </Button>
