@@ -104,6 +104,7 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <FontFamily x:Key="FontMain">Segoe UI Variable, Segoe UI, Sans-Serif</FontFamily>
     <FontFamily x:Key="FontMono">Cascadia Code, Consolas, Courier New</FontFamily>
+    <FontFamily x:Key="FontEmoji">Segoe UI Emoji, Segoe MDL2 Assets, Segoe UI Symbol, Segoe UI</FontFamily>
 
     <sys:Double x:Key="FontSizeXS">11</sys:Double>
     <sys:Double x:Key="FontSizeSM">12</sys:Double>

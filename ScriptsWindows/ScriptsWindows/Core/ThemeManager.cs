@@ -52,7 +52,7 @@ public static class ThemeManager
         {
             Id = "obsidian",
             Name = "Noir Pur OLED",
-            Icon = "🖤",
+            Icon = "🌙",
             VisualStyle = "Noir absolu profond (#000000), contrastes tranchants & pureté OLED",
             BgDeep = Color.FromRgb(0, 0, 0),                 // Noir absolu pur 0,0,0
             BgDeepGradientEnd = Color.FromRgb(2, 2, 4),      // Noir profond
@@ -62,7 +62,7 @@ public static class ThemeManager
             BgInput = Color.FromRgb(24, 24, 30),             // Fond des badges
             Accent = Color.FromRgb(99, 102, 241),
             AccentHover = Color.FromRgb(129, 140, 248),
-            AccentDim = Color.FromArgb(70, 99, 102, 241),
+            AccentDim = Color.FromArgb(80, 99, 102, 241),
             Border = Color.FromRgb(32, 32, 42),              // Filet sombre discret
             BorderAccent = Color.FromRgb(99, 102, 241),
             TextPrimary = Color.FromRgb(255, 255, 255),      // Blanc pur éclatant sur fond noir

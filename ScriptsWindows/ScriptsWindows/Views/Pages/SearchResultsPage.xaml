@@ -23,7 +23,7 @@
                     HorizontalAlignment="Center"
                     Margin="0,40,0,0">
                 <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="🔎" FontSize="44" HorizontalAlignment="Center"/>
+                    <TextBlock Text="🔎" FontSize="44" FontFamily="{StaticResource FontEmoji}" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
                     <TextBlock Text="Aucun outil ne correspond à votre recherche"
                                FontFamily="{StaticResource FontMain}"
                                FontSize="16" FontWeight="SemiBold"

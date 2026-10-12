@@ -55,9 +55,13 @@
                 <!-- Badge Icône moderne -->
                 <Border Grid.Column="0" 
                         Background="{DynamicResource AccentDim}" 
+                        BorderBrush="{DynamicResource BorderAccent}"
+                        BorderThickness="0.8"
                         CornerRadius="8" Width="36" Height="36" Margin="0,0,10,0"
                         VerticalAlignment="Center">
                     <TextBlock x:Name="TxtIcon" Text="⚡" FontSize="17" 
+                               FontFamily="{StaticResource FontEmoji}"
+                               Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
 
@@ -102,6 +106,8 @@
                 <Border x:Name="BadgeCategory"
                         DockPanel.Dock="Left"
                         Background="{DynamicResource BgInput}"
+                        BorderBrush="{DynamicResource Border}"
+                        BorderThickness="1"
                         CornerRadius="6"
                         Padding="7,3,7,3"
                         VerticalAlignment="Center"
@@ -109,6 +115,7 @@
                     <TextBlock x:Name="TxtCategory"
                                Text="Catégorie"
                                FontSize="10.5"
+                               FontFamily="{StaticResource FontEmoji}"
                                FontWeight="Medium"
                                Foreground="{DynamicResource TextMuted}" />
                 </Border>

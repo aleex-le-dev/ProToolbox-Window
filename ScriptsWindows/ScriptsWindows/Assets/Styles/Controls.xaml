@@ -170,6 +170,15 @@
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
+    <!-- Icône de la barre latérale (support emojis et symboles contrastés) -->
+    <Style x:Key="SidebarIcon" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FontEmoji}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!--               SCROLLBAR PERSONNALISÉE                          -->
     <!-- ═══════════════════════════════════════════════════════════════ -->

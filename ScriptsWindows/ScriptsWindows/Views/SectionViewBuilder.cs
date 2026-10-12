@@ -466,8 +466,10 @@ public static class SectionViewBuilder
                 Text = catGroup.CategoryIcon,
                 FontSize = 15,
                 Margin = new Thickness(0, 0, 8, 0),
+                FontFamily = new FontFamily("Segoe UI Emoji, Segoe MDL2 Assets, Segoe UI Symbol, Segoe UI"),
                 VerticalAlignment = VerticalAlignment.Center
             };
+            iconBlock.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
 
             var titleBlock = new TextBlock
             {
