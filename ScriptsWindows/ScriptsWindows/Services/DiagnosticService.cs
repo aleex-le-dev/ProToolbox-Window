@@ -240,23 +240,34 @@ Write-Output $sep
 Write-Output '  ANALYSE MÉMOIRE RAM'
 Write-Output $sep
 
-$sticks = Get-WmiObject Win32_PhysicalMemory
-if (-not $sticks) { Write-Output '[!] Aucune information mémoire disponible'; return }
+$sticks = @(Get-CimInstance Win32_PhysicalMemory -ErrorAction SilentlyContinue)
+if (-not $sticks -or $sticks.Count -eq 0) {
+    $sticks = @(Get-WmiObject Win32_PhysicalMemory -ErrorAction SilentlyContinue)
+}
+if (-not $sticks -or $sticks.Count -eq 0) { Write-Output '[!] Aucune information mémoire disponible'; return }
+
+$memTypes = @{ 20='DDR'; 21='DDR2'; 24='DDR3'; 26='DDR4'; 29='LPDDR3'; 30='LPDDR4'; 31='LPDDR4X'; 34='DDR5'; 35='LPDDR5X'; 36='LPDDR5' }
+$formFactors = @{ 8='DIMM'; 12='SODIMM'; 0='Intégrée (Soudée)' }
 
 $i = 1
 foreach ($s in $sticks) {
     $capacityGB = [math]::Round($s.Capacity / 1GB, 2)
+    $rawType = if ($s.SMBIOSMemoryType -gt 0) { $s.SMBIOSMemoryType } else { $s.MemoryType }
+    $tName = if ($memTypes.ContainsKey([int]$rawType)) { $memTypes[[int]$rawType] } elseif ($rawType -gt 0) { ""Type $rawType"" } else { ""Standard"" }
+    $fName = if ($formFactors.ContainsKey([int]$s.FormFactor)) { $formFactors[[int]$s.FormFactor] } else { ""Format $($s.FormFactor)"" }
+
     Write-Output ""[SLOT $i] Capacité : $capacityGB GB""
     Write-Output ""[SLOT $i] Vitesse  : $($s.Speed) MHz""
-    Write-Output ""[SLOT $i] Type     : $($s.MemoryType) / FormFactor: $($s.FormFactor)""
+    Write-Output ""[SLOT $i] Type     : $tName ($fName)""
     Write-Output ""[SLOT $i] Fabricant: $($s.Manufacturer)""
     $i++
 }
 
 $total = ($sticks | Measure-Object -Property Capacity -Sum).Sum
 $totalGB = [math]::Round($total / 1GB, 2)
+$usedSlots = $sticks.Count
 Write-Output ""$sep""
-Write-Output ""[TOTAL] $totalGB GB installés — $i slots utilisés""
+Write-Output ""[TOTAL] $totalGB GB installés — $usedSlots slots utilisés""
 
 # Test outil Windows
 Write-Output '[i] Pour un test approfondi, lancez : mdsched.exe'

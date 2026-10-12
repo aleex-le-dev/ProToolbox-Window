@@ -195,25 +195,13 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "diag_smart",
-            Name = "Disques - santé S.M.A.R.T.",
-            Description = "Santé S.M.A.R.T. et type de disque (NVMe/SSD/HDD via Get-PhysicalDisk).",
+            Name = "Disques - santé S.M.A.R.T. et espace",
+            Description = "État de santé S.M.A.R.T. en %, type de disque et espace libre/occupé par lecteur.",
             Category = "DIAGNOSTIC",
             SubHeading = "Stockage physique",
             Icon = "💾",
-            Action = (log, ct) => DiskService.GetPhysicalDisks(log, ct),
-            Tags = new[] { "smart", "santé", "disques", "ssd", "nvme", "hdd", "usure" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_volumes",
-            Name = "Disques - volumes et espace",
-            Description = "Lecteurs, taux d'occupation et espace disponible (Get-Volume).",
-            Category = "DIAGNOSTIC",
-            SubHeading = "Stockage physique",
-            Icon = "📊",
-            Action = (log, ct) => DiskService.GetVolumesStatus(log, ct),
-            Tags = new[] { "volumes", "espace", "disque", "libre", "taille", "partitions" }
+            Action = (log, ct) => DiskService.GetDisksHealthAndStorage(log, ct),
+            Tags = new[] { "smart", "santé", "disques", "espace", "volumes", "ssd", "nvme", "hdd", "usure", "libre" }
         });
 
         // Sous-titre interne : Alimentation et Batterie
@@ -723,17 +711,6 @@ public static class ToolRegistry
     private static void RegisterDiskTools()
     {
         // Sous-titre interne : Tables de partitions et Volumes
-        _allTools.Add(new ScriptTool
-        {
-            Id = "disk_mgmt_gui",
-            Name = "Gestionnaire de disques (GUI)",
-            Description = "Console de gestion des partitions (diskmgmt.msc).",
-            Category = "DISQUE",
-            SubHeading = "Tables de partitions et Volumes",
-            Icon = "💽",
-            Action = (log, ct) => DiskService.LaunchDiskManagement(log, ct),
-            Tags = new[] { "diskmgmt", "gestionnaire", "partitions", "volumes", "msc" }
-        });
 
         _allTools.Add(new ScriptTool
         {
@@ -776,13 +753,13 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "disk_bitlocker",
-            Name = "État chiffrement BitLocker",
-            Description = "État de protection et de chiffrement des disques (manage-bde).",
+            Name = "Gestion et Chiffrement BitLocker",
+            Description = "Consulter l'état, choisir le lecteur et activer ou désactiver la protection BitLocker.",
             Category = "DISQUE",
             SubHeading = "Sécurité et Chiffrement de volume",
             Icon = "🔒",
-            Action = (log, ct) => DiagnosticService.CheckBitLocker(log, ct),
-            Tags = new[] { "bitlocker", "chiffrement", "sécurité", "volumes", "manage-bde" }
+            Action = (log, ct) => DiskService.ManageBitLocker(log, ct),
+            Tags = new[] { "bitlocker", "chiffrement", "sécurité", "volumes", "manage-bde", "activer", "désactiver" }
         });
     }
 

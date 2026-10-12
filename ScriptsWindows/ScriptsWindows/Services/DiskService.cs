@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Services;
@@ -20,30 +21,78 @@ public static class DiskService
         return Task.CompletedTask;
     }
 
-    /// <summary>Affiche la liste des disques physiques, modèles et santé.</summary>
-    public static async Task GetPhysicalDisks(Action<string> onOutput, CancellationToken ct = default)
+    /// <summary>Affiche la santé S.M.A.R.T. en % et l'espace de stockage de chaque disque physique et volume.</summary>
+    public static async Task GetDisksHealthAndStorage(Action<string> onOutput, CancellationToken ct = default)
     {
-        onOutput("[i] Analyse des disques physiques...");
+        onOutput("[i] Analyse approfondie des disques, de leur santé et de l'espace...");
         await PowerShellRunner.RunAsync(@"
-Write-Output '=== DISQUES PHYSIQUES ET ÉTAT S.M.A.R.T. ==='
-Get-PhysicalDisk | Format-Table -AutoSize Number, FriendlyName, MediaType, HealthStatus, OperationalStatus, @{N='Taille (Go)';E={[math]::Round($_.Size/1GB, 1)}} | Out-String | Write-Output
-", onOutput, ct);
-    }
+$pDisks = @(Get-PhysicalDisk -ErrorAction SilentlyContinue)
+$disks = @(Get-Disk -ErrorAction SilentlyContinue)
 
-    /// <summary>Affiche les volumes, lettres de lecteur et espace libre.</summary>
-    public static async Task GetVolumesStatus(Action<string> onOutput, CancellationToken ct = default)
-    {
-        onOutput("[i] Analyse des volumes et de l'espace disque...");
-        await PowerShellRunner.RunAsync(@"
-Write-Output '=== VOLUMES ET ESPACE DISQUE ==='
-Get-Volume | Where-Object { $_.DriveLetter } | ForEach-Object {
-    $free = [math]::Round($_.SizeRemaining / 1GB, 2)
-    $total = [math]::Round($_.Size / 1GB, 2)
-    $pct = if ($total -gt 0) { [math]::Round(($free / $total) * 100, 1) } else { 0 }
-    Write-Output ""Lecteur $($_.DriveLetter): [$($_.FileSystemType)] - Libre: $free Go / $total Go ($pct% libre)""
+if (-not $disks -or $disks.Count -eq 0) {
+    Write-Output '[!] Aucun disque détecté par Windows'
+    return
+}
+
+foreach ($d in $disks) {
+    $pd = $pDisks | Where-Object { $_.DeviceId -eq $d.Number -or $_.FriendlyName -eq $d.FriendlyName } | Select-Object -First 1
+    $media = if ($pd.MediaType) { $pd.MediaType } else { 'Disque' }
+    $bus = if ($pd.BusType) { $pd.BusType } else { $d.BusType }
+    
+    # Évaluation de la santé S.M.A.R.T. en %
+    $healthLabel = '100% (Sain / Intact)'
+    $counter = try { Get-StorageReliabilityCounter -Disk $pd -ErrorAction SilentlyContinue } catch { $null }
+    if ($counter -and $counter.Wear -ne $null) {
+        $wear = [int]$counter.Wear
+        $healthPct = [math]::Max(0, 100 - $wear)
+        $healthLabel = ""$healthPct% (Usure : $wear%)""
+    } else {
+        if ($d.HealthStatus -eq 'Healthy') { $healthLabel = '100% (Sain / Intact)' }
+        elseif ($d.HealthStatus -eq 'Warning') { $healthLabel = '70% (Avertissement S.M.A.R.T.)' }
+        elseif ($d.HealthStatus -eq 'Unhealthy') { $healthLabel = '0% (Défaillant / Critique)' }
+        else { $healthLabel = ""$($d.HealthStatus)"" }
+    }
+    
+    $sizeGB = [math]::Round($d.Size / 1GB, 1)
+    
+    Write-Output '=================================================='
+    Write-Output "" DISQUE $($d.Number) : $($d.FriendlyName)""
+    Write-Output '=================================================='
+    Write-Output ""• Type             : $media ($bus)""
+    Write-Output ""• Capacité totale  : $sizeGB Go""
+    Write-Output ""• Santé S.M.A.R.T. : $healthLabel""
+    Write-Output ""• Statut           : $($d.OperationalStatus)""
+    
+    $parts = $d | Get-Partition -ErrorAction SilentlyContinue
+    $volumes = $parts | Get-Volume -ErrorAction SilentlyContinue | Where-Object { $_.DriveLetter }
+    
+    if ($volumes) {
+        Write-Output '• Volumes et Espace :'
+        foreach ($v in $volumes) {
+            $freeGB = [math]::Round($v.SizeRemaining / 1GB, 2)
+            $totGB  = [math]::Round($v.Size / 1GB, 2)
+            $usedGB = [math]::Round($totGB - $freeGB, 2)
+            $pctFree = if ($totGB -gt 0) { [math]::Round(($freeGB / $totGB) * 100, 1) } else { 0 }
+            $pctUsed = if ($totGB -gt 0) { [math]::Round(($usedGB / $totGB) * 100, 1) } else { 0 }
+            Write-Output ""   -> Lecteur $($v.DriveLetter): [$($v.FileSystemType)]""
+            Write-Output ""      - Espace libre   : $freeGB Go sur $totGB Go ($pctFree% disponible)""
+            Write-Output ""      - Espace utilisé : $usedGB Go ($pctUsed% occupé)""
+        }
+    } else {
+        Write-Output '• Volumes          : Aucune partition avec lettre attribuée'
+    }
+    Write-Output ''
 }
 ", onOutput, ct);
     }
+
+    /// <summary>Rétro-compatibilité : appelle l'analyse unifiée des disques et de l'espace.</summary>
+    public static Task GetPhysicalDisks(Action<string> onOutput, CancellationToken ct = default)
+        => GetDisksHealthAndStorage(onOutput, ct);
+
+    /// <summary>Rétro-compatibilité : appelle l'analyse unifiée des disques et de l'espace.</summary>
+    public static Task GetVolumesStatus(Action<string> onOutput, CancellationToken ct = default)
+        => GetDisksHealthAndStorage(onOutput, ct);
 
     /// <summary>Exécute l'optimisation de disque (TRIM pour SSD, défragmentation pour HDD).</summary>
     public static async Task OptimizeDrives(Action<string> onOutput, CancellationToken ct = default)
@@ -85,5 +134,21 @@ Get-Volume | Where-Object { $_.DriveLetter } | ForEach-Object {
         CommandRunner.StartProcess("cleanmgr.exe", "/sagerun:1");
         onOutput("[OK] Nettoyage de disque lancé");
         return Task.CompletedTask;
+    }
+
+    /// <summary>Ouvre l'interface interactive de gestion et chiffrement BitLocker (sélection de disque, état, activation/désactivation).</summary>
+    public static async Task ManageBitLocker(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Analyse de l'état BitLocker sur tous les lecteurs...");
+        await DiagnosticService.CheckBitLocker(onOutput, ct);
+
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.BitLockerDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 }
