@@ -47,36 +47,7 @@ public static class ThemeManager
 {
     public static readonly List<AppTheme> AvailableThemes = new()
     {
-        // 1. CLAIR ÉPURÉ (PAR DÉFAUT)
-        new AppTheme
-        {
-            Id = "light",
-            Name = "Clair Épuré",
-            Icon = "☀️",
-            VisualStyle = "Interface blanche moderne, finitions sobres & contraste parfait",
-            BgDeep = Color.FromRgb(248, 250, 252),            // Blanc gris très doux (Slate 50)
-            BgDeepGradientEnd = Color.FromRgb(241, 245, 249), // Slate 100
-            BgSidebar = Color.FromRgb(255, 255, 255),         // Blanc pur
-            BgCard = Color.FromRgb(255, 255, 255),            // Blanc pur
-            BgCardHover = Color.FromRgb(241, 245, 249),       // Survol subtil
-            BgInput = Color.FromRgb(241, 245, 249),           // Fond des badges
-            Accent = Color.FromRgb(37, 99, 235),              // Bleu royal moderne
-            AccentHover = Color.FromRgb(29, 78, 216),
-            AccentDim = Color.FromArgb(40, 37, 99, 235),      // Voile bleuté léger
-            Border = Color.FromRgb(226, 232, 240),            // Bordures douces
-            BorderAccent = Color.FromRgb(59, 130, 246),
-            TextPrimary = Color.FromRgb(15, 23, 42),          // Texte principal foncé très lisible
-            TextSecondary = Color.FromRgb(71, 85, 105),       // Texte secondaire
-            TextMuted = Color.FromRgb(148, 163, 184),         // Texte atténué
-            ShadowColor = Color.FromRgb(15, 23, 42),
-            ShadowOpacity = 0.06,
-            ShadowBlur = 10,
-            CardBorderThickness = 1.0,
-            TerminalBg = Color.FromRgb(15, 23, 42),           // Terminal foncé contrasté
-            TerminalText = Color.FromRgb(248, 250, 252)
-        },
-
-        // 2. NOIR PUR OLED (Vrai noir absolu #000000 - Deep Black)
+        // 1. NOIR PUR OLED (PAR DÉFAUT - Vrai noir absolu #000000)
         new AppTheme
         {
             Id = "obsidian",
@@ -103,10 +74,39 @@ public static class ThemeManager
             CardBorderThickness = 1.0,
             TerminalBg = Color.FromRgb(0, 0, 0),             // Terminal noir pur 0,0,0
             TerminalText = Color.FromRgb(245, 245, 250)
+        },
+
+        // 2. CLAIR ÉPURÉ
+        new AppTheme
+        {
+            Id = "light",
+            Name = "Clair Épuré",
+            Icon = "☀️",
+            VisualStyle = "Interface blanche moderne, finitions sobres & contraste parfait",
+            BgDeep = Color.FromRgb(248, 250, 252),            // Blanc gris très doux (Slate 50)
+            BgDeepGradientEnd = Color.FromRgb(241, 245, 249), // Slate 100
+            BgSidebar = Color.FromRgb(255, 255, 255),         // Blanc pur
+            BgCard = Color.FromRgb(255, 255, 255),            // Blanc pur
+            BgCardHover = Color.FromRgb(241, 245, 249),       // Survol subtil
+            BgInput = Color.FromRgb(241, 245, 249),           // Fond des badges
+            Accent = Color.FromRgb(37, 99, 235),              // Bleu royal moderne
+            AccentHover = Color.FromRgb(29, 78, 216),
+            AccentDim = Color.FromArgb(40, 37, 99, 235),      // Voile bleuté léger
+            Border = Color.FromRgb(226, 232, 240),            // Bordures douces
+            BorderAccent = Color.FromRgb(59, 130, 246),
+            TextPrimary = Color.FromRgb(15, 23, 42),          // Texte principal foncé très lisible
+            TextSecondary = Color.FromRgb(71, 85, 105),       // Texte secondaire
+            TextMuted = Color.FromRgb(148, 163, 184),         // Texte atténué
+            ShadowColor = Color.FromRgb(15, 23, 42),
+            ShadowOpacity = 0.06,
+            ShadowBlur = 10,
+            CardBorderThickness = 1.0,
+            TerminalBg = Color.FromRgb(15, 23, 42),           // Terminal foncé contrasté
+            TerminalText = Color.FromRgb(248, 250, 252)
         }
     };
 
-    private static int _currentIndex = 0; // Démarre sur 0 = Clair Épuré
+    private static int _currentIndex = 0; // Démarre sur 0 = Noir Pur OLED
     private static string? _lastAppliedThemeId;
 
     public static AppTheme CurrentTheme => AvailableThemes[_currentIndex];
