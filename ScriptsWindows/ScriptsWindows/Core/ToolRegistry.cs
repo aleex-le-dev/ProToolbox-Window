@@ -84,7 +84,6 @@ public static class ToolRegistry
 
         // ─── Secrets & Clés (5) ───
         ["sec_wifi_show"] = "netsh.exe wlan show profiles key=clear",
-        ["sec_wifi_export"] = "netsh.exe wlan export profile folder=%USERPROFILE%\\Desktop key=clear",
         ["sec_audit_sensitive"] = "AlexToolkit.exe (Audit C# approfondi .ssh, .aws, .env, documents secrets)",
         ["sec_win_key"] = "wmic.exe path softwarelicensingservice get OA3xOriginalProductKey",
         ["sec_browser_profiles"] = "AlexToolkit.exe (Lecteur SQLite natif Chrome, Edge, Brave, Firefox)",
@@ -584,18 +583,6 @@ public static class ToolRegistry
             Icon = "📶",
             Action = (log, ct) => SecurityService.DumpWifiPasswords(log, ct),
             Tags = new[] { "wifi", "mot de passe", "clés", "clair", "sécurité" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_wifi_export",
-            Name = "Exporter profils & clés Wi-Fi",
-            Description = "Sauvegarde des profils et clés Wi-Fi en XML dans le dossier de votre choix.",
-            Category = "SECRETS",
-            SubHeading = "Cartes réseau sans fil (Wi-Fi)",
-            Icon = "💾",
-            Action = (log, ct) => ExportService.ExportWifiAndApps(log, ct),
-            Tags = new[] { "export", "wifi", "xml", "bureau", "profils", "sauvegarde" }
         });
 
         // Sous-titre interne : Dossiers utilisateurs & Clés d'authentification

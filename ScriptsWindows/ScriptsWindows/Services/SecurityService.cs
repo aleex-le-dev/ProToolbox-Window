@@ -50,64 +50,80 @@ Write-Output $creds
             return;
         }
 
-        onOutput($"[OK] {profiles.Count} profil(s) Wi-Fi détecté(s) :\n");
-
-        var wifiResults = new List<(string Ssid, string? Password)>();
-
-        foreach (var ssid in profiles)
+        // Extraction en parallèle ultra-rapide de l'ensemble des clés Wi-Fi
+        var wifiResults = new (string Ssid, string? Password)[profiles.Count];
+        var parallelOptions = new ParallelOptions
         {
-            ct.ThrowIfCancellationRequested();
+            MaxDegreeOfParallelism = 10,
+            CancellationToken = ct
+        };
 
-            var details = await CommandRunner.RunAsync($"netsh wlan show profile name=\"{ssid}\" key=clear", ct);
-            string? password = null;
-
-            foreach (var dLine in details.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+        await Parallel.ForEachAsync(Enumerable.Range(0, profiles.Count), parallelOptions, async (i, token) =>
+        {
+            var ssid = profiles[i];
+            try
             {
-                if (dLine.Contains("Contenu de la cl", StringComparison.OrdinalIgnoreCase) ||
-                    dLine.Contains("Key Content", StringComparison.OrdinalIgnoreCase))
+                var details = await CommandRunner.RunAsync($"netsh wlan show profile name=\"{ssid}\" key=clear", token);
+                string? password = null;
+
+                foreach (var dLine in details.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    var cIdx = dLine.IndexOf(':');
-                    if (cIdx >= 0)
+                    if (dLine.Contains("Contenu de la cl", StringComparison.OrdinalIgnoreCase) ||
+                        dLine.Contains("Key Content", StringComparison.OrdinalIgnoreCase))
                     {
-                        password = dLine.Substring(cIdx + 1).Trim();
-                        break;
+                        var cIdx = dLine.IndexOf(':');
+                        if (cIdx >= 0)
+                        {
+                            password = dLine.Substring(cIdx + 1).Trim();
+                            break;
+                        }
                     }
                 }
+
+                wifiResults[i] = (ssid, password);
             }
+            catch
+            {
+                wifiResults[i] = (ssid, null);
+            }
+        });
 
-            wifiResults.Add((ssid, password));
+        // Affichage groupé et instantané dans la console (sans défilement lent un par un)
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"[OK] {profiles.Count} profil(s) Wi-Fi détecté(s) :\n");
 
+        foreach (var (ssid, password) in wifiResults)
+        {
+            sb.AppendLine($"📶 [SSID] {ssid}");
             if (!string.IsNullOrEmpty(password))
             {
-                onOutput($"📶 [SSID] {ssid}");
-                onOutput($"   🔑 Mot de passe : {password}");
+                sb.AppendLine($"   🔑 Mot de passe : {password}");
             }
             else
             {
-                onOutput($"📶 [SSID] {ssid}");
-                onOutput($"   🔓 Mot de passe : (Réseau ouvert ou clé entreprise)");
+                sb.AppendLine($"   🔓 Mot de passe : (Réseau ouvert ou clé entreprise)");
             }
-            onOutput("--------------------------------------------------");
+            sb.AppendLine("--------------------------------------------------");
         }
 
-        // Boîte de dialogue pour proposer la sauvegarde dans un dossier de destination
-        if (wifiResults.Count > 0)
+        onOutput(sb.ToString().TrimEnd());
+
+        // Boîte de dialogue pour proposer la sauvegarde directe du fichier texte sans sous-dossier
+        if (wifiResults.Length > 0)
         {
-            var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
-                title: "Sélectionnez l'emplacement où copier les mots de passe Wi-Fi",
-                folderPrefix: "Sauvegarde_MotsDePasse_Wifi",
-                confirmQuestion: $"{wifiResults.Count} profil(s) Wi-Fi et clés ont été analysés.\n\nSouhaitez-vous rassembler et exporter l'ensemble de ces mots de passe dans un dossier sécurisé de votre choix ?",
+            var targetFilePath = FolderDialogHelper.AskSaveFilePath(
+                title: "Enregistrer les mots de passe Wi-Fi",
+                defaultFileName: "Mots_de_passe_WiFi.txt",
+                confirmQuestion: $"{wifiResults.Length} profil(s) Wi-Fi et clés ont été analysés.\n\nSouhaitez-vous enregistrer l'ensemble de ces mots de passe dans un fichier texte à l'emplacement de votre choix ?",
                 confirmTitle: "Sauvegarde des mots de passe Wi-Fi — Alex Toolkit"
             );
 
-            if (!string.IsNullOrEmpty(targetDir))
+            if (!string.IsNullOrEmpty(targetFilePath))
             {
                 onOutput("\n═══════════════════════════════════════════════════════════════");
-                onOutput("  📁 EXPORTATION SÉCURISÉE DES MOTS DE PASSE WI-FI");
+                onOutput("  📁 EXPORTATION DES MOTS DE PASSE WI-FI");
                 onOutput("═══════════════════════════════════════════════════════════════");
-                onOutput($"[i] Dossier de destination : {targetDir}");
 
-                string reportPath = System.IO.Path.Combine(targetDir, "Mots_de_passe_WiFi.txt");
                 var reportLines = new List<string>
                 {
                     "===========================================================",
@@ -124,18 +140,10 @@ Write-Output $creds
                     reportLines.Add("-----------------------------------------------------------");
                 }
 
-                await System.IO.File.WriteAllLinesAsync(reportPath, reportLines, ct);
+                await System.IO.File.WriteAllLinesAsync(targetFilePath, reportLines, ct);
 
-                // Export natif complémentaire des profils XML netsh
-                try
-                {
-                    await CommandRunner.RunAsync($"netsh wlan export profile key=clear folder=\"{targetDir}\"", ct);
-                }
-                catch { }
-
-                onOutput($"✅ [SUCCÈS] Rapport texte créé : {reportPath}");
-                onOutput($"✅ [SUCCÈS] Profils XML exportés dans : {targetDir}");
-                FolderDialogHelper.OpenInExplorer(targetDir);
+                onOutput($"✅ [SUCCÈS] Mots de passe enregistrés directement dans : {targetFilePath}");
+                FolderDialogHelper.OpenInExplorer(targetFilePath);
             }
             else
             {
@@ -172,16 +180,15 @@ Write-Output $creds
 
         onOutput("\n═══════════════════════════════════════════════════════════════");
 
-        var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
-            title: "Sélectionnez l'emplacement où sauvegarder les mots de passe générés",
-            folderPrefix: "Generation_MotsDePasse",
-            confirmQuestion: "Une série de mots de passe sécurisés vient d'être générée.\n\nSouhaitez-vous enregistrer ces mots de passe dans un fichier texte au sein d'un dossier de votre choix ?",
+        var targetFilePath = FolderDialogHelper.AskSaveFilePath(
+            title: "Enregistrer les mots de passe générés",
+            defaultFileName: "Mots_de_passe_generes.txt",
+            confirmQuestion: "Une série de mots de passe sécurisés vient d'être générée.\n\nSouhaitez-vous enregistrer ces mots de passe dans un fichier texte à l'emplacement de votre choix ?",
             confirmTitle: "Génération de mots de passe — Alex Toolkit"
         );
 
-        if (!string.IsNullOrEmpty(targetDir))
+        if (!string.IsNullOrEmpty(targetFilePath))
         {
-            string filePath = System.IO.Path.Combine(targetDir, "Mots_de_passe_generes.txt");
             var lines = new List<string>
             {
                 "===========================================================",
@@ -194,15 +201,15 @@ Write-Output $creds
 
             foreach (var item in generated)
             {
-                lines.Add($"Label    : {item.Label}");
+                lines.Add($"Label        : {item.Label}");
                 lines.Add($"Mot de passe : {item.Password}");
-                lines.Add($"Longueur : {item.Length} caractères");
+                lines.Add($"Longueur     : {item.Length} caractères");
                 lines.Add("-----------------------------------------------------------");
             }
 
-            await System.IO.File.WriteAllLinesAsync(filePath, lines, ct);
-            onOutput($"\n✅ [SUCCÈS] Mots de passe enregistrés dans : {filePath}");
-            FolderDialogHelper.OpenInExplorer(targetDir);
+            await System.IO.File.WriteAllLinesAsync(targetFilePath, lines, ct);
+            onOutput($"\n✅ [SUCCÈS] Mots de passe enregistrés directement dans : {targetFilePath}");
+            FolderDialogHelper.OpenInExplorer(targetFilePath);
         }
         else
         {

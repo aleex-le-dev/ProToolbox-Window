@@ -52,25 +52,24 @@ if ($key) {
 
         if (!string.IsNullOrWhiteSpace(foundKey))
         {
-            var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
-                title: "Sélectionnez l'emplacement où sauvegarder la clé produit Windows",
-                folderPrefix: "Sauvegarde_Cle_Windows",
-                confirmQuestion: $"Une clé de licence Windows a été détectée ({source}) :\n\n{foundKey}\n\nSouhaitez-vous sauvegarder cette clé dans un dossier sécurisé de votre choix ?",
+            var targetFilePath = FolderDialogHelper.AskSaveFilePath(
+                title: "Enregistrer la clé produit Windows",
+                defaultFileName: "Cle_Produit_Windows.txt",
+                confirmQuestion: $"Une clé de licence Windows a été détectée ({source}) :\n\n{foundKey}\n\nSouhaitez-vous enregistrer cette clé dans un fichier texte à l'emplacement de votre choix ?",
                 confirmTitle: "Sauvegarde de la clé Windows — Alex Toolkit"
             );
 
-            if (!string.IsNullOrEmpty(targetDir))
+            if (!string.IsNullOrEmpty(targetFilePath))
             {
-                string filePath = Path.Combine(targetDir, "Cle_Produit_Windows.txt");
                 var content = $"===========================================================\n" +
                               $" CLÉ DE PRODUIT WINDOWS — {Environment.MachineName}\n" +
                               $" Date d'export : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n" +
                               $" Source        : {source}\n" +
                               $"===========================================================\n\n" +
                               $"Clé de licence : {foundKey}\n";
-                await File.WriteAllTextAsync(filePath, content, ct);
-                onOutput($"\n[OK] Clé de licence enregistrée dans : {filePath}");
-                FolderDialogHelper.OpenInExplorer(targetDir);
+                await File.WriteAllTextAsync(targetFilePath, content, ct);
+                onOutput($"\n✅ [SUCCÈS] Clé de licence enregistrée directement dans : {targetFilePath}");
+                FolderDialogHelper.OpenInExplorer(targetFilePath);
             }
             else
             {
@@ -105,24 +104,23 @@ if ($key) {
     // ─── 3. Export de la liste des logiciels installés ───────────────────────
     public static async Task ExportSoftwareList(Action<string> onOutput, CancellationToken ct = default)
     {
-        var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
-            title: "Sélectionnez l'emplacement où exporter la liste des logiciels",
-            folderPrefix: "Inventaire_Logiciels",
-            confirmQuestion: "Souhaitez-vous exporter la liste complète des logiciels installés dans un dossier de sauvegarde de votre choix ?",
+        var dest = FolderDialogHelper.AskSaveFilePath(
+            title: "Enregistrer la liste des logiciels",
+            defaultFileName: "liste_logiciels.txt",
+            confirmQuestion: "Souhaitez-vous exporter la liste complète des logiciels installés dans un fichier texte à l'emplacement de votre choix ?",
             confirmTitle: "Export inventaire des logiciels — Alex Toolkit"
         );
 
-        if (string.IsNullOrEmpty(targetDir))
+        if (string.IsNullOrEmpty(dest))
         {
             onOutput("[i] Export de la liste des logiciels annulé par l'utilisateur.");
             return;
         }
 
-        var dest = Path.Combine(targetDir, "liste_logiciels.txt");
         onOutput($"[i] Export de la liste des logiciels via winget vers {dest}...");
         await CommandRunner.RunAsync($"winget list > \"{dest}\"", onOutput, ct);
-        onOutput($"\n✅ [SUCCÈS] Liste des logiciels exportée : {dest}");
-        FolderDialogHelper.OpenInExplorer(targetDir);
+        onOutput($"\n✅ [SUCCÈS] Liste des logiciels exportée directement dans : {dest}");
+        FolderDialogHelper.OpenInExplorer(dest);
     }
 
     // ─── 4. Analyse & Extraction de l'historique web (SQLite) ────────────────
@@ -610,31 +608,6 @@ if ($key) {
             }
         }
         catch { }
-    }
-
-    // ─── 6. Sauvegarde des profils Wi-Fi et logiciels ─────────────────────────
-    public static async Task ExportWifiAndApps(Action<string> onOutput, CancellationToken ct = default)
-    {
-        var targetDir = FolderDialogHelper.AskAndCreateDestinationFolder(
-            title: "Sélectionnez l'emplacement où exporter les profils Wi-Fi et applications",
-            folderPrefix: "Export_WiFi_et_Applications",
-            confirmQuestion: "Souhaitez-vous exporter l'ensemble des profils et clés Wi-Fi (XML) ainsi que la liste des logiciels installés dans un dossier de sauvegarde de votre choix ?",
-            confirmTitle: "Export Wi-Fi et Applications — Alex Toolkit"
-        );
-
-        if (string.IsNullOrEmpty(targetDir))
-        {
-            onOutput("[i] Exportation annulée par l'utilisateur.");
-            return;
-        }
-
-        onOutput($"[i] Dossier de destination : {targetDir}");
-        onOutput("[i] Export des profils Wi-Fi (fichiers XML avec clés en clair)...");
-        await CommandRunner.RunAsync($"netsh wlan export profile key=clear folder=\"{targetDir}\"", onOutput, ct);
-        onOutput("[i] Export de la liste des applications via winget...");
-        await CommandRunner.RunAsync($"winget list > \"{Path.Combine(targetDir, "apps_list.txt")}\"", onOutput, ct);
-        onOutput($"\n✅ [SUCCÈS] Profils Wi-Fi et liste des logiciels exportés dans : {targetDir}");
-        FolderDialogHelper.OpenInExplorer(targetDir);
     }
 }
 
