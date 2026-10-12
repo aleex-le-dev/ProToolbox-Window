@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.Data.Sqlite;
 using ScriptsWindows.Core;
 
@@ -395,12 +396,133 @@ if ($key) {
                     }
                     onOutput("");
                 }
+
+                // ─── Boîte de dialogue Windows native pour choisir l'emplacement à la souris ───
+                bool shouldExport = false;
+                string? selectedFolder = null;
+
+                try
+                {
+                    Application.Current?.Dispatcher?.Invoke(() =>
+                    {
+                        var mbResult = MessageBox.Show(
+                            Application.Current.MainWindow,
+                            $"{findings.Count} document(s) et clé(s) sensible(s) ont été identifiés sur votre ordinateur.\n\nSouhaitez-vous copier et rassembler l'ensemble de ces fichiers dans un dossier de sauvegarde sécurisé de votre choix ?",
+                            "Sauvegarde des documents sensibles — Alex Toolkit",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question);
+
+                        if (mbResult == MessageBoxResult.Yes)
+                        {
+                            var folderDialog = new Microsoft.Win32.OpenFolderDialog
+                            {
+                                Title = "Sélectionnez l'emplacement où copier tous les documents sensibles",
+                                Multiselect = false
+                            };
+
+                            if (folderDialog.ShowDialog(Application.Current.MainWindow) == true)
+                            {
+                                selectedFolder = folderDialog.FolderName;
+                                shouldExport = true;
+                            }
+                        }
+                    });
+                }
+                catch { }
+
+                if (shouldExport && !string.IsNullOrWhiteSpace(selectedFolder))
+                {
+                    onOutput("\n═══════════════════════════════════════════════════════════════");
+                    onOutput("  📁 EXPORTATION SÉCURISÉE DES DOCUMENTS SENSIBLES");
+                    onOutput("═══════════════════════════════════════════════════════════════");
+
+                    string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                    string targetDir = Path.Combine(selectedFolder, $"Sauvegarde_Secrets_{timestamp}");
+                    try
+                    {
+                        Directory.CreateDirectory(targetDir);
+                        onOutput($"[i] Dossier de destination créé : {targetDir}\n");
+
+                        int copiedCount = 0;
+                        int errorCount = 0;
+
+                        foreach (var item in findings)
+                        {
+                            if (ct.IsCancellationRequested) break;
+                            try
+                            {
+                                if (!File.Exists(item.Path)) continue;
+
+                                // Sous-dossier ordonné par catégorie
+                                string sanitizedCat = CleanFolderName(item.Category);
+                                string catDir = Path.Combine(targetDir, sanitizedCat);
+                                if (!Directory.Exists(catDir)) Directory.CreateDirectory(catDir);
+
+                                string fileName = Path.GetFileName(item.Path);
+                                string destPath = Path.Combine(catDir, fileName);
+
+                                // Gestion des collisions de noms
+                                int suffix = 1;
+                                while (File.Exists(destPath))
+                                {
+                                    string nameOnly = Path.GetFileNameWithoutExtension(fileName);
+                                    string ext = Path.GetExtension(fileName);
+                                    destPath = Path.Combine(catDir, $"{nameOnly}_{suffix++}{ext}");
+                                }
+
+                                // Copie partagée sécurisée (contourne les éventuels verrous applicatifs)
+                                using (var src = new FileStream(item.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                                using (var dst = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                                {
+                                    src.CopyTo(dst);
+                                }
+
+                                copiedCount++;
+                                onOutput($"[COPIE] {item.Icon} {fileName} ➜ {sanitizedCat}\\{Path.GetFileName(destPath)}");
+                            }
+                            catch (Exception ex)
+                            {
+                                errorCount++;
+                                onOutput($"[!] Erreur copie ({Path.GetFileName(item.Path)}) : {ex.Message}");
+                            }
+                        }
+
+                        onOutput($"\n✅ {copiedCount} document(s) sensible(s) copié(s) avec succès !");
+                        onOutput($"📂 Emplacement final : {targetDir}");
+
+                        // Ouvrir automatiquement le dossier cible dans l'Explorateur Windows
+                        try
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = targetDir,
+                                UseShellExecute = true
+                            });
+                        }
+                        catch { }
+                    }
+                    catch (Exception ex)
+                    {
+                        onOutput($"[!] Erreur lors de la création du dossier de sauvegarde : {ex.Message}");
+                    }
+                }
+                else
+                {
+                    onOutput("\n[i] Exportation ignorée ou annulée par l'utilisateur.");
+                }
             }
 
             onOutput("═══════════════════════════════════════════════════════════════");
             onOutput("✅ [TERMINÉ] Audit documents sensibles terminé.");
             onOutput("═══════════════════════════════════════════════════════════════");
         }, ct);
+    }
+
+    private static string CleanFolderName(string name)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var clean = new string(name.Where(c => !invalid.Contains(c)).ToArray()).Trim();
+        return string.IsNullOrWhiteSpace(clean) ? "Autres" : clean;
     }
 
     private static void ScanDirectorySafe(
