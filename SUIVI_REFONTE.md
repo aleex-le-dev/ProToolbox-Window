@@ -135,9 +135,19 @@
 
 ---
 
+## 👥 Refonte des Textes & Vulgarisation Grand Public
+
+Tous les textes ont été réécrits pour être compris instantanément par des utilisateurs sans compétences informatiques :
+- **Bénéfice utilisateur direct** mis en avant plutôt que le nom de la commande interne (ex: "Débloquer l'imprimante" au lieu de "Purge du spouleur", "Retrouver mes mots de passe Wi-Fi" au lieu de "Netsh wlan show profiles", "Accélérer le démarrage de Windows" au lieu de "Gestionnaire du démarrage").
+- **Explications simples et claires** : chaque script explique en 1 ou 2 phrases concrètes son utilité et pourquoi l'utiliser.
+- **Titres de sections et sous-titres accueillants** : "Bilan & Santé du PC", "Performances & Énergie", "Dépannage & Réparation", "Installer vos logiciels", etc.
+
+---
+
 ## 🚀 Résultat de Publication
 
 - **Fichier exécutable unique** : [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe) (à la racine)
-- **Taille** : **~3,7 Mo** (autonome, sans installeur lourd)
+- **Taille** : **~10 Mo** (autonome, single-file autonome Release x64)
 - **Architecture** : Windows x64
 - **Manifeste** : Élévation automatique UAC Administrateur requise
+

@@ -189,17 +189,17 @@ public static class SectionViewBuilder
     /// </summary>
     public static (string Icon, string Name) GetCategoryMeta(string category) => (category ?? "").ToUpperInvariant() switch
     {
-        "APPLICATIONS"     => ("📦", "Installation d'applications"),
-        "DIAGNOSTIC"       => ("🔍", "Diagnostic matériel et intégrité"),
-        "DISQUE"           => ("💽", "Disque dur et stockage"),
-        "MATERIEL"         => ("🖥️", "Matériel et périphériques"),
-        "MISES_A_JOUR"     => ("🔄", "Mises à jour et inventaire logiciel"),
-        "NETTOYAGE"        => ("🧹", "Nettoyage et optimisation d'espace"),
-        "PERSONNALISATION" => ("🎨", "Personnalisation et système"),
-        "REPARATION"       => ("🔧", "Réparation intégrale"),
-        "RESEAU"           => ("🌐", "Réseau et configuration"),
-        "SECRETS"          => ("🔑", "Récupération d'identifiants et secrets"),
-        "SECURITE"         => ("🛡️", "Surveillance, sécurité et événements"),
+        "APPLICATIONS"     => ("📦", "Installer vos logiciels"),
+        "DIAGNOSTIC"       => ("🔍", "Bilan & Santé du PC"),
+        "DISQUE"           => ("💽", "Disques et stockage"),
+        "MATERIEL"         => ("🖥️", "Performances & Énergie"),
+        "MISES_A_JOUR"     => ("🔄", "Mises à jour des programmes"),
+        "NETTOYAGE"        => ("🧹", "Nettoyage & Espace disque"),
+        "PERSONNALISATION" => ("🎨", "Personnalisation de Windows"),
+        "REPARATION"       => ("🔧", "Dépannage & Réparation"),
+        "RESEAU"           => ("🌐", "Internet & Réseau"),
+        "SECRETS"          => ("🔑", "Mots de passe & Clés de licence"),
+        "SECURITE"         => ("🛡️", "Sécurité & Antivirus"),
         _                  => ("⚙️", string.IsNullOrWhiteSpace(category) ? "Général" : FormatFrenchTitle(category))
     };
 
@@ -208,18 +208,18 @@ public static class SectionViewBuilder
     /// </summary>
     public static string GetCategorySubtitle(string category) => (category ?? "").ToUpperInvariant() switch
     {
-        "APPLICATIONS"     => "Installation automatisée de navigateurs, lecteurs et utilitaires via winget",
-        "DIAGNOSTIC"       => "Analyse carte mère, CPU, RAM, disques physiques, batterie et réseau",
-        "DISQUE"           => "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker",
-        "MATERIEL"         => "Outils de diagnostic mémoire, GPU/DxDiag, périphériques et benchmarks",
-        "MISES_A_JOUR"     => "Inventaire applicatif, mise à niveau winget et signatures Defender",
-        "NETTOYAGE"        => "Centre interactif de nettoyage de disque, caches, corbeille et magasin WinSxS",
-        "PERSONNALISATION" => "God Mode et rétablissement du menu contextuel classique Windows 10",
-        "REPARATION"       => "Centres interactifs d'intégrité DISM/SFC, CHKDSK, gestionnaire de services et Store UWP",
-        "RESEAU"           => "Centre de contrôle unifié, diagnostic, changement DNS, scanners LAN/Wi-Fi et analyse des flux",
-        "SECRETS"          => "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web",
-        "SECURITE"         => "Centre unifié de surveillance, protection Defender, erreurs BSOD et charge mémoire",
-        _                  => "Outils système Windows"
+        "APPLICATIONS"     => "Installez ou mettez à jour en 1 clic vos applications indispensables du quotidien",
+        "DIAGNOSTIC"       => "Vérifiez l'état de votre ordinateur, son matériel et accélérez son démarrage",
+        "DISQUE"           => "Gérez vos disques durs et clés USB, boostez leur vitesse et protégez vos dossiers",
+        "MATERIEL"         => "Ajustez la puissance du processeur (normal ou boost) et testez la rapidité du PC",
+        "MISES_A_JOUR"     => "Recherchez et installez les dernières versions de tous vos programmes en un clic",
+        "NETTOYAGE"        => "Libérez de l'espace disque en supprimant les fichiers temporaires et inutiles en toute sécurité",
+        "PERSONNALISATION" => "Simplifiez votre usage en retrouvant le clic droit classique ou le dossier Tous les Réglages",
+        "REPARATION"       => "Réparez automatiquement les bugs de Windows, les blocages d'impression et les erreurs",
+        "RESEAU"           => "Résolvez les coupures de connexion, optimisez votre Wi-Fi et inspectez vos équipements",
+        "SECRETS"          => "Retrouvez vos clés Wi-Fi, votre licence Windows originale et créez des mots de passe incassables",
+        "SECURITE"         => "Protégez votre ordinateur des virus, surveillez les pannes récentes et les logiciels lourds",
+        _                  => "Outils pratiques pour prendre soin de votre PC"
     };
 
     /// <summary>
