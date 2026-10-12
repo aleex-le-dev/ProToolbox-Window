@@ -158,32 +158,32 @@ public static class ThemeManager
             TerminalText = Color.FromRgb(103, 232, 249)
         },
 
-        // 5. SOMBRE PRO (Anthracite mat & Élégance discrète)
+        // 5. NOIR PUR OLED (Vrai noir absolu #000000 - Deep Black)
         new AppTheme
         {
             Id = "obsidian",
-            Name = "Sombre Pro",
-            Icon = "🌑",
-            VisualStyle = "Anthracite mat professionnel, confort oculaire & précision",
-            BgDeep = Color.FromRgb(15, 17, 23),
-            BgDeepGradientEnd = Color.FromRgb(22, 25, 34),
-            BgSidebar = Color.FromRgb(19, 22, 31),
-            BgCard = Color.FromRgb(28, 32, 43),
-            BgCardHover = Color.FromRgb(38, 43, 58),
+            Name = "Noir Pur OLED",
+            Icon = "🖤",
+            VisualStyle = "Noir absolu profond (#000000), contrastes tranchants & pureté OLED",
+            BgDeep = Color.FromRgb(0, 0, 0),                 // Noir absolu pur 0,0,0
+            BgDeepGradientEnd = Color.FromRgb(4, 4, 6),      // Noir profond
+            BgSidebar = Color.FromRgb(8, 8, 10),             // Noir pur sidebar
+            BgCard = Color.FromRgb(16, 16, 20),              // Noir intense contrasté
+            BgCardHover = Color.FromRgb(26, 26, 34),
             Accent = Color.FromRgb(99, 102, 241),
             AccentHover = Color.FromRgb(129, 140, 248),
-            AccentDim = Color.FromArgb(90, 99, 102, 241),
-            Border = Color.FromRgb(42, 48, 66),
-            BorderAccent = Color.FromRgb(79, 70, 229),
-            TextPrimary = Color.FromRgb(248, 250, 252),
-            TextSecondary = Color.FromRgb(148, 163, 184),
-            TextMuted = Color.FromRgb(100, 116, 139),
+            AccentDim = Color.FromArgb(80, 99, 102, 241),
+            Border = Color.FromRgb(28, 28, 36),              // Filet sombre très discret
+            BorderAccent = Color.FromRgb(99, 102, 241),
+            TextPrimary = Color.FromRgb(255, 255, 255),      // Blanc pur éclatant sur fond noir
+            TextSecondary = Color.FromRgb(160, 165, 178),
+            TextMuted = Color.FromRgb(100, 105, 118),
             ShadowColor = Color.FromRgb(0, 0, 0),
-            ShadowOpacity = 0.35,
+            ShadowOpacity = 0.70,
             ShadowBlur = 12,
             CardBorderThickness = 1.0,
-            TerminalBg = Color.FromRgb(11, 12, 16),
-            TerminalText = Color.FromRgb(226, 232, 240)
+            TerminalBg = Color.FromRgb(0, 0, 0),             // Terminal noir pur 0,0,0
+            TerminalText = Color.FromRgb(245, 245, 250)
         }
     };
 

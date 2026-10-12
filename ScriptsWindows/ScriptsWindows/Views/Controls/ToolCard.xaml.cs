@@ -54,18 +54,20 @@ public partial class ToolCard : UserControl
         if (_tool == null) return;
         bool isFav = FavoritesManager.IsFavorite(_tool.Id);
 
+        // Strictement la même taille 20x20 qu'elle soit jaune ou non
+        FavViewbox.Width = 20;
+        FavViewbox.Height = 20;
+
         if (isFav)
         {
-            // Étoile jaune/dorée : PLUS GRANDE (24x24) avec effet halo lumineux étincelant
-            FavViewbox.Width = 24;
-            FavViewbox.Height = 24;
+            // Étoile jaune/dorée : même taille exacte, remplie d'or pur
             PathFav.Fill = BrushFavGoldFill;
             PathFav.Stroke = BrushFavGoldStroke;
             PathFav.StrokeThickness = 1.0;
             PathFav.Effect = new System.Windows.Media.Effects.DropShadowEffect
             {
                 Color = Color.FromRgb(245, 158, 11),
-                BlurRadius = 8,
+                BlurRadius = 6,
                 ShadowDepth = 0,
                 Opacity = 0.85
             };
@@ -73,12 +75,10 @@ public partial class ToolCard : UserControl
         }
         else
         {
-            // Étoile non-jaune (vide) : plus petite (20x20), sans remplissage
-            FavViewbox.Width = 20;
-            FavViewbox.Height = 20;
+            // Étoile non-jaune (vide) : même taille exacte, contour épuré
             PathFav.Fill = Brushes.Transparent;
             PathFav.Stroke = BrushFavEmptyStroke;
-            PathFav.StrokeThickness = 1.6;
+            PathFav.StrokeThickness = 1.5;
             PathFav.Effect = null;
             BtnFavorite.ToolTip = "☆ Ajouter aux favoris";
         }

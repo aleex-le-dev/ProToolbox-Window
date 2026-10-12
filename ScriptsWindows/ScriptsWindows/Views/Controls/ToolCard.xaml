@@ -82,10 +82,10 @@
                     </Button.Resources>
                     <Viewbox x:Name="FavViewbox" Width="20" Height="20">
                         <Path x:Name="PathFav"
-                              Data="M 12,1.75 L 15.2,8.25 L 22.4,9.27 L 17.2,14.34 L 18.4,21.5 L 12,18.13 L 5.6,21.5 L 6.8,14.34 L 1.6,9.27 L 8.8,8.25 Z"
+                              Data="M 12,2 L 15.09,8.26 L 22,9.27 L 17,14.14 L 18.18,21.02 L 12,17.77 L 5.82,21.02 L 7,14.14 L 2,9.27 L 8.91,8.26 Z"
                               Fill="Transparent"
                               Stroke="{DynamicResource TextMuted}"
-                              StrokeThickness="1.6"
+                              StrokeThickness="1.5"
                               StrokeLineJoin="Round"
                               Stretch="Uniform" />
                     </Viewbox>
