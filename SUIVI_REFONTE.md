@@ -71,6 +71,18 @@
     2. ⚡ **Actions et Outils Rapides** :
        - *Analyse rapide Defender* (scan mémoire et exécutables sensibles en 1 clic direct).
        - *Moniteur de fiabilité (Perfmon)* (historique visuel de stabilité au fil du temps en 1 clic direct).
+- **📦 Installation d'Applications (`ApplicationsPage.xaml.cs`)** :
+  - **Gestionnaire Unifié d'Installation (`AppInstallerDialog.xaml`)** :
+    - Regroupe strictement vos **6 applications indispensables** :
+      1. 🌐 **Google Chrome** (Navigateur web rapide et sécurisé)
+      2. 🎬 **VLC Media Player** (Lecteur multimédia universel)
+      3. 📄 **Sumatra PDF** (Lecteur PDF léger et rapide)
+      4. 🗜️ **7-Zip** (Gestionnaire d'archives haute compression)
+      5. ⚡ **PowerShell 7** (Terminal moderne multiplateforme)
+      6. 💼 **Microsoft Office** (Installateur complet via lien Google Drive)
+    - **Options interactives** : cases à cocher pour sélection multiple, bouton *Tout cocher* / *Tout décocher*, déploiement groupé en 1 clic avec barre de progression et boutons d'installation individuels par ligne.
+    - **Affichage direct** : la carte de l'outil est affichée directement sur la page sans sous-catégorie ni bandeau d'accordéon superflu.
+    - Anciens scripts individuels 1-clic supprimés de la page pour une interface 100% épurée et sans doublons.
 
 ---
 

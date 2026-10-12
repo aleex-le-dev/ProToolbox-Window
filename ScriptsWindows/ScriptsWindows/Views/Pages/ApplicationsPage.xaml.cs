@@ -10,7 +10,7 @@ public partial class ApplicationsPage : Page, ISectionPage
     public ApplicationsPage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("APPLICATIONS"));
+        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("APPLICATIONS"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();

@@ -95,13 +95,8 @@ public static class ToolRegistry
         ["disk_trim_opt"] = "defrag.exe /O /C",
         ["disk_bitlocker"] = "manage-bde.exe -status",
 
-        // ─── Applications (6) ───
-        ["app_install_chrome"] = "winget.exe install Google.Chrome --silent",
-        ["app_install_vlc"] = "winget.exe install VideoLAN.VLC --silent",
-        ["app_install_sumatra"] = "winget.exe install SumatraPDF.SumatraPDF --silent",
-        ["app_install_7zip"] = "winget.exe install 7zip.7zip --silent",
-        ["app_install_pwsh"] = "winget.exe install Microsoft.PowerShell --silent",
-        ["app_open_office"] = "start https://drive.google.com/file/d/1wf1eqVkXIM0f0R2963Ee4RKK-a_rgWld/view?usp=drive_link",
+        // ─── Applications (1) ───
+        ["app_installer_center"] = "AlexToolkit.exe (Installation d'applications unifiée : Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell 7, Office)",
 
         // ─── Mises à jour (4) ───
         ["upd_list_apps"] = "winget.exe list",
@@ -666,80 +661,16 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterAppInstallationTools()
     {
-        // Sous-titre interne : Navigateurs web
         _allTools.Add(new ScriptTool
         {
-            Id = "app_install_chrome",
-            Name = "Installer Google Chrome",
-            Description = "Installation silencieuse de Google Chrome via Winget.",
+            Id = "app_installer_center",
+            Name = "Installation d'Applications",
+            Description = "Interface unifiée : sélectionnez et installez vos logiciels indispensables (Google Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell 7, Microsoft Office) en un clic.",
             Category = "APPLICATIONS",
-            SubHeading = "Navigateurs web",
-            Icon = "🌐",
-            Action = (log, ct) => AppService.InstallChrome(log, ct),
-            Tags = new[] { "chrome", "google", "navigateur", "web", "winget" }
-        });
-
-        // Sous-titre interne : Multimédia et Documents
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_install_vlc",
-            Name = "Installer VLC Media Player",
-            Description = "Installation de VLC Media Player via Winget.",
-            Category = "APPLICATIONS",
-            SubHeading = "Multimédia et Documents",
-            Icon = "🎬",
-            Action = (log, ct) => AppService.InstallVlc(log, ct),
-            Tags = new[] { "vlc", "vidéo", "médias", "musique", "winget" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_install_sumatra",
-            Name = "Installer Sumatra PDF",
-            Description = "Installation du lecteur PDF léger Sumatra.",
-            Category = "APPLICATIONS",
-            SubHeading = "Multimédia et Documents",
-            Icon = "📄",
-            Action = (log, ct) => AppService.InstallSumatraPdf(log, ct),
-            Tags = new[] { "sumatra", "pdf", "lecteur", "winget" }
-        });
-
-        // Sous-titre interne : Utilitaires de compression et Système
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_install_7zip",
-            Name = "Installer 7-Zip",
-            Description = "Installation de 7-Zip via Winget.",
-            Category = "APPLICATIONS",
-            SubHeading = "Utilitaires de compression et Système",
-            Icon = "🗜️",
-            Action = (log, ct) => AppService.Install7Zip(log, ct),
-            Tags = new[] { "7zip", "archive", "compression", "winget", "installer" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_install_pwsh",
-            Name = "Installer PowerShell 7",
-            Description = "Installation de PowerShell 7 via Winget.",
-            Category = "APPLICATIONS",
-            SubHeading = "Utilitaires de compression et Système",
-            Icon = "⚡",
-            Action = (log, ct) => AppService.InstallPs7(log, ct),
-            Tags = new[] { "powershell", "ps7", "terminal", "winget", "microsoft" }
-        });
-
-        // Sous-titre interne : Bureautique
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_open_office",
-            Name = "Télécharger Microsoft Office",
-            Description = "Téléchargement de l'installateur Microsoft Office via Google Drive.",
-            Category = "APPLICATIONS",
-            SubHeading = "Bureautique",
-            Icon = "💼",
-            Action = (log, ct) => AppService.InstallOffice(log, ct),
-            Tags = new[] { "office", "word", "excel", "microsoft", "téléchargement" }
+            SubHeading = "",
+            Icon = "📦",
+            Action = (log, ct) => AppService.OpenAppInstallerDialog(log, ct),
+            Tags = new[] { "applications", "logiciels", "winget", "installer", "chrome", "vlc", "7zip", "sumatra", "powershell", "office", "unifié" }
         });
     }
 

@@ -6,6 +6,19 @@ namespace ScriptsWindows.Services;
 /// <summary>Service applications — winget + installations (app_install_*, update_*).</summary>
 public class AppService
 {
+    /// <summary>Ouvre le Centre d'Installation d'Applications (App Store Winget interactif).</summary>
+    public static async Task OpenAppInstallerDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.AppInstallerDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
     /// <summary>Ouvre l'interface interactive de gestion des paquets et mises à jour Winget.</summary>
     public static async Task OpenWingetManagerDialog(Action<string> onOutput, CancellationToken ct = default)
     {
