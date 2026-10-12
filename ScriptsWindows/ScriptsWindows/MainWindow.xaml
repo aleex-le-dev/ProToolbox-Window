@@ -248,7 +248,7 @@
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🔄" FontSize="14" Margin="0,0,10,0" />
-                                    <TextBlock Text="Mises à Jour" VerticalAlignment="Center" />
+                                    <TextBlock Text="Mises à jour" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
@@ -348,7 +348,7 @@
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="🔑" FontSize="14" Margin="0,0,10,0" />
-                                    <TextBlock Text="Secrets &amp; Clés" VerticalAlignment="Center" />
+                                    <TextBlock Text="Secrets &amp; clés" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>

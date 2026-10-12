@@ -46,7 +46,7 @@ public partial class MainWindow : Window
         };
 
         // Démarrer sur la page Favoris
-        NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "Mes Favoris", "Vos outils préférés accessibles rapidement");
+        NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "Mes favoris", "Vos outils préférés accessibles rapidement");
 
         // Préchauffage asynchrone de toutes les pages (0 ms de délai au clic)
         Dispatcher.InvokeAsync(WarmupPages, DispatcherPriority.Background);
@@ -203,7 +203,7 @@ public partial class MainWindow : Window
     }
 
     private void NavFavoris_Click(object sender, RoutedEventArgs e)
-        => NavigateTo((Button)sender, GetOrCreatePage("FAVORIS"), "Mes Favoris", "Vos outils préférés accessibles rapidement");
+        => NavigateTo((Button)sender, GetOrCreatePage("FAVORIS"), "Mes favoris", "Vos outils préférés accessibles rapidement");
 
     private void NavCategory_Click(object sender, RoutedEventArgs e)
     {
@@ -213,18 +213,18 @@ public partial class MainWindow : Window
 
         var (title, subtitle) = tag switch
         {
-            "DIAGNOSTIC"       => ("🔍 Diagnostic Matériel & Intégrité", "Analyse carte mère, CPU, RAM, disques physiques, batterie et réseau"),
-            "MATERIEL"         => ("🖥️ Matériel & Périphériques", "Outils de diagnostic mémoire, GPU/DxDiag, périphériques et benchmarks"),
-            "REPARATION"       => ("🔧 Réparation Intégrale", "CHKDSK, spouleur, pipeline DISM+SFC, cache icônes et Windows Update"),
-            "NETTOYAGE"        => ("🧹 Nettoyage & Optimisation Espace", "Nettoyage unifié, magasins WinSxS, caches navigateurs, temp et cleanmgr"),
-            "SECRETS"          => ("🔑 Récupération d'Identifiants & Secrets", "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web"),
-            "RESEAU"           => ("🌐 Réseau & Configuration", "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions"),
-            "DISQUE"           => ("💽 Disque Dur & Stockage", "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker"),
-            "APPLICATIONS"     => ("📦 Installation d'Applications", "Installation automatisée de navigateurs, lecteurs et utilitaires via winget"),
-            "MISES_A_JOUR"     => ("🔄 Mises à Jour & Inventaire Logiciel", "Inventaire applicatif, mise à niveau winget et signatures Defender"),
-            "SECURITE"         => ("🛡️ Surveillance, Sécurité & Événements", "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources"),
-            "PERSONNALISATION" => ("🎨 Personnalisation & Système", "God Mode et rétablissement du menu contextuel classique Windows 10"),
-            _                  => ("Mes Favoris", "Vos outils préférés accessibles rapidement")
+            "APPLICATIONS"     => ("📦 Installation d'applications", "Installation automatisée de navigateurs, lecteurs et utilitaires via winget"),
+            "DIAGNOSTIC"       => ("🔍 Diagnostic matériel et intégrité", "Analyse carte mère, CPU, RAM, disques physiques, batterie et réseau"),
+            "DISQUE"           => ("💽 Disque dur et stockage", "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker"),
+            "MATERIEL"         => ("🖥️ Matériel et périphériques", "Outils de diagnostic mémoire, GPU/DxDiag, périphériques et benchmarks"),
+            "MISES_A_JOUR"     => ("🔄 Mises à jour et inventaire logiciel", "Inventaire applicatif, mise à niveau winget et signatures Defender"),
+            "NETTOYAGE"        => ("🧹 Nettoyage et optimisation d'espace", "Nettoyage unifié, magasins WinSxS, caches navigateurs, temp et cleanmgr"),
+            "PERSONNALISATION" => ("🎨 Personnalisation et système", "God Mode et rétablissement du menu contextuel classique Windows 10"),
+            "REPARATION"       => ("🔧 Réparation intégrale", "CHKDSK, spouleur, pipeline DISM+SFC, cache icônes et Windows Update"),
+            "RESEAU"           => ("🌐 Réseau et configuration", "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions"),
+            "SECRETS"          => ("🔑 Récupération d'identifiants et secrets", "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web"),
+            "SECURITE"         => ("🛡️ Surveillance, sécurité et événements", "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources"),
+            _                  => ("Mes favoris", "Vos outils préférés accessibles rapidement")
         };
 
         NavigateTo(btn, page, title, subtitle);

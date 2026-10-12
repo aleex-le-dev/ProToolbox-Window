@@ -70,6 +70,60 @@ public class SectionController
 /// </summary>
 public static class SectionViewBuilder
 {
+    private static readonly HashSet<string> Acronyms = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "SSD", "HDD", "RAM", "CPU", "GPU", "BIOS", "UEFI", "DNS", "ARP", "IP",
+        "TCP", "UDP", "OS", "UWP", "SFC", "DISM", "CHKDSK", "SMART", "TRIM",
+        "WMI", "CIM", "CMD", "GUI", "USB", "Wi-Fi", "WinSxS", "Windows", "Winget", "Defender"
+    };
+
+    /// <summary>
+    /// Formate un titre ou nom de catégorie/sous-catégorie selon les règles typographiques françaises :
+    /// Majuscule au premier mot, minuscules pour les mots suivants, tout en préservant
+    /// les sigles et acronymes en majuscules (ex: SSD, RAM, CPU, GPU, BIOS, DNS, ARP, Wi-Fi...).
+    /// </summary>
+    public static string FormatFrenchTitle(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+        var tokens = System.Text.RegularExpressions.Regex.Split(input.Trim(), @"(\s+|[()&/,›\-])");
+        var sb = new System.Text.StringBuilder();
+        bool isFirstWord = true;
+
+        foreach (var token in tokens)
+        {
+            if (string.IsNullOrEmpty(token)) continue;
+
+            if (char.IsWhiteSpace(token[0]) || token == "(" || token == ")" || token == "&" || token == "/" || token == "," || token == "›" || token == "-")
+            {
+                sb.Append(token);
+                continue;
+            }
+
+            string matched = Acronyms.FirstOrDefault(a => a.Equals(token, StringComparison.OrdinalIgnoreCase)) ?? "";
+            if (!string.IsNullOrEmpty(matched))
+            {
+                sb.Append(matched);
+            }
+            else if (token.Length > 1 && token.All(char.IsUpper))
+            {
+                sb.Append(token);
+            }
+            else if (isFirstWord)
+            {
+                sb.Append(char.ToUpper(token[0]) + (token.Length > 1 ? token.Substring(1).ToLower() : ""));
+            }
+            else
+            {
+                sb.Append(token.ToLower());
+            }
+
+            isFirstWord = false;
+        }
+
+        return sb.ToString();
+    }
+
     /// <summary>
     /// Fournit l'icône et le nom d'affichage français pour une catégorie donnée.
     /// </summary>
@@ -79,14 +133,14 @@ public static class SectionViewBuilder
         "MATERIEL"         => ("🖥️", "Matériel"),
         "REPARATION"       => ("🔧", "Réparation"),
         "NETTOYAGE"        => ("🧹", "Nettoyage"),
-        "SECRETS"          => ("🔑", "Secrets & Clés"),
+        "SECRETS"          => ("🔑", "Secrets & clés"),
         "RESEAU"           => ("🌐", "Réseau"),
         "DISQUE"           => ("💽", "Disque"),
         "APPLICATIONS"     => ("📦", "Applications"),
-        "MISES_A_JOUR"     => ("🔄", "Mises à Jour"),
+        "MISES_A_JOUR"     => ("🔄", "Mises à jour"),
         "SECURITE"         => ("🛡️", "Sécurité"),
         "PERSONNALISATION" => ("🎨", "Personnalisation"),
-        _                  => ("⚙️", string.IsNullOrWhiteSpace(category) ? "Général" : category)
+        _                  => ("⚙️", string.IsNullOrWhiteSpace(category) ? "Général" : FormatFrenchTitle(category))
     };
 
     /// <summary>
@@ -101,9 +155,9 @@ public static class SectionViewBuilder
         var toolList = tools.ToList();
         if (toolList.Count == 0) return controller;
 
-        // Grouper par sous-catégorie et trier systématiquement par ordre alphabétique
+        // Grouper par sous-catégorie et trier systématiquement par ordre alphabétique avec casse de phrase
         var groups = toolList
-            .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading)
+            .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : FormatFrenchTitle(t.SubHeading))
             .Select(g => new
             {
                 SubHeading = g.Key,
@@ -304,7 +358,7 @@ public static class SectionViewBuilder
                     CategoryName  = meta.Name,
                     TotalCount    = cg.Count(),
                     SubCategories = cg
-                        .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading)
+                        .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : FormatFrenchTitle(t.SubHeading))
                         .Select(sg => new
                         {
                             SubHeading = sg.Key,
