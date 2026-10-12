@@ -112,19 +112,6 @@ public partial class MainWindow : Window
 
     // ─── Console Terminal Latéral ────────────────────────────────────
 
-    private void BtnToggleConsole_Click(object sender, RoutedEventArgs e)
-    {
-        if (OutputPanel.Visibility == Visibility.Visible)
-        {
-            OutputPanel.Visibility = Visibility.Collapsed;
-        }
-        else
-        {
-            AdjustConsoleWidth();
-            OutputPanel.Visibility = Visibility.Visible;
-        }
-    }
-
     /// <summary>
     /// Ajuste la largeur de la console pour qu'elle ait la même largeur que la zone de scripts (partage 50/50 de l'espace disponible).
     /// </summary>
