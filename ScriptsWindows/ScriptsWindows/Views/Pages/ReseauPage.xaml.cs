@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class ReseauPage : Page
+public partial class ReseauPage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public ReseauPage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("RESEAU"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("RESEAU"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }

@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class DisquePage : Page
+public partial class DisquePage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public DisquePage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("DISQUE"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("DISQUE"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }

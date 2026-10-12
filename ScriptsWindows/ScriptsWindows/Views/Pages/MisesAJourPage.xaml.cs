@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class MisesAJourPage : Page
+public partial class MisesAJourPage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public MisesAJourPage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("MISES_A_JOUR"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("MISES_A_JOUR"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }

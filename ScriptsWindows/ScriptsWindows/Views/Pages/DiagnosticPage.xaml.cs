@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class DiagnosticPage : Page
+public partial class DiagnosticPage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public DiagnosticPage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("DIAGNOSTIC"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("DIAGNOSTIC"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }

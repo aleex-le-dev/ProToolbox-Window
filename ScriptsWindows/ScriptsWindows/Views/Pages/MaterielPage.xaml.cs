@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class MaterielPage : Page
+public partial class MaterielPage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public MaterielPage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("MATERIEL"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("MATERIEL"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }

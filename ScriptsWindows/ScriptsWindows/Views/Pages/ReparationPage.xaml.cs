@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class ReparationPage : Page
+public partial class ReparationPage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public ReparationPage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("REPARATION"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("REPARATION"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }

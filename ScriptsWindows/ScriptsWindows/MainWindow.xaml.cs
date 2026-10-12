@@ -79,6 +79,32 @@ public partial class MainWindow : Window
 
     // ─── Console Terminal Latéral ────────────────────────────────────
 
+    private void BtnToggleConsole_Click(object sender, RoutedEventArgs e)
+    {
+        if (OutputPanel.Visibility == Visibility.Visible)
+        {
+            OutputPanel.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            AdjustConsoleWidth();
+            OutputPanel.Visibility = Visibility.Visible;
+        }
+    }
+
+    /// <summary>
+    /// Ajuste la largeur de la console pour qu'elle ait la même largeur que la zone de scripts (partage 50/50 de l'espace disponible).
+    /// </summary>
+    private void AdjustConsoleWidth()
+    {
+        double available = ActualWidth - 220; // 220px = sidebar gauche
+        if (available > 600)
+        {
+            double halfWidth = Math.Round(available / 2.0);
+            OutputPanel.Width = Math.Clamp(halfWidth, 380, available * 0.7);
+        }
+    }
+
     private void BtnCloseOutput_Click(object sender, RoutedEventArgs e)
     {
         if (ScriptExecutionCoordinator.IsRunning)
@@ -112,8 +138,8 @@ public partial class MainWindow : Window
         var    currentPoint = e.GetPosition(this);
         double deltaX       = _resizeStartPoint.X - currentPoint.X;
         double newWidth     = _startTerminalWidth + deltaX;
-        double maxWidth     = Math.Max(300, ActualWidth * 0.7);
-        OutputPanel.Width   = Math.Clamp(newWidth, 200, maxWidth);
+        double maxWidth     = Math.Max(400, ActualWidth * 0.75);
+        OutputPanel.Width   = Math.Clamp(newWidth, 300, maxWidth);
     }
 
     private void TerminalResizeGrip_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -192,6 +218,21 @@ public partial class MainWindow : Window
         navBtn.Style    = (Style)FindResource("SidebarItemActive");
         _activeNavBtn   = navBtn;
 
+        // Replier toutes les sous-catégories de toutes les pages mises en cache
+        foreach (var cachedPage in _pageCache.Values)
+        {
+            if (cachedPage is ISectionPage sp)
+            {
+                sp.ResetSections();
+            }
+        }
+
+        // S'assurer que la page affichée a également toutes ses sous-catégories fermées
+        if (page is ISectionPage currentSectionPage)
+        {
+            currentSectionPage.ResetSections();
+        }
+
         MainFrame.Navigate(page);
         PageTitle.Text    = title;
         PageSubtitle.Text = subtitle;
@@ -246,7 +287,11 @@ public partial class MainWindow : Window
         // InvokeAsync = non-bloquant, ne gèle pas le thread appelant
         Dispatcher.InvokeAsync(() =>
         {
-            OutputPanel.Visibility = Visibility.Visible;
+            if (OutputPanel.Visibility != Visibility.Visible)
+            {
+                AdjustConsoleWidth();
+                OutputPanel.Visibility = Visibility.Visible;
+            }
 
             var brush = (line.StartsWith("[ERR]") || line.Contains("[ERREUR]") || line.Contains("❌"))
                       ? BrushError

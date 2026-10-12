@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class ApplicationsPage : Page
+public partial class ApplicationsPage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public ApplicationsPage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("APPLICATIONS"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("APPLICATIONS"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }

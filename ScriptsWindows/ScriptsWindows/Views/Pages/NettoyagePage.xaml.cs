@@ -3,21 +3,15 @@ using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Pages;
 
-public partial class NettoyagePage : Page
+public partial class NettoyagePage : Page, ISectionPage
 {
-    private bool _loaded;
+    private SectionController? _controller;
 
     public NettoyagePage()
     {
         InitializeComponent();
-        Loaded += (s, e) => LoadTools();
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("NETTOYAGE"));
     }
 
-    private void LoadTools()
-    {
-        if (_loaded) return;
-        _loaded = true;
-
-        SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("NETTOYAGE"));
-    }
+    public void ResetSections() => _controller?.CollapseAll();
 }
