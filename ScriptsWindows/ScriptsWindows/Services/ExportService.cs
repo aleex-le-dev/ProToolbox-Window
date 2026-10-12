@@ -67,6 +67,12 @@ if ($key) {
     // ─── 4. Analyse & Extraction de l'historique web (SQLite) ────────────────
     public static async Task AnalyzeBrowserHistory(Action<string> onOutput, CancellationToken ct = default)
     {
+        try
+        {
+            SQLitePCL.Batteries_V2.Init();
+        }
+        catch { }
+
         onOutput("═══════════════════════════════════════════════════════════════");
         onOutput("  🌐 ANALYSE ET EXTRACTION DE L'HISTORIQUE DE NAVIGATION");
         onOutput("═══════════════════════════════════════════════════════════════");
@@ -206,7 +212,8 @@ if ($key) {
         }
         catch (Exception ex)
         {
-            onOutput($"[!] Erreur lors de la lecture SQLite pour {browserName} : {ex.Message}");
+            var msg = ex.InnerException != null ? $"{ex.Message} -> {ex.InnerException.Message}" : ex.Message;
+            onOutput($"[!] Erreur lors de la lecture SQLite pour {browserName} : {msg}");
         }
         finally
         {

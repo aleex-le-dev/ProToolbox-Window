@@ -14,6 +14,7 @@
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
     <!-- ── Optimisations de performance ────────────────────────── -->
     <!-- Tiered Compilation : JIT adaptatif (Quick JIT → Full JIT) -->
