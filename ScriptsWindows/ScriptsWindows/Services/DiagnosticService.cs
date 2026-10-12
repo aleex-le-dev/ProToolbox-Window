@@ -72,6 +72,54 @@ Write-Output $sep
     }
 
     // ────────────────────────────────────────────────────────────────
+    //  CARTE MÈRE, BIOS & SYSTÈME  (sys_motherboard_bios)
+    // ────────────────────────────────────────────────────────────────
+    public static async Task GetMotherboardBiosInfo(Action<string> onOutput, CancellationToken ct = default)
+    {
+        const string script = @"
+$sep = '=' * 60
+Write-Output $sep
+Write-Output '  CARTE MÈRE, BIOS & CONFIGURATION SYSTÈME'
+Write-Output $sep
+
+# Carte Mère
+$bb = Get-CimInstance Win32_BaseBoard
+Write-Output ""[CARTE MÈRE] Fabricant     : $($bb.Manufacturer)""
+Write-Output ""[CARTE MÈRE] Modèle        : $($bb.Product)""
+Write-Output ""[CARTE MÈRE] Numéro Série  : $($bb.SerialNumber)""
+Write-Output ''
+
+# BIOS / UEFI
+$bios = Get-CimInstance Win32_BIOS
+Write-Output ""[BIOS/UEFI] Fabricant     : $($bios.Manufacturer)""
+Write-Output ""[BIOS/UEFI] Version       : $($bios.SMBIOSBIOSVersion)""
+Write-Output ""[BIOS/UEFI] Date          : $($bios.ReleaseDate)""
+Write-Output ''
+
+# Processeur
+$cpu = Get-CimInstance Win32_Processor
+Write-Output ""[CPU] Modèle            : $($cpu.Name)""
+Write-Output ""[CPU] Cœurs / Threads    : $($cpu.NumberOfCores) cœurs / $($cpu.NumberOfLogicalProcessors) threads""
+Write-Output ""[CPU] Fréquence Max     : $($cpu.MaxClockSpeed) MHz""
+Write-Output ''
+
+# Machine & OS
+$cs = Get-CimInstance Win32_ComputerSystem
+$os = Get-CimInstance Win32_OperatingSystem
+Write-Output ""[MACHINE] Nom PC        : $($cs.Name)""
+Write-Output ""[MACHINE] Fabricant     : $($cs.Manufacturer)""
+Write-Output ""[MACHINE] Modèle        : $($cs.Model)""
+Write-Output ""[OS] Système             : $($os.Caption) ($($os.OSArchitecture))""
+Write-Output ""[OS] Version / Build    : $($os.Version) (Build $($os.BuildNumber))""
+
+Write-Output $sep
+Write-Output '[OK] Audit système terminé avec succès'
+Write-Output $sep
+";
+        await PowerShellRunner.RunAsync(script, onOutput, ct);
+    }
+
+    // ────────────────────────────────────────────────────────────────
     //  RAPPORT BATTERIE  (sys_battery_report)
     // ────────────────────────────────────────────────────────────────
     public static async Task GetBatteryReport(Action<string> onOutput, CancellationToken ct = default)

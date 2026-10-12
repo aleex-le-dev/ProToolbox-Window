@@ -156,6 +156,13 @@
                             </StackPanel>
                         </Button>
 
+                        <Button Tag="SECRETS" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🔑" FontSize="14" Margin="0,0,10,0" />
+                                <TextBlock Text="Secrets &amp; Clés" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+
                         <Button Tag="RESEAU" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🌐" FontSize="14" Margin="0,0,10,0" />
@@ -177,17 +184,17 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Tag="SECURITE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="MISES_A_JOUR" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="🔐" FontSize="14" Margin="0,0,10,0" />
-                                <TextBlock Text="Sécurité" VerticalAlignment="Center" />
+                                <TextBlock Text="🔄" FontSize="14" Margin="0,0,10,0" />
+                                <TextBlock Text="Mises à Jour" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <Button Tag="EXTRACTION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="SECURITE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="📤" FontSize="14" Margin="0,0,10,0" />
-                                <TextBlock Text="Extraction" VerticalAlignment="Center" />
+                                <TextBlock Text="🛡️" FontSize="14" Margin="0,0,10,0" />
+                                <TextBlock Text="Sécurité" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
@@ -195,20 +202,6 @@
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="🎨" FontSize="14" Margin="0,0,10,0" />
                                 <TextBlock Text="Personnalisation" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-
-                        <Button Tag="MATERIEL" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="🖥️" FontSize="14" Margin="0,0,10,0" />
-                                <TextBlock Text="Matériel" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-
-                        <Button Tag="RAPPORTS" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="📊" FontSize="14" Margin="0,0,10,0" />
-                                <TextBlock Text="Rapports" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 

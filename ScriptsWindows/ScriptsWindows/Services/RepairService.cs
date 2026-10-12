@@ -15,6 +15,47 @@ public class RepairService
         await CommandRunner.RunAsync("sfc /scannow", onOutput, ct);
     }
 
+    // Pipeline Curatif Global (DISM + SFC)
+    public static async Task RunCurativePipeline(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("========================================================");
+        onOutput("  PIPELINE CURATIF GLOBAL : DISM RESTOREHEALTH + SFC");
+        onOutput("========================================================");
+        onOutput("\n[1/2] Étape 1 : Restauration de l'image Windows (DISM /RestoreHealth)...");
+        await CommandRunner.RunAsync("DISM /Online /Cleanup-Image /RestoreHealth", onOutput, ct);
+        onOutput("\n[2/2] Étape 2 : Vérification et réparation d'intégrité (SFC /scannow)...");
+        await CommandRunner.RunAsync("sfc /scannow", onOutput, ct);
+        onOutput("\n[OK] Pipeline curatif global terminé avec succès");
+    }
+
+    // Déblocage Spouleur d'Impression
+    public static async Task FixPrintSpooler(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Arrêt du spouleur d'impression Windows...");
+        await CommandRunner.RunAsync("net stop spooler", onOutput, ct);
+        onOutput("[i] Purge de la file d'attente d'impression (System32\\spool\\PRINTERS)...");
+        await PowerShellRunner.RunAsync(@"
+Remove-Item 'C:\Windows\System32\spool\PRINTERS\*' -Recurse -Force -ErrorAction SilentlyContinue
+Write-Output '[OK] File d''attente d''impression purgée'
+", onOutput, ct);
+        onOutput("[i] Redémarrage du spouleur d'impression...");
+        await CommandRunner.RunAsync("net start spooler", onOutput, ct);
+        onOutput("[OK] Spouleur d'impression débloqué et relancé");
+    }
+
+    // Réparation Applications & Microsoft Store
+    public static async Task RepairWindowsStore(Action<string> onOutput, CancellationToken ct = default)
+    {
+        onOutput("[i] Réinitialisation du cache Microsoft Store (wsreset)...");
+        await CommandRunner.RunAsync("wsreset.exe", onOutput, ct);
+        onOutput("[i] Réenregistrement des packages applicatifs UWP et Microsoft Store...");
+        await PowerShellRunner.RunAsync(@"
+Get-AppXPackage *WindowsStore* -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register ""$($_.InstallLocation)\AppXManifest.xml""}
+Get-AppXPackage -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register ""$($_.InstallLocation)\AppXManifest.xml"" -ErrorAction SilentlyContinue}
+Write-Output '[OK] Réenregistrement des applications UWP et Store terminé'
+", onOutput, ct);
+    }
+
     // Réparation réseau & DNS  (res_network_dns)
     public static async Task RepairNetworkDns(Action<string> onOutput, CancellationToken ct = default)
     {

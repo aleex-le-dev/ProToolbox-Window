@@ -50,9 +50,8 @@ public partial class MainWindow : Window
         {
             string[] categories =
             {
-                "DIAGNOSTIC", "REPARATION", "NETTOYAGE", "RESEAU", "DISQUE",
-                "APPLICATIONS", "SECURITE", "EXTRACTION", "PERSONNALISATION",
-                "MATERIEL", "RAPPORTS"
+                "DIAGNOSTIC", "REPARATION", "NETTOYAGE", "SECRETS", "RESEAU",
+                "DISQUE", "APPLICATIONS", "MISES_A_JOUR", "SECURITE", "PERSONNALISATION"
             };
             foreach (var cat in categories)
             {
@@ -142,14 +141,13 @@ public partial class MainWindow : Window
             "DIAGNOSTIC"       => new DiagnosticPage(),
             "REPARATION"       => new ReparationPage(),
             "NETTOYAGE"        => new NettoyagePage(),
+            "SECRETS"          => new SecretsPage(),
             "RESEAU"           => new ReseauPage(),
             "DISQUE"           => new DisquePage(),
             "APPLICATIONS"     => new ApplicationsPage(),
+            "MISES_A_JOUR"     => new MisesAJourPage(),
             "SECURITE"         => new SecuritePage(),
-            "EXTRACTION"       => new ExtractionPage(),
             "PERSONNALISATION" => new PersonnalisationPage(),
-            "MATERIEL"         => new MaterielPage(),
-            "RAPPORTS"         => new RapportsPage(),
             _                  => new FavorisPage()
         };
 
@@ -168,18 +166,17 @@ public partial class MainWindow : Window
 
         var (title, subtitle) = tag switch
         {
-            "DIAGNOSTIC"       => ("🔍 Diagnostic",       "Analyse approfondie de la configuration et des composants système"),
-            "REPARATION"       => ("🔧 Réparation",        "Intégrité système SFC, DISM, CHKDSK et redémarrages de secours"),
-            "NETTOYAGE"        => ("🧹 Nettoyage",         "Optimisation, suppression des fichiers temporaires et caches"),
-            "RESEAU"           => ("🌐 Réseau",            "Configuration DNS, audit Wi-Fi, réinitialisation de pile réseau"),
-            "DISQUE"           => ("💽 Disque",            "Formatage sécurisé, état SMART et gestion des disques"),
-            "APPLICATIONS"     => ("📦 Applications",     "Gestion, mise à jour et installation de logiciels"),
-            "SECURITE"         => ("🔐 Sécurité",         "Comptes d'utilisateurs, Defender, mots de passe Wi-Fi et audit"),
-            "EXTRACTION"       => ("📤 Extraction",        "Récupération de licences, exports et sauvegardes"),
-            "PERSONNALISATION" => ("🎨 Personnalisation",  "God Mode, menu contextuel classique et réglages Windows"),
-            "MATERIEL"         => ("🖥️ Matériel",         "Écran tactile, imprimantes, performances et alimentation"),
-            "RAPPORTS"         => ("📊 Rapports",          "Fiabilité, performances, Wi-Fi, alimentation et journaux Windows"),
-            _                  => ("⭐ Mes Favoris",       "Vos outils préférés accessibles rapidement")
+            "DIAGNOSTIC"       => ("🔍 Diagnostic Matériel & Composants", "Audit santé batterie, CPU, RAM, disques SMART, réseau et intégrité système"),
+            "REPARATION"       => ("🔧 Réparation Intégrale", "CHKDSK, spouleur, pipeline curatif DISM+SFC, cache icônes et Windows Update"),
+            "NETTOYAGE"        => ("🧹 Nettoyage & Optimisation Espace", "Nettoyage unifié, magasins WinSxS, caches navigateurs, temp et cleanmgr"),
+            "SECRETS"          => ("🔑 Récupération d'Identifiants & Secrets", "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web"),
+            "RESEAU"           => ("🌐 Réseau & Configuration", "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions"),
+            "DISQUE"           => ("💽 Disque Dur & Stockage", "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker"),
+            "APPLICATIONS"     => ("📦 Installation d'Applications", "Installation rapide d'outils essentiels via winget (Chrome, VLC, 7-Zip...)"),
+            "MISES_A_JOUR"     => ("🔄 Mises à Jour & Inventaire Logiciel", "Inventaire applicatif, mise à niveau winget et signatures Defender"),
+            "SECURITE"         => ("🛡️ Surveillance, Sécurité & Événements", "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources"),
+            "PERSONNALISATION" => ("🎨 Personnalisation & Système", "God Mode et rétablissement du menu contextuel classique Windows 10"),
+            _                  => ("⭐ Mes Favoris", "Vos outils préférés accessibles rapidement")
         };
 
         NavigateTo(btn, page, title, subtitle);
