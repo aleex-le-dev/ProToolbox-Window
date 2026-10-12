@@ -4,9 +4,6 @@
       Background="{DynamicResource BgDeep}"
       Title="Mises à Jour &amp; Inventaire Logiciel">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24,16,24,24">
-            <!-- Cartes en grille -->
-            <WrapPanel x:Name="ToolsPanel" Margin="0,4,0,0" />
-        </StackPanel>
+        <StackPanel Margin="24,16,24,24" x:Name="ToolsPanel" />
     </ScrollViewer>
 </Page>

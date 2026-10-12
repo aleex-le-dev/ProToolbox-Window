@@ -50,7 +50,7 @@ public partial class MainWindow : Window
         {
             string[] categories =
             {
-                "DIAGNOSTIC", "REPARATION", "NETTOYAGE", "SECRETS", "RESEAU",
+                "DIAGNOSTIC", "MATERIEL", "REPARATION", "NETTOYAGE", "SECRETS", "RESEAU",
                 "DISQUE", "APPLICATIONS", "MISES_A_JOUR", "SECURITE", "PERSONNALISATION"
             };
             foreach (var cat in categories)
@@ -139,6 +139,7 @@ public partial class MainWindow : Window
         Page newPage = tag switch
         {
             "DIAGNOSTIC"       => new DiagnosticPage(),
+            "MATERIEL"         => new MaterielPage(),
             "REPARATION"       => new ReparationPage(),
             "NETTOYAGE"        => new NettoyagePage(),
             "SECRETS"          => new SecretsPage(),
@@ -166,13 +167,14 @@ public partial class MainWindow : Window
 
         var (title, subtitle) = tag switch
         {
-            "DIAGNOSTIC"       => ("🔍 Diagnostic Matériel & Composants", "Audit santé batterie, CPU, RAM, disques SMART, réseau et intégrité système"),
-            "REPARATION"       => ("🔧 Réparation Intégrale", "CHKDSK, spouleur, pipeline curatif DISM+SFC, cache icônes et Windows Update"),
+            "DIAGNOSTIC"       => ("🔍 Diagnostic Matériel & Intégrité", "Analyse carte mère, CPU, RAM, disques physiques, batterie et réseau"),
+            "MATERIEL"         => ("🖥️ Matériel & Périphériques", "Outils de diagnostic mémoire, GPU/DxDiag, périphériques et benchmarks"),
+            "REPARATION"       => ("🔧 Réparation Intégrale", "CHKDSK, spouleur, pipeline DISM+SFC, cache icônes et Windows Update"),
             "NETTOYAGE"        => ("🧹 Nettoyage & Optimisation Espace", "Nettoyage unifié, magasins WinSxS, caches navigateurs, temp et cleanmgr"),
             "SECRETS"          => ("🔑 Récupération d'Identifiants & Secrets", "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web"),
             "RESEAU"           => ("🌐 Réseau & Configuration", "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions"),
             "DISQUE"           => ("💽 Disque Dur & Stockage", "Formatage Diskpart, défragmentation, TRIM SSD, gestionnaire et BitLocker"),
-            "APPLICATIONS"     => ("📦 Installation d'Applications", "Installation rapide d'outils essentiels via winget (Chrome, VLC, 7-Zip...)"),
+            "APPLICATIONS"     => ("📦 Installation d'Applications", "Installation automatisée de navigateurs, lecteurs et utilitaires via winget"),
             "MISES_A_JOUR"     => ("🔄 Mises à Jour & Inventaire Logiciel", "Inventaire applicatif, mise à niveau winget et signatures Defender"),
             "SECURITE"         => ("🛡️ Surveillance, Sécurité & Événements", "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources"),
             "PERSONNALISATION" => ("🎨 Personnalisation & Système", "God Mode et rétablissement du menu contextuel classique Windows 10"),

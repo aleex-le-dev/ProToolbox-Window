@@ -7,8 +7,9 @@ using ScriptsWindows.Services;
 namespace ScriptsWindows.Core;
 
 /// <summary>
-/// Répertoire central de tous les outils disponibles dans l'application (63 scripts répartis en 10 catégories).
-/// Conforme à l'arborescence officielle ALEX TOOLKIT.
+/// Répertoire central de tous les outils disponibles dans l'application.
+/// Structuré en 11 catégories principales avec sous-titres internes (subheadings).
+/// Conforme à la directive UI/UX Alex Toolkit.
 /// </summary>
 public static class ToolRegistry
 {
@@ -16,16 +17,17 @@ public static class ToolRegistry
 
     static ToolRegistry()
     {
-        RegisterDiagnosticTools();       // 1. Diagnostic Matériel & Composants (13 scripts)
-        RegisterRepairTools();           // 2. Réparation Intégrale (10 scripts)
-        RegisterCleaningTools();         // 3. Nettoyage & Optimisation Espace (6 scripts)
-        RegisterSecretsTools();          // 4. Récupération d'Identifiants & Secrets (5 scripts)
-        RegisterNetworkTools();          // 5. Réseau & Configuration (6 scripts)
-        RegisterDiskTools();             // 6. Disque Dur & Stockage (5 scripts)
-        RegisterAppInstallationTools();  // 7. Installation d'Applications (6 scripts)
-        RegisterUpdatesTools();          // 8. Mises à Jour & Inventaire Logiciel (4 scripts)
-        RegisterSecurityTools();         // 9. Surveillance, Sécurité & Événements (6 scripts)
-        RegisterPersonalizationTools();  // 10. Personnalisation & Système (2 scripts)
+        RegisterDiagnosticTools();       // Catégorie 1 : Diagnostic Matériel & Intégrité
+        RegisterHardwareTools();         // Catégorie 2 : Matériel & Périphériques
+        RegisterRepairTools();           // Catégorie 3 : Réparation Intégrale
+        RegisterCleaningTools();         // Catégorie 4 : Nettoyage & Optimisation Espace
+        RegisterSecretsTools();          // Catégorie 5 : Récupération d'Identifiants & Secrets
+        RegisterNetworkTools();          // Catégorie 6 : Réseau & Configuration
+        RegisterDiskTools();             // Catégorie 7 : Disque Dur & Stockage
+        RegisterAppInstallationTools();  // Catégorie 8 : Installation d'Applications
+        RegisterUpdatesTools();          // Catégorie 9 : Mises à Jour & Inventaire Logiciel
+        RegisterSecurityTools();         // Catégorie 10 : Surveillance, Sécurité & Événements
+        RegisterPersonalizationTools();  // Catégorie 11 : Personnalisation & Système
     }
 
     public static IReadOnlyList<ScriptTool> AllTools => _allTools;
@@ -47,42 +49,23 @@ public static class ToolRegistry
             t.Name.ToLowerInvariant().Contains(q) ||
             t.Description.ToLowerInvariant().Contains(q) ||
             t.Category.ToLowerInvariant().Contains(q) ||
+            t.SubHeading.ToLowerInvariant().Contains(q) ||
             t.Tags.Any(tag => tag.ToLowerInvariant().Contains(q)));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 1. 🔍 DIAGNOSTIC MATÉRIEL & COMPOSANTS (13 scripts)
+    // CATÉGORIE 1 : 🔍 DIAGNOSTIC MATÉRIEL & INTÉGRITÉ
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterDiagnosticTools()
     {
+        // Sous-titre interne : Carte mère & Processeur
         _allTools.Add(new ScriptTool
         {
-            Id = "diag_battery",
-            Name = "Batterie - Santé & Usure",
-            Description = "Tension en direct, capacité théorique vs réelle (powercfg /batteryreport).",
-            Category = "DIAGNOSTIC",
-            Icon = "🔋",
-            Action = (log, ct) => DiagnosticService.GetFullBatteryReport(log, ct),
-            Tags = new[] { "batterie", "powercfg", "batteryreport", "santé", "usure", "tension" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_winsat",
-            Name = "Benchmark Global (WinSAT)",
-            Description = "Évaluation des performances CPU, RAM, GPU et stockage (winsat formal).",
-            Category = "DIAGNOSTIC",
-            Icon = "⚙️",
-            Action = (log, ct) => HardwareService.RunWinSat(log, ct),
-            Tags = new[] { "benchmark", "winsat", "performance", "score", "cpu", "gpu", "ram", "disque" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_sys_report",
+            Id = "diag_mobo",
             Name = "Carte Mère, BIOS & Système",
-            Description = "Modèle, version BIOS, processeur et configuration globale.",
+            Description = "Modèle, fabricant, version BIOS via Get-CimInstance Win32_BaseBoard, Win32_BIOS.",
             Category = "DIAGNOSTIC",
+            SubHeading = "Carte mère & Processeur",
             Icon = "🖥️",
             Action = (log, ct) => DiagnosticService.GetMotherboardBiosInfo(log, ct),
             Tags = new[] { "carte mère", "bios", "système", "uefi", "processeur", "modèle" }
@@ -90,32 +73,37 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "diag_network",
-            Name = "Carte Réseau & Connectivité",
-            Description = "Interfaces, débit négocié, passerelle et test ping.",
-            Category = "DIAGNOSTIC",
-            Icon = "🌐",
-            Action = (log, ct) => DiagnosticService.DiagNetwork(log, ct),
-            Tags = new[] { "réseau", "ping", "connectivité", "ip", "passerelle", "interface", "débit" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_temp",
+            Id = "diag_cpu",
             Name = "CPU & Températures",
-            Description = "Fréquence, charge, cœurs et relevé des sondes ACPI / WMI.",
+            Description = "Cœurs, fréquence, charge CPU et sondes thermiques ACPI (MSAcpi_ThermalZoneTemperature).",
             Category = "DIAGNOSTIC",
+            SubHeading = "Carte mère & Processeur",
             Icon = "🌡️",
             Action = (log, ct) => DiagnosticService.GetTemperatureReport(log, ct),
             Tags = new[] { "cpu", "température", "chaleur", "thermal", "fréquence", "cœurs" }
         });
 
+        // Sous-titre interne : Mémoire vive (RAM)
         _allTools.Add(new ScriptTool
         {
-            Id = "diag_disk_smart",
-            Name = "Disques - Santé S.M.A.R.T.",
-            Description = "État physique, usure et type de média (NVMe / SSD / HDD).",
+            Id = "diag_ram",
+            Name = "RAM - Audit Matériel",
+            Description = "Vitesse, constructeur, slots et capacité par barrette (Win32_PhysicalMemory).",
             Category = "DIAGNOSTIC",
+            SubHeading = "Mémoire vive (RAM)",
+            Icon = "🧠",
+            Action = (log, ct) => DiagnosticService.CheckRam(log, ct),
+            Tags = new[] { "ram", "mémoire", "slots", "mhz", "vitesse", "constructeur", "ddr" }
+        });
+
+        // Sous-titre interne : Stockage physique
+        _allTools.Add(new ScriptTool
+        {
+            Id = "diag_smart",
+            Name = "Disques - Santé S.M.A.R.T.",
+            Description = "Santé S.M.A.R.T. et type de disque (NVMe/SSD/HDD via Get-PhysicalDisk).",
+            Category = "DIAGNOSTIC",
+            SubHeading = "Stockage physique",
             Icon = "💾",
             Action = (log, ct) => DiskService.GetPhysicalDisks(log, ct),
             Tags = new[] { "smart", "santé", "disques", "ssd", "nvme", "hdd", "usure" }
@@ -123,76 +111,50 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "diag_disk_volumes",
+            Id = "diag_volumes",
             Name = "Disques - Volumes & Espace",
-            Description = "Espace libre, occupé et systèmes de fichiers.",
+            Description = "Lecteurs, taux d'occupation et espace disponible (Get-Volume).",
             Category = "DIAGNOSTIC",
+            SubHeading = "Stockage physique",
             Icon = "📊",
             Action = (log, ct) => DiskService.GetVolumesStatus(log, ct),
             Tags = new[] { "volumes", "espace", "disque", "libre", "taille", "partitions" }
         });
 
+        // Sous-titre interne : Alimentation & Batterie
         _allTools.Add(new ScriptTool
         {
-            Id = "diag_devmgmt",
-            Name = "Gestionnaire de Périphériques (Devmgmt)",
-            Description = "Contrôle des composants en erreur ou pilotes manquants (devmgmt.msc).",
+            Id = "diag_battery",
+            Name = "Batterie - Santé & Usure",
+            Description = "Tension/pourcentage direct et rapport d'usure (powercfg /batteryreport).",
             Category = "DIAGNOSTIC",
-            Icon = "🔌",
-            Action = (log, ct) => HardwareService.LaunchDevmgmt(log, ct),
-            Tags = new[] { "devmgmt", "périphériques", "drivers", "pilotes", "erreurs" }
+            SubHeading = "Alimentation & Batterie",
+            Icon = "🔋",
+            Action = (log, ct) => DiagnosticService.GetFullBatteryReport(log, ct),
+            Tags = new[] { "batterie", "powercfg", "batteryreport", "santé", "usure", "tension" }
         });
 
+        // Sous-titre interne : Interface réseau
         _allTools.Add(new ScriptTool
         {
-            Id = "diag_dxdiag",
-            Name = "GPU & Audio (DxDiag)",
-            Description = "Spécifications DirectX, VRAM, pilotes d'affichage et sorties audio (dxdiag).",
+            Id = "diag_network",
+            Name = "Carte Réseau & Connectivité",
+            Description = "Adaptateurs, débits négociés, adresses IP et test ping de connectivité.",
             Category = "DIAGNOSTIC",
-            Icon = "🎮",
-            Action = (log, ct) => HardwareService.LaunchDxdiag(log, ct),
-            Tags = new[] { "dxdiag", "gpu", "directx", "vram", "audio", "graphique" }
+            SubHeading = "Interface réseau",
+            Icon = "🌐",
+            Action = (log, ct) => DiagnosticService.DiagNetwork(log, ct),
+            Tags = new[] { "réseau", "ping", "connectivité", "ip", "passerelle", "interface", "débit" }
         });
 
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_msinfo32",
-            Name = "Informations Système (Msinfo32)",
-            Description = "Vue exhaustive du matériel, des ressources et de l'OS (msinfo32).",
-            Category = "DIAGNOSTIC",
-            Icon = "ℹ️",
-            Action = (log, ct) => HardwareService.LaunchMsinfo32(log, ct),
-            Tags = new[] { "msinfo32", "matériel", "système", "os", "ressources" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_ram_audit",
-            Name = "RAM - Audit Matériel",
-            Description = "Vitesse (MHz), constructeur, slots utilisés et capacité par barrette.",
-            Category = "DIAGNOSTIC",
-            Icon = "🧠",
-            Action = (log, ct) => DiagnosticService.CheckRam(log, ct),
-            Tags = new[] { "ram", "mémoire", "slots", "mhz", "vitesse", "constructeur", "ddr" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "diag_ram_test",
-            Name = "RAM - Test Mémoire Intégral",
-            Description = "Diagnostic mémoire Windows au redémarrage (mdsched.exe).",
-            Category = "DIAGNOSTIC",
-            Icon = "🛠️",
-            Action = (log, ct) => HardwareService.RunRamTest(log, ct),
-            Tags = new[] { "ram", "mdsched", "test", "mémoire", "diagnostic" }
-        });
-
+        // Sous-titre interne : Fichiers système Windows
         _allTools.Add(new ScriptTool
         {
             Id = "diag_sfc",
             Name = "Scan Intégrité Système (SFC)",
-            Description = "Analyse d'intégrité des fichiers système protégés (sfc /scannow).",
+            Description = "Contrôle d'intégrité des fichiers protégés (sfc /scannow).",
             Category = "DIAGNOSTIC",
+            SubHeading = "Fichiers système Windows",
             Icon = "🛡️",
             Action = (log, ct) => RepairService.RunSfc(log, ct),
             Tags = new[] { "sfc", "scannow", "intégrité", "fichiers", "système" }
@@ -200,93 +162,125 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 2. 🔧 RÉPARATION INTÉGRALE (10 scripts)
+    // CATÉGORIE 2 : 🖥️ MATÉRIEL & PÉRIPHÉRIQUES
+    // ─────────────────────────────────────────────────────────────────────────
+    private static void RegisterHardwareTools()
+    {
+        // Sous-titre interne : Mémoire vive (RAM)
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_mdsched",
+            Name = "Diagnostic Mémoire (mdsched)",
+            Description = "Outil de diagnostic mémoire Windows au redémarrage (mdsched.exe).",
+            Category = "MATERIEL",
+            SubHeading = "Mémoire vive (RAM)",
+            Icon = "🧠",
+            Action = (log, ct) => HardwareService.RunRamTest(log, ct),
+            Tags = new[] { "ram", "mdsched", "test", "mémoire", "diagnostic" }
+        });
+
+        // Sous-titre interne : Contrôleur graphique & Audio
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_dxdiag",
+            Name = "Diagnostic Matériel (DxDiag)",
+            Description = "Diagnostic matériel DirectX, GPU et cartes audio (dxdiag.exe).",
+            Category = "MATERIEL",
+            SubHeading = "Contrôleur graphique & Audio",
+            Icon = "🎮",
+            Action = (log, ct) => HardwareService.LaunchDxdiag(log, ct),
+            Tags = new[] { "dxdiag", "gpu", "directx", "vram", "audio", "graphique" }
+        });
+
+        // Sous-titre interne : Pilotes & Périphériques d'entrée/sortie
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_devmgmt",
+            Name = "Gestionnaire de Périphériques",
+            Description = "Gestionnaire de périphériques (devmgmt.msc).",
+            Category = "MATERIEL",
+            SubHeading = "Pilotes & Périphériques d'entrée/sortie",
+            Icon = "🔌",
+            Action = (log, ct) => HardwareService.LaunchDevmgmt(log, ct),
+            Tags = new[] { "devmgmt", "périphériques", "drivers", "pilotes", "erreurs" }
+        });
+
+        // Sous-titre interne : Banc d'essai & Performances globales
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_resmon",
+            Name = "Moniteur de Ressources (Resmon)",
+            Description = "Moniteur de ressources en temps réel (resmon.exe).",
+            Category = "MATERIEL",
+            SubHeading = "Banc d'essai & Performances globales",
+            Icon = "📊",
+            Action = (log, ct) => HardwareService.LaunchResmon(log, ct),
+            Tags = new[] { "resmon", "ressources", "cpu", "ram", "disque", "réseau" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_msinfo",
+            Name = "Informations Système (Msinfo32)",
+            Description = "Vue d'ensemble du matériel et configuration Windows (msinfo32.exe).",
+            Category = "MATERIEL",
+            SubHeading = "Banc d'essai & Performances globales",
+            Icon = "ℹ️",
+            Action = (log, ct) => HardwareService.LaunchMsinfo32(log, ct),
+            Tags = new[] { "msinfo32", "matériel", "système", "os", "ressources" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_winsat",
+            Name = "Benchmark Global (WinSAT)",
+            Description = "Benchmark complet CPU, RAM, GPU et disques (winsat formal).",
+            Category = "MATERIEL",
+            SubHeading = "Banc d'essai & Performances globales",
+            Icon = "⚙️",
+            Action = (log, ct) => HardwareService.RunWinSat(log, ct),
+            Tags = new[] { "benchmark", "winsat", "performance", "score", "cpu", "gpu", "ram", "disque" }
+        });
+
+        // Sous-titre interne : Gestion d'énergie
+        _allTools.Add(new ScriptTool
+        {
+            Id = "hw_power_perf",
+            Name = "Profil Performances Élevées",
+            Description = "Profil d'alimentation Ultimate Performance / Hautes performances.",
+            Category = "MATERIEL",
+            SubHeading = "Gestion d'énergie",
+            Icon = "⚡",
+            Action = (log, ct) => HardwareService.SetPlanHigh(log, ct),
+            Tags = new[] { "alimentation", "énergie", "performances", "powercfg", "profil" }
+        });
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // CATÉGORIE 3 : 🔧 RÉPARATION INTÉGRALE
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterRepairTools()
     {
+        // Sous-titre interne : Magasin d'images Windows (Component Store)
         _allTools.Add(new ScriptTool
         {
-            Id = "rep_chkdsk",
-            Name = "Correction Disque (CHKDSK)",
-            Description = "Réparation du système de fichiers (chkdsk C: /f /r).",
+            Id = "repair_dism_check",
+            Name = "Vérification DISM (ScanHealth)",
+            Description = "Vérification de corruption du magasin (DISM /ScanHealth).",
             Category = "REPARATION",
-            Icon = "🔍",
-            Action = (log, ct) => RepairService.RunChkdsk("C", log, ct),
-            Tags = new[] { "chkdsk", "disque", "réparation", "ntfs", "erreurs" }
+            SubHeading = "Magasin d'images Windows (Component Store)",
+            Icon = "🔎",
+            Action = (log, ct) => RepairService.RunDismCheck(log, ct),
+            Tags = new[] { "dism", "checkhealth", "scanhealth", "corruption", "image" }
         });
 
         _allTools.Add(new ScriptTool
         {
-            Id = "rep_spooler",
-            Name = "Déblocage Spouleur d'Impression",
-            Description = "Purge de System32\\spool\\PRINTERS et relance du service.",
+            Id = "repair_dism_restore",
+            Name = "Restauration DISM (RestoreHealth)",
+            Description = "Réparation en ligne du magasin (DISM /RestoreHealth).",
             Category = "REPARATION",
-            Icon = "🖨️",
-            Action = (log, ct) => RepairService.FixPrintSpooler(log, ct),
-            Tags = new[] { "spouleur", "imprimante", "print", "spooler", "déblocage", "purge" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "rep_pipeline",
-            Name = "Pipeline Curatif Global (DISM + SFC)",
-            Description = "Enchaînement automatique DISM Restore puis SFC.",
-            Category = "REPARATION",
-            Icon = "🩹",
-            Action = (log, ct) => RepairService.RunCurativePipeline(log, ct),
-            Tags = new[] { "pipeline", "curatif", "dism", "sfc", "global", "restauration" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "rep_icon_cache",
-            Name = "Reconstruction Cache Icônes & Miniatures",
-            Description = "Purge de iconcache*.db et thumbcache*.db.",
-            Category = "REPARATION",
-            Icon = "🖼️",
-            Action = (log, ct) => RepairService.RepairIcons(log, ct),
-            Tags = new[] { "icones", "miniatures", "cache", "iconcache", "thumbcache", "explorer" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "rep_wu_reset",
-            Name = "Réinitialisation Complète Windows Update",
-            Description = "Purge SoftwareDistribution/Catroot2 et reset services.",
-            Category = "REPARATION",
-            Icon = "🔄",
-            Action = (log, ct) => RepairService.ResetWindowsUpdate(log, ct),
-            Tags = new[] { "windows update", "wu", "softwaredistribution", "catroot2", "reset", "mise a jour" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "rep_uwp_store",
-            Name = "Réparation Applications & Microsoft Store",
-            Description = "Réenregistrement des paquets UWP et du Store.",
-            Category = "REPARATION",
-            Icon = "🏬",
-            Action = (log, ct) => RepairService.RepairWindowsStore(log, ct),
-            Tags = new[] { "store", "microsoft store", "uwp", "wsreset", "applications", "paquets" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "rep_net_reset",
-            Name = "Réparation Pile Réseau & Winsock",
-            Description = "Reset TCP/IP, Winsock, purge ARP et renouvellement IP.",
-            Category = "REPARATION",
-            Icon = "🔌",
-            Action = (log, ct) => NetworkService.ResetAll(log, ct),
-            Tags = new[] { "réseau", "winsock", "tcp", "ip", "arp", "pile", "connexion" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "rep_dism_restore",
-            Name = "Restauration Image Windows (DISM Restore)",
-            Description = "Réparation via Windows Update (DISM /RestoreHealth).",
-            Category = "REPARATION",
+            SubHeading = "Magasin d'images Windows (Component Store)",
             Icon = "🩺",
             Action = (log, ct) => RepairService.RunDismRestore(log, ct),
             Tags = new[] { "dism", "restorehealth", "image", "windows", "réparation" }
@@ -294,82 +288,121 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "rep_drivers_backup",
-            Name = "Sauvegarder Pilotes Système (DISM)",
-            Description = "Sauvegarde préventive vers C:\\DriversBackup.",
+            Id = "repair_pipeline",
+            Name = "Pipeline Curatif Global (DISM + SFC)",
+            Description = "Exécution enchaînée DISM RestoreHealth puis sfc /scannow.",
             Category = "REPARATION",
+            SubHeading = "Magasin d'images Windows (Component Store)",
+            Icon = "🩹",
+            Action = (log, ct) => RepairService.RunCurativePipeline(log, ct),
+            Tags = new[] { "pipeline", "curatif", "dism", "sfc", "global", "restauration" }
+        });
+
+        // Sous-titre interne : Système de fichiers & Partitions
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_chkdsk",
+            Name = "Correction Disque (CHKDSK)",
+            Description = "Réparation des erreurs disques et secteurs (chkdsk C: /f /r).",
+            Category = "REPARATION",
+            SubHeading = "Système de fichiers & Partitions",
+            Icon = "🔍",
+            Action = (log, ct) => RepairService.RunChkdsk("C", log, ct),
+            Tags = new[] { "chkdsk", "disque", "réparation", "ntfs", "erreurs" }
+        });
+
+        // Sous-titre interne : Pilotes de périphériques
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_export_drivers",
+            Name = "Sauvegarder Pilotes Système (DISM)",
+            Description = "Export et sauvegarde vers C:\\DriversBackup (DISM /Export-Driver).",
+            Category = "REPARATION",
+            SubHeading = "Pilotes de périphériques",
             Icon = "💾",
             Action = (log, ct) => ExportService.ExportDrivers(log, ct),
             Tags = new[] { "pilotes", "drivers", "backup", "sauvegarde", "dism" }
         });
 
+        // Sous-titre interne : Services de mise à jour Windows
         _allTools.Add(new ScriptTool
         {
-            Id = "rep_dism_check",
-            Name = "Vérification Image Windows (DISM Check)",
-            Description = "Analyse de corruption du magasin (DISM /ScanHealth).",
+            Id = "repair_wu",
+            Name = "Réinitialisation Windows Update",
+            Description = "Réinitialisation intégrale des composants WU (SoftwareDistribution/Catroot2).",
             Category = "REPARATION",
-            Icon = "🔎",
-            Action = (log, ct) => RepairService.RunDismCheck(log, ct),
-            Tags = new[] { "dism", "checkhealth", "scanhealth", "corruption", "image" }
+            SubHeading = "Services de mise à jour Windows",
+            Icon = "🔄",
+            Action = (log, ct) => RepairService.ResetWindowsUpdate(log, ct),
+            Tags = new[] { "windows update", "wu", "softwaredistribution", "catroot2", "reset", "mise a jour" }
+        });
+
+        // Sous-titre interne : Pile réseau & Protocoles
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_network_stack",
+            Name = "Réparation Pile Réseau & Winsock",
+            Description = "Réinitialisation TCP/IP, Winsock, purge ARP et bail DHCP.",
+            Category = "REPARATION",
+            SubHeading = "Pile réseau & Protocoles",
+            Icon = "🔌",
+            Action = (log, ct) => NetworkService.ResetAll(log, ct),
+            Tags = new[] { "réseau", "winsock", "tcp", "ip", "arp", "pile", "connexion" }
+        });
+
+        // Sous-titre interne : Sous-système d'impression
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_spooler",
+            Name = "Déblocage Spouleur d'Impression",
+            Description = "Purge de spool\\PRINTERS et relance du spouleur d'impression.",
+            Category = "REPARATION",
+            SubHeading = "Sous-système d'impression",
+            Icon = "🖨️",
+            Action = (log, ct) => RepairService.FixPrintSpooler(log, ct),
+            Tags = new[] { "spouleur", "imprimante", "print", "spooler", "déblocage", "purge" }
+        });
+
+        // Sous-titre interne : Plateforme d'applications universelles (UWP)
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_uwp_store",
+            Name = "Réparation Microsoft Store & UWP",
+            Description = "Réenregistrement complet du Microsoft Store et paquets UWP.",
+            Category = "REPARATION",
+            SubHeading = "Plateforme d'applications universelles (UWP)",
+            Icon = "🏬",
+            Action = (log, ct) => RepairService.RepairWindowsStore(log, ct),
+            Tags = new[] { "store", "microsoft store", "uwp", "wsreset", "applications", "paquets" }
+        });
+
+        // Sous-titre interne : Interface graphique (Shell Windows)
+        _allTools.Add(new ScriptTool
+        {
+            Id = "repair_icon_cache",
+            Name = "Reconstruction Cache Icônes & Miniatures",
+            Description = "Suppression de iconcache*.db / thumbcache*.db et relance d'Explorer.",
+            Category = "REPARATION",
+            SubHeading = "Interface graphique (Shell Windows)",
+            Icon = "🖼️",
+            Action = (log, ct) => RepairService.RepairIcons(log, ct),
+            Tags = new[] { "icones", "miniatures", "cache", "iconcache", "thumbcache", "explorer" }
         });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 3. 🧹 NETTOYAGE & OPTIMISATION ESPACE (6 scripts)
+    // CATÉGORIE 4 : 🧹 NETTOYAGE & OPTIMISATION ESPACE
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterCleaningTools()
     {
+        // Sous-titre interne : Stockage temporaire OS & Profils
         _allTools.Add(new ScriptTool
         {
-            Id = "cl_all",
-            Name = "Nettoyage Complet Unifié",
-            Description = "Fichiers temporaires, corbeille, logs et cache DNS en un passage.",
-            Category = "NETTOYAGE",
-            Icon = "✨",
-            Action = (log, ct) => CleaningService.CleanAll(log, ct),
-            Tags = new[] { "nettoyage", "unifié", "complet", "temp", "corbeille", "dns", "logs" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "cl_winsxs",
-            Name = "Nettoyage Magasin WinSxS (DISM)",
-            Description = "Optimisation des composants obsolètes (/StartComponentCleanup /ResetBase).",
-            Category = "NETTOYAGE",
-            Icon = "🧹",
-            Action = (log, ct) => CleaningService.CleanWinSxS(log, ct),
-            Tags = new[] { "winsxs", "dism", "optimisation", "cleanup", "resetbase", "espace" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "cl_browsers",
-            Name = "Nettoyer Caches Navigateurs & Vignettes",
-            Description = "Purge Chrome, Edge, Firefox, Brave et miniatures.",
-            Category = "NETTOYAGE",
-            Icon = "🌐",
-            Action = (log, ct) => CleaningService.CleanBrowsers(log, ct),
-            Tags = new[] { "navigateurs", "cache", "chrome", "edge", "firefox", "brave", "vignettes", "miniatures" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "cl_disk",
-            Name = "Outil Nettoyage Disque (Cleanmgr)",
-            Description = "Lancement de l'assistant officiel cleanmgr.exe.",
-            Category = "NETTOYAGE",
-            Icon = "🗑️",
-            Action = (log, ct) => CleaningService.CleanDisk(log, ct),
-            Tags = new[] { "cleanmgr", "disque", "nettoyage", "assistant" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "cl_temp",
+            Id = "clean_temp",
             Name = "Purger les Fichiers Temp",
-            Description = "Nettoyage de C:\\Windows\\Temp et %TEMP%.",
+            Description = "Purge des dossiers temporaires (Windows\\Temp et %TEMP%).",
             Category = "NETTOYAGE",
+            SubHeading = "Stockage temporaire OS & Profils",
             Icon = "📁",
             Action = (log, ct) => CleaningService.CleanTemp(log, ct),
             Tags = new[] { "temp", "temporaires", "purge", "fichiers" }
@@ -377,27 +410,81 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "cl_wu",
+            Id = "clean_wu_cache",
             Name = "Purger Téléchargements Windows Update",
-            Description = "Suppression de SoftwareDistribution\\Download.",
+            Description = "Suppression du dossier SoftwareDistribution\\Download.",
             Category = "NETTOYAGE",
+            SubHeading = "Stockage temporaire OS & Profils",
             Icon = "📦",
             Action = (log, ct) => CleaningService.CleanWindowsUpdate(log, ct),
             Tags = new[] { "windows update", "téléchargements", "softwaredistribution", "download", "purge" }
         });
+
+        // Sous-titre interne : Navigateurs web & Explorateur
+        _allTools.Add(new ScriptTool
+        {
+            Id = "clean_browser_caches",
+            Name = "Nettoyer Caches Navigateurs & Vignettes",
+            Description = "Nettoyage des caches (Chrome, Edge, Firefox, Brave) et vignettes.",
+            Category = "NETTOYAGE",
+            SubHeading = "Navigateurs web & Explorateur",
+            Icon = "🌐",
+            Action = (log, ct) => CleaningService.CleanBrowsers(log, ct),
+            Tags = new[] { "navigateurs", "cache", "chrome", "edge", "firefox", "brave", "vignettes", "miniatures" }
+        });
+
+        // Sous-titre interne : Disque système (Nettoyage natif)
+        _allTools.Add(new ScriptTool
+        {
+            Id = "clean_cleanmgr",
+            Name = "Outil Nettoyage Disque (Cleanmgr)",
+            Description = "Assistant de nettoyage de disque natif (cleanmgr.exe).",
+            Category = "NETTOYAGE",
+            SubHeading = "Disque système (Nettoyage natif)",
+            Icon = "🗑️",
+            Action = (log, ct) => CleaningService.CleanDisk(log, ct),
+            Tags = new[] { "cleanmgr", "disque", "nettoyage", "assistant" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "clean_full_unified",
+            Name = "Nettoyage Complet Unifié",
+            Description = "Purge en 1 clic : corbeille, logs, temporaires et cache DNS.",
+            Category = "NETTOYAGE",
+            SubHeading = "Disque système (Nettoyage natif)",
+            Icon = "✨",
+            Action = (log, ct) => CleaningService.CleanAll(log, ct),
+            Tags = new[] { "nettoyage", "unifié", "complet", "temp", "corbeille", "dns", "logs" }
+        });
+
+        // Sous-titre interne : Magasin de composants Windows
+        _allTools.Add(new ScriptTool
+        {
+            Id = "clean_winsxs",
+            Name = "Nettoyage Magasin WinSxS (DISM)",
+            Description = "Optimisation du dossier WinSxS (DISM /StartComponentCleanup /ResetBase).",
+            Category = "NETTOYAGE",
+            SubHeading = "Magasin de composants Windows",
+            Icon = "🧹",
+            Action = (log, ct) => CleaningService.CleanWinSxS(log, ct),
+            Tags = new[] { "winsxs", "dism", "optimisation", "cleanup", "resetbase", "espace" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 4. 🔑 RÉCUPÉRATION D'IDENTIFIANTS & SECRETS (5 scripts)
+    // CATÉGORIE 5 : 🔑 RÉCUPÉRATION D'IDENTIFIANTS & SECRETS
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterSecretsTools()
     {
+        // Sous-titre interne : Cartes réseau sans fil (Wi-Fi)
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_wifi_pwd",
+            Id = "sec_wifi_show",
             Name = "Afficher Mots de Passe Wi-Fi",
-            Description = "Extrait et affiche les clés Wi-Fi enregistrées en clair.",
+            Description = "Affichage console immédiat des clés Wi-Fi en clair.",
             Category = "SECRETS",
+            SubHeading = "Cartes réseau sans fil (Wi-Fi)",
             Icon = "📶",
             Action = (log, ct) => SecurityService.DumpWifiPasswords(log, ct),
             Tags = new[] { "wifi", "mot de passe", "clés", "clair", "sécurité" }
@@ -405,60 +492,69 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_audit_docs",
-            Name = "Audit Documents Sensibles",
-            Description = "Détection des clés SSH, tokens et mots de passe locaux.",
-            Category = "SECRETS",
-            Icon = "🔍",
-            Action = (log, ct) => ExportService.ScanSensitiveDocs(log, ct),
-            Tags = new[] { "audit", "documents", "ssh", "tokens", "secrets", "mots de passe" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_browser_hist",
-            Name = "Détecter Historique Web & Profils",
-            Description = "Localisation des bases SQLite Chrome et Edge.",
-            Category = "SECRETS",
-            Icon = "🌐",
-            Action = (log, ct) => ExportService.AnalyzeBrowserHistory(log, ct),
-            Tags = new[] { "historique", "web", "profils", "chrome", "edge", "sqlite" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_export_wifi",
+            Id = "sec_wifi_export",
             Name = "Exporter Profils & Clés Wi-Fi",
-            Description = "Sauvegarde des profils XML sur le Bureau.",
+            Description = "Sauvegarde des profils et clés Wi-Fi en XML sur le Bureau.",
             Category = "SECRETS",
+            SubHeading = "Cartes réseau sans fil (Wi-Fi)",
             Icon = "💾",
             Action = (log, ct) => ExportService.ExportWifiAndApps(log, ct),
             Tags = new[] { "export", "wifi", "xml", "bureau", "profils", "sauvegarde" }
         });
 
+        // Sous-titre interne : Dossiers utilisateurs & Clés d'authentification
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_audit_sensitive",
+            Name = "Audit Documents Sensibles",
+            Description = "Audit des clés SSH (id_rsa), tokens .env et identifiants locaux.",
+            Category = "SECRETS",
+            SubHeading = "Dossiers utilisateurs & Clés d'authentification",
+            Icon = "🔍",
+            Action = (log, ct) => ExportService.ScanSensitiveDocs(log, ct),
+            Tags = new[] { "audit", "documents", "ssh", "tokens", "secrets", "mots de passe" }
+        });
+
+        // Sous-titre interne : Puce de sécurité / Carte mère (UEFI)
         _allTools.Add(new ScriptTool
         {
             Id = "sec_win_key",
             Name = "Récupérer Clé Produit Windows",
-            Description = "Lecture de la clé de licence dans le BIOS/UEFI (OA3x).",
+            Description = "Lecture de la clé de licence d'origine intégrée au BIOS/UEFI.",
             Category = "SECRETS",
+            SubHeading = "Puce de sécurité / Carte mère (UEFI)",
             Icon = "🔑",
             Action = (log, ct) => ExportService.GetWindowsKey(log, ct),
             Tags = new[] { "clé produit", "windows", "licence", "oem", "bios", "uefi", "oa3x" }
         });
+
+        // Sous-titre interne : Navigateurs web (Bases locales)
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_browser_profiles",
+            Name = "Détecter Historique Web & Profils",
+            Description = "Localisation des fichiers d'historique et identifiants SQLite (Chrome/Edge).",
+            Category = "SECRETS",
+            SubHeading = "Navigateurs web (Bases locales)",
+            Icon = "🌐",
+            Action = (log, ct) => ExportService.AnalyzeBrowserHistory(log, ct),
+            Tags = new[] { "historique", "web", "profils", "chrome", "edge", "sqlite" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 5. 🌐 RÉSEAU & CONFIGURATION (6 scripts)
+    // CATÉGORIE 6 : 🌐 RÉSEAU & CONFIGURATION
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterNetworkTools()
     {
+        // Sous-titre interne : Serveurs de noms de domaine (DNS)
         _allTools.Add(new ScriptTool
         {
-            Id = "net_dns_cf",
+            Id = "net_dns_cloudflare",
             Name = "Appliquer DNS Cloudflare",
-            Description = "Configuration 1.1.1.1 et 1.0.0.1.",
+            Description = "Application des DNS Cloudflare (1.1.1.1 / 1.0.0.1).",
             Category = "RESEAU",
+            SubHeading = "Serveurs de noms de domaine (DNS)",
             Icon = "☁️",
             Action = (log, ct) => DnsService.SetCloudflare(log, ct),
             Tags = new[] { "dns", "cloudflare", "1.1.1.1", "rapide", "sécurisé" }
@@ -466,10 +562,11 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "net_dns_goog",
+            Id = "net_dns_google",
             Name = "Appliquer DNS Google",
-            Description = "Configuration 8.8.8.8 et 8.8.4.4.",
+            Description = "Application des DNS Google (8.8.8.8 / 8.8.4.4).",
             Category = "RESEAU",
+            SubHeading = "Serveurs de noms de domaine (DNS)",
             Icon = "🔍",
             Action = (log, ct) => DnsService.SetGoogle(log, ct),
             Tags = new[] { "dns", "google", "8.8.8.8", "configuration" }
@@ -477,93 +574,68 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "net_clear_arp",
-            Name = "Purger la Table ARP",
-            Description = "Suppression des correspondances IP/MAC obsolètes (arp -d *).",
-            Category = "RESEAU",
-            Icon = "🛡️",
-            Action = (log, ct) => NetworkService.ClearArp(log, ct),
-            Tags = new[] { "arp", "purge", "table", "cache", "mac", "ip" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "net_wifi_rpt",
-            Name = "Rapport Wi-Fi Complet",
-            Description = "Génération du rapport HTML officiel (netsh wlan show wlanreport).",
-            Category = "RESEAU",
-            Icon = "📊",
-            Action = (log, ct) => DiagnosticService.GetWifiReport(log, ct),
-            Tags = new[] { "wifi", "rapport", "html", "wlanreport", "historique" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
             Id = "net_dns_dhcp",
             Name = "Restaurer DNS Automatique (DHCP)",
-            Description = "Rétablissement des DNS dynamiques du routeur.",
+            Description = "Rétablissement du mode automatique (DHCP de la box).",
             Category = "RESEAU",
+            SubHeading = "Serveurs de noms de domaine (DNS)",
             Icon = "🔄",
             Action = (log, ct) => DnsService.RestoreDhcp(log, ct),
             Tags = new[] { "dns", "dhcp", "automatique", "box", "routeur", "restaurer" }
         });
 
+        // Sous-titre interne : Table de routage & Cache ARP
+        _allTools.Add(new ScriptTool
+        {
+            Id = "net_arp_clear",
+            Name = "Purger la Table ARP",
+            Description = "Purge complète de la table ARP (arp -d *).",
+            Category = "RESEAU",
+            SubHeading = "Table de routage & Cache ARP",
+            Icon = "🛡️",
+            Action = (log, ct) => NetworkService.ClearArp(log, ct),
+            Tags = new[] { "arp", "purge", "table", "cache", "mac", "ip" }
+        });
+
+        // Sous-titre interne : Carte sans fil & Environnement radio
         _allTools.Add(new ScriptTool
         {
             Id = "net_wifi_scan",
             Name = "Scanner les Réseaux Wi-Fi",
-            Description = "Détection des bornes à portée avec puissances et canaux.",
+            Description = "Scan des bornes Wi-Fi avec puissance et canaux.",
             Category = "RESEAU",
+            SubHeading = "Carte sans fil & Environnement radio",
             Icon = "📶",
             Action = (log, ct) => NetworkService.ScanWifi(log, ct),
             Tags = new[] { "wifi", "scan", "bornes", "puissance", "canaux", "wlan" }
         });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "net_wifi_report",
+            Name = "Rapport Wi-Fi Complet",
+            Description = "Génération du rapport de diagnostic complet (netsh wlan show wlanreport).",
+            Category = "RESEAU",
+            SubHeading = "Carte sans fil & Environnement radio",
+            Icon = "📊",
+            Action = (log, ct) => DiagnosticService.GetWifiReport(log, ct),
+            Tags = new[] { "wifi", "rapport", "html", "wlanreport", "historique" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 6. 💽 DISQUE DUR & STOCKAGE (5 scripts)
+    // CATÉGORIE 7 : 💽 DISQUE DUR & STOCKAGE
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterDiskTools()
     {
+        // Sous-titre interne : Tables de partitions & Volumes
         _allTools.Add(new ScriptTool
         {
-            Id = "dsk_diskpart",
-            Name = "Console de Formatage DISKPART",
-            Description = "Outil en ligne de commande administrateur.",
-            Category = "DISQUE",
-            Icon = "💻",
-            Action = (log, ct) => DiskService.LaunchDiskpart(log, ct),
-            Tags = new[] { "diskpart", "formatage", "cmd", "partitions", "admin" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "dsk_defrag_gui",
-            Name = "Défragmenteur de Disque (GUI)",
-            Description = "Ouvre dfrgui.exe.",
-            Category = "DISQUE",
-            Icon = "🛠️",
-            Action = (log, ct) => DiskService.LaunchDefragGui(log, ct),
-            Tags = new[] { "défragmenteur", "dfrgui", "optimisation", "disque", "lecteurs" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "dsk_bitlocker",
-            Name = "État Chiffrement BitLocker",
-            Description = "Contrôle du chiffrement des volumes (manage-bde -status).",
-            Category = "DISQUE",
-            Icon = "🔒",
-            Action = (log, ct) => DiagnosticService.CheckBitLocker(log, ct),
-            Tags = new[] { "bitlocker", "chiffrement", "sécurité", "volumes", "manage-bde" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "dsk_mgmt_gui",
+            Id = "disk_mgmt_gui",
             Name = "Gestionnaire de Disques (GUI)",
-            Description = "Ouvre diskmgmt.msc.",
+            Description = "Console de gestion des partitions (diskmgmt.msc).",
             Category = "DISQUE",
+            SubHeading = "Tables de partitions & Volumes",
             Icon = "💽",
             Action = (log, ct) => DiskService.LaunchDiskManagement(log, ct),
             Tags = new[] { "diskmgmt", "gestionnaire", "partitions", "volumes", "msc" }
@@ -571,71 +643,81 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "dsk_trim",
-            Name = "Optimisation Disque & TRIM SSD",
-            Description = "Commande defrag /O (TRIM / Défragmentation).",
+            Id = "disk_diskpart",
+            Name = "Console de Formatage DISKPART",
+            Description = "Invite de commandes DISKPART en mode administrateur.",
             Category = "DISQUE",
+            SubHeading = "Tables de partitions & Volumes",
+            Icon = "💻",
+            Action = (log, ct) => DiskService.LaunchDiskpart(log, ct),
+            Tags = new[] { "diskpart", "formatage", "cmd", "partitions", "admin" }
+        });
+
+        // Sous-titre interne : Supports Flash & Mécaniques (SSD / HDD)
+        _allTools.Add(new ScriptTool
+        {
+            Id = "disk_defrag_gui",
+            Name = "Défragmenteur de Disque (GUI)",
+            Description = "Défragmenteur de disque Windows (dfrgui.exe).",
+            Category = "DISQUE",
+            SubHeading = "Supports Flash & Mécaniques (SSD / HDD)",
+            Icon = "🛠️",
+            Action = (log, ct) => DiskService.LaunchDefragGui(log, ct),
+            Tags = new[] { "défragmenteur", "dfrgui", "optimisation", "disque", "lecteurs" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "disk_trim_opt",
+            Name = "Optimisation Disque & TRIM SSD",
+            Description = "Commande d'optimisation TRIM pour SSD (defrag /O).",
+            Category = "DISQUE",
+            SubHeading = "Supports Flash & Mécaniques (SSD / HDD)",
             Icon = "⚡",
             Action = (log, ct) => DiskService.OptimizeDrives(log, ct),
             Tags = new[] { "trim", "ssd", "defrag", "optimisation", "disque" }
         });
+
+        // Sous-titre interne : Sécurité & Chiffrement de volume
+        _allTools.Add(new ScriptTool
+        {
+            Id = "disk_bitlocker",
+            Name = "État Chiffrement BitLocker",
+            Description = "État de protection et de chiffrement des disques (manage-bde).",
+            Category = "DISQUE",
+            SubHeading = "Sécurité & Chiffrement de volume",
+            Icon = "🔒",
+            Action = (log, ct) => DiagnosticService.CheckBitLocker(log, ct),
+            Tags = new[] { "bitlocker", "chiffrement", "sécurité", "volumes", "manage-bde" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 7. 📦 INSTALLATION D'APPLICATIONS (6 scripts)
+    // CATÉGORIE 8 : 📦 INSTALLATION D'APPLICATIONS
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterAppInstallationTools()
     {
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_install_7zip",
-            Name = "Installer 7-Zip",
-            Description = "7zip.7zip via Winget.",
-            Category = "APPLICATIONS",
-            Icon = "🗜️",
-            Action = (log, ct) => AppService.Install7Zip(log, ct),
-            Tags = new[] { "7zip", "archive", "compression", "winget", "installer" }
-        });
-
+        // Sous-titre interne : Navigateurs web
         _allTools.Add(new ScriptTool
         {
             Id = "app_install_chrome",
             Name = "Installer Google Chrome",
-            Description = "Google.Chrome via Winget.",
+            Description = "Installation silencieuse de Google Chrome via Winget.",
             Category = "APPLICATIONS",
+            SubHeading = "Navigateurs web",
             Icon = "🌐",
             Action = (log, ct) => AppService.InstallChrome(log, ct),
             Tags = new[] { "chrome", "google", "navigateur", "web", "winget" }
         });
 
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_install_ps7",
-            Name = "Installer PowerShell 7",
-            Description = "Microsoft.PowerShell via Winget.",
-            Category = "APPLICATIONS",
-            Icon = "⚡",
-            Action = (log, ct) => AppService.InstallPs7(log, ct),
-            Tags = new[] { "powershell", "ps7", "terminal", "winget", "microsoft" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "app_install_sumatra",
-            Name = "Installer Sumatra PDF",
-            Description = "SumatraPDF.SumatraPDF via Winget.",
-            Category = "APPLICATIONS",
-            Icon = "📄",
-            Action = (log, ct) => AppService.InstallSumatraPdf(log, ct),
-            Tags = new[] { "sumatra", "pdf", "lecteur", "winget" }
-        });
-
+        // Sous-titre interne : Multimédia & Documents
         _allTools.Add(new ScriptTool
         {
             Id = "app_install_vlc",
             Name = "Installer VLC Media Player",
-            Description = "VideoLAN.VLC via Winget.",
+            Description = "Installation de VLC Media Player via Winget.",
             Category = "APPLICATIONS",
+            SubHeading = "Multimédia & Documents",
             Icon = "🎬",
             Action = (log, ct) => AppService.InstallVlc(log, ct),
             Tags = new[] { "vlc", "vidéo", "médias", "musique", "winget" }
@@ -643,10 +725,49 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "app_install_office",
-            Name = "Télécharger Microsoft Office 2024",
-            Description = "Ouvre le portail de téléchargement officiel Office.",
+            Id = "app_install_sumatra",
+            Name = "Installer Sumatra PDF",
+            Description = "Installation du lecteur PDF léger Sumatra.",
             Category = "APPLICATIONS",
+            SubHeading = "Multimédia & Documents",
+            Icon = "📄",
+            Action = (log, ct) => AppService.InstallSumatraPdf(log, ct),
+            Tags = new[] { "sumatra", "pdf", "lecteur", "winget" }
+        });
+
+        // Sous-titre interne : Utilitaires de compression & Système
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_7zip",
+            Name = "Installer 7-Zip",
+            Description = "Installation de 7-Zip via Winget.",
+            Category = "APPLICATIONS",
+            SubHeading = "Utilitaires de compression & Système",
+            Icon = "🗜️",
+            Action = (log, ct) => AppService.Install7Zip(log, ct),
+            Tags = new[] { "7zip", "archive", "compression", "winget", "installer" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_pwsh",
+            Name = "Installer PowerShell 7",
+            Description = "Installation de PowerShell 7 via Winget.",
+            Category = "APPLICATIONS",
+            SubHeading = "Utilitaires de compression & Système",
+            Icon = "⚡",
+            Action = (log, ct) => AppService.InstallPs7(log, ct),
+            Tags = new[] { "powershell", "ps7", "terminal", "winget", "microsoft" }
+        });
+
+        // Sous-titre interne : Bureautique
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_open_office",
+            Name = "Télécharger Microsoft Office 2024",
+            Description = "Accès à l'installateur officiel Microsoft Office.",
+            Category = "APPLICATIONS",
+            SubHeading = "Bureautique",
             Icon = "💼",
             Action = (log, ct) => AppService.InstallOffice(log, ct),
             Tags = new[] { "office", "word", "excel", "microsoft", "téléchargement" }
@@ -654,16 +775,18 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 8. 🔄 MISES À JOUR & INVENTAIRE LOGICIEL (4 scripts)
+    // CATÉGORIE 9 : 🔄 MISES À JOUR & INVENTAIRE LOGICIEL
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterUpdatesTools()
     {
+        // Sous-titre interne : Gestionnaire de paquets (Winget)
         _allTools.Add(new ScriptTool
         {
-            Id = "maj_list_installed",
+            Id = "upd_list_apps",
             Name = "Lister les Logiciels Installés",
-            Description = "Inventaire du parc applicatif via winget list.",
+            Description = "Liste de l'ensemble des logiciels installés (winget list).",
             Category = "MISES_A_JOUR",
+            SubHeading = "Gestionnaire de paquets (Winget)",
             Icon = "📋",
             Action = (log, ct) => AppService.GetInstalledApps(log, ct),
             Tags = new[] { "logiciels", "inventaire", "liste", "winget", "applications" }
@@ -671,71 +794,68 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "maj_defender_sig",
-            Name = "Mettre à Jour Signatures Defender",
-            Description = "Téléchargement forcé des signatures (Update-MpSignature).",
+            Id = "upd_check_updates",
+            Name = "Vérifier Mises à Jour Disponibles",
+            Description = "Détection des mises à jour disponibles (winget upgrade).",
             Category = "MISES_A_JOUR",
-            Icon = "🛡️",
-            Action = (log, ct) => SecurityService.UpdateDefender(log, ct),
-            Tags = new[] { "defender", "signatures", "antivirus", "mise a jour", "mp-signature" }
+            SubHeading = "Gestionnaire de paquets (Winget)",
+            Icon = "🔍",
+            Action = (log, ct) => AppService.ListUpdates(log, ct),
+            Tags = new[] { "mises a jour", "vérifier", "winget", "disponibles", "obsolètes" }
         });
 
         _allTools.Add(new ScriptTool
         {
-            Id = "maj_update_all",
+            Id = "upd_apply_all",
             Name = "Mettre à Jour Tous les Logiciels",
-            Description = "Mise à niveau globale (winget upgrade --all --include-unknown).",
+            Description = "Mise à niveau automatique de toutes les applications (winget upgrade --all).",
             Category = "MISES_A_JOUR",
+            SubHeading = "Gestionnaire de paquets (Winget)",
             Icon = "🚀",
             Action = (log, ct) => AppService.UpdateAll(log, ct),
             Tags = new[] { "mise a jour", "upgrade", "all", "winget", "logiciels" }
         });
 
+        // Sous-titre interne : Moteur antivirus Microsoft Defender
         _allTools.Add(new ScriptTool
         {
-            Id = "maj_check_updates",
-            Name = "Vérifier Mises à Jour Disponibles",
-            Description = "Analyse des versions obsolètes via winget upgrade.",
+            Id = "upd_defender_sigs",
+            Name = "Mettre à Jour Signatures Defender",
+            Description = "Mise à jour immédiate des signatures de sécurité (Update-MpSignature).",
             Category = "MISES_A_JOUR",
-            Icon = "🔍",
-            Action = (log, ct) => AppService.ListUpdates(log, ct),
-            Tags = new[] { "mises a jour", "vérifier", "winget", "disponibles", "obsolètes" }
+            SubHeading = "Moteur antivirus Microsoft Defender",
+            Icon = "🛡️",
+            Action = (log, ct) => SecurityService.UpdateDefender(log, ct),
+            Tags = new[] { "defender", "signatures", "antivirus", "mise a jour", "mp-signature" }
         });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 9. 🛡️ SURVEILLANCE, SÉCURITÉ & ÉVÉNEMENTS (6 scripts)
+    // CATÉGORIE 10 : 🛡️ SURVEILLANCE, SÉCURITÉ & ÉVÉNEMENTS
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterSecurityTools()
     {
+        // Sous-titre interne : Mémoire vive & Processus système
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_defender_quick",
-            Name = "Analyse Rapide Defender",
-            Description = "Lancement d'un scan antiviral rapide (Start-MpScan -ScanType QuickScan).",
+            Id = "sec_top_ram",
+            Name = "Top Processus & Charge RAM",
+            Description = "Top 10 des applications les plus gourmandes en RAM.",
             Category = "SECURITE",
-            Icon = "🛡️",
-            Action = (log, ct) => SecurityService.DefenderQuickScan(log, ct),
-            Tags = new[] { "defender", "scan", "antivirus", "rapide", "analyse" }
+            SubHeading = "Mémoire vive & Processus système",
+            Icon = "📈",
+            Action = (log, ct) => DiagnosticService.GetRamUsage(log, ct),
+            Tags = new[] { "processus", "ram", "charge", "consommation", "top" }
         });
 
+        // Sous-titre interne : Journaux d'événements & Noyau Windows
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_defender_status",
-            Name = "État Windows Defender",
-            Description = "Contrôle de la protection temps réel et des moteurs.",
-            Category = "SECURITE",
-            Icon = "🩺",
-            Action = (log, ct) => DiagnosticService.GetDefenderStatus(log, ct),
-            Tags = new[] { "defender", "état", "protection", "temps réel", "sécurité" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_event_log",
+            Id = "sec_event_errors",
             Name = "Journal Erreurs Critiques & Plantages",
-            Description = "Filtre sur les derniers événements d'erreur système et BSOD.",
+            Description = "Analyse des erreurs critiques récentes et BSOD dans le journal Système.",
             Category = "SECURITE",
+            SubHeading = "Journaux d'événements & Noyau Windows",
             Icon = "⚠️",
             Action = (log, ct) => DiagnosticService.GetEventLog(log, ct),
             Tags = new[] { "erreurs", "journal", "plantages", "bsod", "critiques", "logs" }
@@ -743,60 +863,68 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_reliability",
+            Id = "sec_perfmon_rel",
             Name = "Moniteur de Fiabilité (Perfmon)",
-            Description = "Historique graphique des crashs Windows (perfmon /rel).",
+            Description = "Historique de fiabilité et plantages du système (perfmon /rel).",
             Category = "SECURITE",
+            SubHeading = "Journaux d'événements & Noyau Windows",
             Icon = "📉",
             Action = (log, ct) => DiagnosticService.LaunchReliabilityMonitor(log, ct),
             Tags = new[] { "fiabilité", "perfmon", "crashs", "historique", "plantages" }
         });
 
+        // Sous-titre interne : Protection antivirale (Defender)
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_resmon",
-            Name = "Moniteur de Ressources (Resmon)",
-            Description = "Surveillance CPU/RAM/Disque/Réseau en temps réel (resmon.exe).",
+            Id = "sec_defender_status",
+            Name = "État Windows Defender",
+            Description = "État de protection en temps réel de Defender.",
             Category = "SECURITE",
-            Icon = "📊",
-            Action = (log, ct) => HardwareService.LaunchResmon(log, ct),
-            Tags = new[] { "resmon", "ressources", "cpu", "ram", "disque", "réseau", "surveillance" }
+            SubHeading = "Protection antivirale (Defender)",
+            Icon = "🩺",
+            Action = (log, ct) => DiagnosticService.GetDefenderStatus(log, ct),
+            Tags = new[] { "defender", "état", "protection", "temps réel", "sécurité" }
         });
 
         _allTools.Add(new ScriptTool
         {
-            Id = "sec_ram_usage",
-            Name = "Top Processus & Charge RAM",
-            Description = "Affichage des applications les plus consommatrices.",
+            Id = "sec_defender_quickscan",
+            Name = "Analyse Rapide Defender",
+            Description = "Analyse antivirus rapide (Start-MpScan -ScanType QuickScan).",
             Category = "SECURITE",
-            Icon = "📈",
-            Action = (log, ct) => DiagnosticService.GetRamUsage(log, ct),
-            Tags = new[] { "processus", "ram", "charge", "consommation", "top" }
+            SubHeading = "Protection antivirale (Defender)",
+            Icon = "🛡️",
+            Action = (log, ct) => SecurityService.DefenderQuickScan(log, ct),
+            Tags = new[] { "defender", "scan", "antivirus", "rapide", "analyse" }
         });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 10. 🎨 PERSONNALISATION & SYSTÈME (2 scripts)
+    // CATÉGORIE 11 : 🎨 PERSONNALISATION & SYSTÈME
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterPersonalizationTools()
     {
+        // Sous-titre interne : Panneau de configuration étendu
         _allTools.Add(new ScriptTool
         {
-            Id = "prs_godmode",
+            Id = "tweak_godmode",
             Name = "Activer le God Mode",
-            Description = "Création du raccourci vers le panneau de configuration étendu.",
+            Description = "Création du raccourci dossier God Mode.",
             Category = "PERSONNALISATION",
+            SubHeading = "Panneau de configuration étendu",
             Icon = "👑",
             Action = (log, ct) => PersonalizationService.CreateGodMode(log, ct),
             Tags = new[] { "god mode", "panneau de configuration", "raccourci" }
         });
 
+        // Sous-titre interne : Explorateur Windows 11
         _allTools.Add(new ScriptTool
         {
-            Id = "prs_classic_menu",
+            Id = "tweak_classic_context",
             Name = "Menu Contextuel Windows 10",
-            Description = "Rétablissement du clic droit classique complet sous Windows 11.",
+            Description = "Rétablissement du menu clic droit classique Windows 10.",
             Category = "PERSONNALISATION",
+            SubHeading = "Explorateur Windows 11",
             Icon = "🖱️",
             Action = (log, ct) => PersonalizationService.SetClassicMenu(log, ct),
             Tags = new[] { "menu contextuel", "windows 10", "clic droit", "windows 11" }

@@ -21,6 +21,9 @@ public class ScriptTool
     /// <summary>Catégorie parente</summary>
     public required string Category { get; init; }
 
+    /// <summary>Sous-titre / En-tête de sous-section interne</summary>
+    public string SubHeading { get; init; } = string.Empty;
+
     /// <summary>Icône Emoji ou chemin vers une image</summary>
     public string Icon { get; init; } = "⚙️";
 
