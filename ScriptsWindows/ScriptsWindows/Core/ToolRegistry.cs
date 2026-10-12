@@ -41,6 +41,102 @@ public static class ToolRegistry
         return _allTools.Where(t => favIds.Contains(t.Id));
     }
 
+    private static readonly Dictionary<string, string> CommandMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        // ─── Diagnostic (8) ───
+        ["diag_mobo"] = "powershell Get-CimInstance Win32_BaseBoard, Win32_BIOS",
+        ["diag_cpu"] = "powershell Get-CimInstance Win32_Processor / MSAcpi",
+        ["diag_ram"] = "powershell Get-CimInstance Win32_PhysicalMemory",
+        ["diag_smart"] = "powershell Get-PhysicalDisk",
+        ["diag_volumes"] = "powershell Get-Volume",
+        ["diag_battery"] = "powercfg.exe /batteryreport",
+        ["diag_network"] = "powershell Get-NetAdapter, Test-NetConnection",
+        ["diag_sfc"] = "sfc.exe /scannow",
+
+        // ─── Matériel (7) ───
+        ["hw_mdsched"] = "mdsched.exe",
+        ["hw_dxdiag"] = "dxdiag.exe",
+        ["hw_devmgmt"] = "devmgmt.msc",
+        ["hw_resmon"] = "resmon.exe",
+        ["hw_msinfo"] = "msinfo32.exe",
+        ["hw_winsat"] = "winsat.exe formal",
+        ["hw_power_perf"] = "powercfg.exe -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61",
+
+        // ─── Réparation (10) ───
+        ["repair_dism_check"] = "dism.exe /Online /Cleanup-Image /ScanHealth",
+        ["repair_dism_restore"] = "dism.exe /Online /Cleanup-Image /RestoreHealth",
+        ["repair_pipeline"] = "dism.exe /RestoreHealth && sfc.exe /scannow",
+        ["repair_chkdsk"] = "chkdsk.exe C: /f /r",
+        ["repair_export_drivers"] = "dism.exe /Online /Export-Driver /Destination:C:\\DriversBackup",
+        ["repair_wu"] = "net stop wuauserv && ren SoftwareDistribution && net start wuauserv",
+        ["repair_network_stack"] = "netsh.exe int ip reset && netsh.exe winsock reset && ipconfig.exe /flushdns",
+        ["repair_spooler"] = "net stop spooler && del %systemroot%\\System32\\spool\\printers\\* /Q && net start spooler",
+        ["repair_uwp_store"] = "wsreset.exe && powershell Add-AppxPackage",
+        ["repair_icon_cache"] = "taskkill.exe /f /im explorer.exe && del %localappdata%\\IconCache.db && start explorer.exe",
+
+        // ─── Nettoyage (6) ───
+        ["clean_temp"] = "del /q /f /s %TEMP%\\* && del /q /f /s C:\\Windows\\Temp\\*",
+        ["clean_wu_cache"] = "net stop wuauserv && del /q /f /s C:\\Windows\\SoftwareDistribution\\Download\\*",
+        ["clean_browser_caches"] = "powershell Remove-Item (Caches Chrome/Edge/Firefox)",
+        ["clean_cleanmgr"] = "cleanmgr.exe /sagerun:1",
+        ["clean_full_unified"] = "powershell Clear-RecycleBin && ipconfig /flushdns && del %TEMP%\\*",
+        ["clean_winsxs"] = "dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase",
+
+        // ─── Secrets & Clés (5) ───
+        ["sec_wifi_show"] = "netsh.exe wlan show profiles key=clear",
+        ["sec_wifi_export"] = "netsh.exe wlan export profile folder=%USERPROFILE%\\Desktop key=clear",
+        ["sec_audit_sensitive"] = "powershell Get-ChildItem $env:USERPROFILE (.ssh, .env, tokens)",
+        ["sec_win_key"] = "wmic.exe path softwarelicensingservice get OA3xOriginalProductKey",
+        ["sec_browser_profiles"] = "powershell Get-ChildItem %LOCALAPPDATA% (History SQLite)",
+
+        // ─── Réseau (6) ───
+        ["net_dns_cloudflare"] = "powershell Set-DnsClientServerAddress (1.1.1.1, 1.0.0.1)",
+        ["net_dns_google"] = "powershell Set-DnsClientServerAddress (8.8.8.8, 8.8.4.4)",
+        ["net_dns_dhcp"] = "powershell Set-DnsClientServerAddress -ResetServerAddresses",
+        ["net_arp_clear"] = "arp.exe -d *",
+        ["net_wifi_scan"] = "netsh.exe wlan show networks mode=bssid",
+        ["net_wifi_report"] = "netsh.exe wlan show wlanreport",
+
+        // ─── Disque (5) ───
+        ["disk_mgmt_gui"] = "diskmgmt.msc",
+        ["disk_diskpart"] = "diskpart.exe",
+        ["disk_defrag_gui"] = "dfrgui.exe",
+        ["disk_trim_opt"] = "defrag.exe /O /C",
+        ["disk_bitlocker"] = "manage-bde.exe -status",
+
+        // ─── Applications (6) ───
+        ["app_install_chrome"] = "winget.exe install Google.Chrome --silent",
+        ["app_install_vlc"] = "winget.exe install VideoLAN.VLC --silent",
+        ["app_install_sumatra"] = "winget.exe install SumatraPDF.SumatraPDF --silent",
+        ["app_install_7zip"] = "winget.exe install 7zip.7zip --silent",
+        ["app_install_pwsh"] = "winget.exe install Microsoft.PowerShell --silent",
+        ["app_open_office"] = "start https://officecdn.microsoft.com / setup.exe",
+
+        // ─── Mises à jour (4) ───
+        ["upd_list_apps"] = "winget.exe list",
+        ["upd_check_updates"] = "winget.exe upgrade",
+        ["upd_apply_all"] = "winget.exe upgrade --all --include-unknown",
+        ["upd_defender_sigs"] = "powershell Update-MpSignature",
+
+        // ─── Sécurité (5) ───
+        ["sec_top_ram"] = "powershell Get-Process | Sort-Object WorkingSet64 -Descending",
+        ["sec_event_errors"] = "powershell Get-WinEvent (System, Level=1,2)",
+        ["sec_perfmon_rel"] = "perfmon.exe /rel",
+        ["sec_defender_status"] = "powershell Get-MpComputerStatus",
+        ["sec_defender_quickscan"] = "powershell Start-MpScan -ScanType QuickScan",
+
+        // ─── Personnalisation (2) ───
+        ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
+        ["tweak_classic_context"] = "reg.exe add HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32"
+    };
+
+    public static string GetCommand(string toolId)
+    {
+        if (CommandMap.TryGetValue(toolId ?? "", out var cmd))
+            return cmd;
+        return "powershell.exe";
+    }
+
     public static IEnumerable<ScriptTool> Search(string query)
     {
         if (string.IsNullOrWhiteSpace(query)) return Enumerable.Empty<ScriptTool>();

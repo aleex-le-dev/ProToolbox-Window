@@ -37,7 +37,6 @@ public partial class MainWindow : Window
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         ThemeManager.ApplyTheme(ThemeManager.CurrentTheme);
-        UpdateThemeButtonState();
 
         // Initialisation des compteurs de scripts pour chaque catégorie et les favoris
         UpdateCategoryCounts();
@@ -91,24 +90,6 @@ public partial class MainWindow : Window
             }
         }
         catch { }
-    }
-
-    // ─── Thème ───────────────────────────────────────────────────────
-
-    private void BtnTheme_Click(object sender, RoutedEventArgs e)
-    {
-        ThemeManager.NextTheme();
-        UpdateThemeButtonState();
-    }
-
-    private void UpdateThemeButtonState()
-    {
-        var current = ThemeManager.CurrentTheme;
-        TxtThemeIcon.Text = current.Icon;
-        TxtThemeName.Text = current.Name;
-
-        var nextThemeName = current.Id == "light" ? "Noir Pur OLED" : "Clair Épuré";
-        BtnTheme.ToolTip  = $"Thème actif : {current.Name}\nCliquez pour basculer vers {nextThemeName}";
     }
 
     // ─── Console Terminal Latéral ────────────────────────────────────

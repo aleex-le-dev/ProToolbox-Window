@@ -8,7 +8,50 @@
         <StackPanel Margin="28,20,28,32" MaxWidth="1100" HorizontalAlignment="Stretch">
 
             <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!--   1. CARTE PRINCIPALE : EXPORT CATÉGORIES & SOUS-CATÉGORIES    -->
+            <!--                   1. APPARENCE & THÈME                          -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Border Background="{DynamicResource BgCard}"
+                    BorderBrush="{DynamicResource Border}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="22,18,22,18"
+                    Margin="0,0,0,20">
+                <DockPanel LastChildFill="True">
+                    <Button x:Name="BtnToggleTheme"
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center"
+                            Click="BtnToggleTheme_Click"
+                            Background="{DynamicResource BgInput}"
+                            BorderBrush="{DynamicResource Border}"
+                            BorderThickness="1"
+                            Padding="14,8,16,8"
+                            Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock x:Name="TxtThemeIcon" Text="🌙" FontSize="15" FontFamily="{StaticResource FontEmoji}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock x:Name="TxtThemeName" Text="Noir Pur OLED" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="🎨 Apparence &amp; Thème"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimary}" />
+                        <TextBlock Text="Basculez entre le thème sombre Noir Pur OLED et le thème Clair Épuré."
+                                   FontSize="12.5"
+                                   Foreground="{DynamicResource TextSecondary}"
+                                   Margin="0,3,0,0" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!--   2. STRUCTURE DÉTAILLÉE : SCRIPTS, EXÉCUTABLES & COMMANDES    -->
             <!-- ═══════════════════════════════════════════════════════════════ -->
             <Border Background="{DynamicResource BgCard}"
                     BorderBrush="{DynamicResource Border}"
@@ -31,7 +74,7 @@
                                     FontWeight="SemiBold"
                                     Cursor="Hand"
                                     Margin="0,0,10,0"
-                                    ToolTip="Copier la liste au format Markdown avec puces"
+                                    ToolTip="Copier la liste au format Markdown avec les exécutables et commandes"
                                     Click="BtnCopyMarkdown_Click">
                                 <Button.Resources>
                                     <Style TargetType="Border">
@@ -41,7 +84,7 @@
                             </Button>
 
                             <Button x:Name="BtnCopyHierarchy"
-                                    Content="📋 Copier la liste (1 clic)"
+                                    Content="📋 Copier l'arborescence (1 clic)"
                                     Background="{DynamicResource Accent}"
                                     BorderThickness="0"
                                     Foreground="#FFFFFF"
@@ -49,7 +92,7 @@
                                     FontSize="12.5"
                                     FontWeight="Bold"
                                     Cursor="Hand"
-                                    ToolTip="Copier toutes les catégories et sous-catégories dans le presse-papiers"
+                                    ToolTip="Copier toute l'arborescence détaillée (catégories, scripts et commandes exécutées)"
                                     Click="BtnCopyHierarchy_Click">
                                 <Button.Resources>
                                     <Style TargetType="Border">
@@ -60,11 +103,11 @@
                         </StackPanel>
 
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="📁 Structure des catégories &amp; sous-catégories"
+                            <TextBlock Text="📁 Structure des modules &amp; commandes exécutées"
                                        FontSize="16"
                                        FontWeight="Bold"
                                        Foreground="{DynamicResource TextPrimary}" />
-                            <TextBlock Text="Arborescence intégrale de tous les modules classés par ordre alphabétique. Copiez la liste instantanément."
+                            <TextBlock Text="Inventaire complet de chaque catégorie, script et commande / binaire .exe sous-jacent."
                                        FontSize="12.5"
                                        Foreground="{DynamicResource TextSecondary}"
                                        Margin="0,4,0,0" />
@@ -101,98 +144,119 @@
                                  FontSize="12"
                                  IsReadOnly="True"
                                  TextWrapping="Wrap"
-                                 MaxHeight="320"
+                                 MaxHeight="360"
                                  VerticalScrollBarVisibility="Auto" />
                     </Border>
                 </StackPanel>
             </Border>
 
             <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!--           2. ESPACE RÉSERVÉ AUX FUTURS PARAMÈTRES              -->
+            <!--     3. À PROPOS & CONFIGURATION COMPLÈTE DE CET ORDINATEUR     -->
             <!-- ═══════════════════════════════════════════════════════════════ -->
             <Border Background="{DynamicResource BgCard}"
                     BorderBrush="{DynamicResource Border}"
                     BorderThickness="1"
                     CornerRadius="12"
-                    Padding="22,20,22,20"
-                    Margin="0,0,0,20">
+                    Padding="22,20,22,20">
                 <StackPanel>
-                    <TextBlock Text="⚙️ Préférences &amp; Options générales"
-                               FontSize="16"
-                               FontWeight="Bold"
-                               Foreground="{DynamicResource TextPrimary}" />
-                    <TextBlock Text="Cet espace est configuré pour accueillir vos futurs réglages personnalisés."
-                               FontSize="12.5"
-                               Foreground="{DynamicResource TextSecondary}"
-                               Margin="0,4,0,16" />
+                    <DockPanel LastChildFill="True" Margin="0,0,0,18">
+                        <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="Alex Toolkit v4.0" FontWeight="Bold" FontSize="12.5" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Right" />
+                            <TextBlock Text="Par AleexLeDev" FontSize="11" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Right" Margin="0,2,0,0" />
+                        </StackPanel>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="ℹ️ À propos &amp; Configuration de cet ordinateur"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Text="Informations matérielles, système et environnement d'exécution de la machine active."
+                                       FontSize="12.5"
+                                       Foreground="{DynamicResource TextSecondary}"
+                                       Margin="0,3,0,0" />
+                        </StackPanel>
+                    </DockPanel>
 
-                    <!-- Option fictive / template 1 -->
-                    <Border Background="{DynamicResource BgDeep}"
-                            BorderBrush="{DynamicResource Border}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="14,12,14,12"
-                            Margin="0,0,0,10">
-                        <DockPanel LastChildFill="True">
-                            <Border DockPanel.Dock="Right"
-                                    Background="{DynamicResource BgInput}"
-                                    BorderBrush="{DynamicResource Border}"
-                                    BorderThickness="1"
-                                    CornerRadius="6"
-                                    Padding="8,3,8,3"
-                                    VerticalAlignment="Center">
-                                <TextBlock Text="Bientôt disponible" FontSize="11" Foreground="{DynamicResource TextMuted}" />
-                            </Border>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="Comportement de la console" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimary}" />
-                                <TextBlock Text="Affichage automatique du volet de console lors du lancement d'un script" FontSize="11.5" Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0" />
+                    <!-- Grille des spécifications du PC -->
+                    <UniformGrid Columns="2" Margin="0,0,0,0">
+                        <!-- Nom Machine & Session -->
+                        <Border Background="{DynamicResource BgDeep}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="14,12,14,12"
+                                Margin="0,0,6,10">
+                            <StackPanel>
+                                <TextBlock Text="💻 Ordinateur &amp; Utilisateur" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
+                                <TextBlock x:Name="TxtSpecMachine" Text="Chargement..." FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
                             </StackPanel>
-                        </DockPanel>
-                    </Border>
+                        </Border>
 
-                    <!-- Option fictive / template 2 -->
-                    <Border Background="{DynamicResource BgDeep}"
-                            BorderBrush="{DynamicResource Border}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="14,12,14,12">
-                        <DockPanel LastChildFill="True">
-                            <Border DockPanel.Dock="Right"
-                                    Background="{DynamicResource BgInput}"
-                                    BorderBrush="{DynamicResource Border}"
-                                    BorderThickness="1"
-                                    CornerRadius="6"
-                                    Padding="8,3,8,3"
-                                    VerticalAlignment="Center">
-                                <TextBlock Text="Bientôt disponible" FontSize="11" Foreground="{DynamicResource TextMuted}" />
-                            </Border>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="Mode de confirmation avant exécution" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimary}" />
-                                <TextBlock Text="Demander une confirmation pour les scripts critiques système ou réseau" FontSize="11.5" Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0" />
+                        <!-- Système d'exploitation -->
+                        <Border Background="{DynamicResource BgDeep}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="14,12,14,12"
+                                Margin="6,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="🪟 Système d'exploitation" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
+                                <TextBlock x:Name="TxtSpecOS" Text="Chargement..." FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
                             </StackPanel>
-                        </DockPanel>
-                    </Border>
+                        </Border>
+
+                        <!-- Processeur (CPU) -->
+                        <Border Background="{DynamicResource BgDeep}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="14,12,14,12"
+                                Margin="0,0,6,10">
+                            <StackPanel>
+                                <TextBlock Text="🧠 Processeur (CPU)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
+                                <TextBlock x:Name="TxtSpecCPU" Text="Chargement..." FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Mémoire vive (RAM) -->
+                        <Border Background="{DynamicResource BgDeep}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="14,12,14,12"
+                                Margin="6,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="⚡ Mémoire vive (RAM)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
+                                <TextBlock x:Name="TxtSpecRAM" Text="Chargement..." FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Stockage système (C:) -->
+                        <Border Background="{DynamicResource BgDeep}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="14,12,14,12"
+                                Margin="0,0,6,0">
+                            <StackPanel>
+                                <TextBlock Text="💽 Disque système (C:)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
+                                <TextBlock x:Name="TxtSpecDisk" Text="Chargement..." FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Droits & PowerShell -->
+                        <Border Background="{DynamicResource BgDeep}"
+                                BorderBrush="{DynamicResource Border}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="14,12,14,12"
+                                Margin="6,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="🛡️ Privilèges &amp; Moteur PowerShell" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
+                                <TextBlock x:Name="TxtSpecPowerShell" Text="Chargement..." FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
                 </StackPanel>
-            </Border>
-
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!--                       3. INFORMATIONS SYSTÈME                  -->
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <Border Background="{DynamicResource BgCard}"
-                    BorderBrush="{DynamicResource Border}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="22,18,22,18">
-                <DockPanel LastChildFill="True">
-                    <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right">
-                        <TextBlock Text="Alex Toolkit v4.0" FontWeight="Bold" FontSize="12.5" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Right" />
-                        <TextBlock Text="Développé par AleexLeDev" FontSize="11" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Right" Margin="0,2,0,0" />
-                    </StackPanel>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="ℹ️ À propos" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
-                        <TextBlock Text="Environnement .NET 8.0 WPF natif x64 pour Windows 10 &amp; Windows 11" FontSize="11.5" Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0" />
-                    </StackPanel>
-                </DockPanel>
             </Border>
 
         </StackPanel>

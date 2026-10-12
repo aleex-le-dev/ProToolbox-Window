@@ -15,6 +15,14 @@ public class ScriptTool
     /// <summary>Titre affiché formaté selon la typographie française (acronymes préservés, pas de majuscules inutiles)</summary>
     public string Title => Views.SectionViewBuilder.FormatFrenchTitle(Name);
 
+    /// <summary>Commande ou exécutable principal lancé par le script (ex: sfc.exe /scannow, winget.exe)</summary>
+    public string Command { get; init; } = string.Empty;
+
+    /// <summary>Retourne la commande définie ou celle résolue par le catalogue</summary>
+    public string ExecutableOrCommand => !string.IsNullOrWhiteSpace(Command)
+        ? Command
+        : Core.ToolRegistry.GetCommand(Id);
+
     /// <summary>Description courte (ex: "CPU, RAM, GPU, Stockage, Réseau")</summary>
     public string Description { get; init; } = string.Empty;
 
