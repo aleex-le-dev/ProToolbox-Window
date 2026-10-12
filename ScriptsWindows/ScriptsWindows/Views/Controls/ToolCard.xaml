@@ -97,8 +97,21 @@
                        TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
                        VerticalAlignment="Top" Margin="0,2,0,4"/>
 
-            <!-- 3. Pied : Bouton Exécuter aligné à droite -->
+            <!-- 3. Pied : Badge Catégorie à gauche (si activé) + Bouton Exécuter à droite -->
             <DockPanel Grid.Row="2" LastChildFill="False">
+                <Border x:Name="BadgeCategory"
+                        DockPanel.Dock="Left"
+                        Background="{DynamicResource BgInput}"
+                        CornerRadius="6"
+                        Padding="7,3,7,3"
+                        VerticalAlignment="Center"
+                        Visibility="Collapsed">
+                    <TextBlock x:Name="TxtCategory"
+                               Text="Catégorie"
+                               FontSize="10.5"
+                               FontWeight="Medium"
+                               Foreground="{DynamicResource TextMuted}" />
+                </Border>
                 <Button x:Name="BtnRun" DockPanel.Dock="Right" Click="BtnRun_Click"
                         Content="▶ Exécuter" FontSize="11.5" FontWeight="SemiBold"
                         Padding="14,6" Cursor="Hand"

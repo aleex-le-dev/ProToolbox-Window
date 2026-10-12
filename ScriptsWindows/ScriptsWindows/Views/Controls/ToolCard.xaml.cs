@@ -47,6 +47,22 @@ public partial class ToolCard : UserControl
         UpdateFavoriteState();
     }
 
+    /// <summary>
+    /// Affiche ou masque le badge de la catégorie dans le pied de carte (utile dans la vue Favoris).
+    /// </summary>
+    public void ShowCategoryBadge(bool show)
+    {
+        if (!show || _tool == null)
+        {
+            BadgeCategory.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        var (icon, name) = SectionViewBuilder.GetCategoryMeta(_tool.Category);
+        TxtCategory.Text = $"{icon} {name}";
+        BadgeCategory.Visibility = Visibility.Visible;
+    }
+
     private void UpdateFavoriteState()
     {
         if (_tool == null) return;
