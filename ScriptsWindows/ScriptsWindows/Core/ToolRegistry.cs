@@ -85,9 +85,9 @@ public static class ToolRegistry
         // ─── Secrets & Clés (5) ───
         ["sec_wifi_show"] = "netsh.exe wlan show profiles key=clear",
         ["sec_wifi_export"] = "netsh.exe wlan export profile folder=%USERPROFILE%\\Desktop key=clear",
-        ["sec_audit_sensitive"] = "powershell Get-ChildItem $env:USERPROFILE (.ssh, .env, tokens)",
+        ["sec_audit_sensitive"] = "AlexToolkit.exe (Audit C# approfondi .ssh, .aws, .env, documents secrets)",
         ["sec_win_key"] = "wmic.exe path softwarelicensingservice get OA3xOriginalProductKey",
-        ["sec_browser_profiles"] = "powershell Get-ChildItem %LOCALAPPDATA% (History SQLite)",
+        ["sec_browser_profiles"] = "AlexToolkit.exe (Lecteur SQLite natif Chrome, Edge, Brave, Firefox)",
 
         // ─── Réseau (6) ───
         ["net_dns_cloudflare"] = "powershell Set-DnsClientServerAddress (1.1.1.1, 1.0.0.1)",
@@ -603,7 +603,7 @@ public static class ToolRegistry
         {
             Id = "sec_audit_sensitive",
             Name = "Audit documents sensibles",
-            Description = "Audit des clés SSH (id_rsa), tokens .env et identifiants locaux.",
+            Description = "Inventaire des clés SSH (.ssh), identifiants Cloud (.aws, .docker), fichiers .env et mots de passe.",
             Category = "SECRETS",
             SubHeading = "Dossiers utilisateurs & Clés d'authentification",
             Icon = "🔍",
@@ -628,8 +628,8 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "sec_browser_profiles",
-            Name = "Détecter historique web & profils",
-            Description = "Localisation des fichiers d'historique et identifiants SQLite (Chrome/Edge).",
+            Name = "Extraire l'historique web & profils",
+            Description = "Extraction SQLite directe des 35 dernières pages visitées (Chrome, Edge, Brave, Firefox).",
             Category = "SECRETS",
             SubHeading = "Navigateurs web (Bases locales)",
             Icon = "🌐",
