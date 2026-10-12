@@ -83,7 +83,7 @@ public static class SectionViewBuilder
             .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading)
             .ToList();
 
-        // Barre d'information et bouton "Tout replier"
+        // Barre d'information discrète
         if (groups.Count > 1)
         {
             var topBar = new DockPanel
@@ -101,18 +101,6 @@ public static class SectionViewBuilder
             DockPanel.SetDock(countInfo, Dock.Left);
             topBar.Children.Add(countInfo);
 
-            var buttonGroup = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-            DockPanel.SetDock(buttonGroup, Dock.Right);
-
-            var btnCollapseAll = CreateMiniButton("▸ Tout replier", () => controller.CollapseAll());
-
-            buttonGroup.Children.Add(btnCollapseAll);
-            topBar.Children.Add(buttonGroup);
-
             container.Children.Add(topBar);
         }
 
@@ -126,7 +114,7 @@ public static class SectionViewBuilder
                 Margin = new Thickness(0, 0, 0, 10)
             };
 
-            // En-tête repliable interactif (carte cliquable)
+            // En-tête de sous-catégorie (carte interactive s'ouvrant au survol)
             var headerBorder = new Border
             {
                 CornerRadius = new CornerRadius(10),
@@ -139,22 +127,15 @@ public static class SectionViewBuilder
 
             var dock = new DockPanel();
 
-            // Côté droit : indicateur texte et badge
-            var rightPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            DockPanel.SetDock(rightPanel, Dock.Right);
-
+            // Côté droit : badge du nombre d'outils
             var countBadge = new Border
             {
                 CornerRadius = new CornerRadius(8),
                 Padding = new Thickness(8, 2, 8, 2),
-                Margin = new Thickness(0, 0, 8, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
             countBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
+            DockPanel.SetDock(countBadge, Dock.Right);
 
             var countText = new TextBlock
             {
@@ -165,18 +146,7 @@ public static class SectionViewBuilder
             countText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
             countBadge.Child = countText;
 
-            var toggleHint = new TextBlock
-            {
-                Text = "Déplier",
-                FontSize = 11.5,
-                FontWeight = FontWeights.Medium,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            toggleHint.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
-
-            rightPanel.Children.Add(countBadge);
-            rightPanel.Children.Add(toggleHint);
-            dock.Children.Add(rightPanel);
+            dock.Children.Add(countBadge);
 
             // Côté gauche : chevron + barre d'accent + titre de la sous-catégorie
             var leftPanel = new StackPanel
@@ -234,21 +204,18 @@ public static class SectionViewBuilder
                 wrapPanel.Children.Add(card);
             }
 
-            // Action de bascule de cette section
+            // Action d'affichage de cette section
             void SetExpanded(bool expand)
             {
                 wrapPanel.Visibility = expand ? Visibility.Visible : Visibility.Collapsed;
                 chevron.Text = expand ? "▼" : "▶";
-                toggleHint.Text = expand ? "Replier" : "Déplier";
 
                 if (expand)
                 {
-                    toggleHint.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
                     headerBorder.SetResourceReference(Border.BorderBrushProperty, "AccentDim");
                 }
                 else
                 {
-                    toggleHint.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
                     headerBorder.SetResourceReference(Border.BorderBrushProperty, "Border");
                 }
             }
@@ -256,21 +223,23 @@ public static class SectionViewBuilder
             // Enregistrer dans le contrôleur exclusif
             controller.RegisterSection(SetExpanded);
 
-            // Clic sur l'en-tête pour basculer en mode exclusif
+            // Ouverture automatique au survol de la sous-catégorie
+            headerBorder.MouseEnter += (s, e) =>
+            {
+                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCardHover");
+                controller.ExpandOnly(currentIndex);
+            };
+
+            headerBorder.MouseLeave += (s, e) =>
+            {
+                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
+            };
+
+            // Clic optionnel pour basculer / replier si souhaité
             headerBorder.MouseLeftButtonDown += (s, e) =>
             {
                 e.Handled = true;
                 controller.Toggle(currentIndex);
-            };
-
-            // Effet hover subtil sur l'en-tête
-            headerBorder.MouseEnter += (s, e) =>
-            {
-                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCardHover");
-            };
-            headerBorder.MouseLeave += (s, e) =>
-            {
-                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
             };
 
             sectionBox.Children.Add(headerBorder);
@@ -280,27 +249,5 @@ public static class SectionViewBuilder
         }
 
         return controller;
-    }
-
-    private static Button CreateMiniButton(string text, Action onClick)
-    {
-        var btn = new Button
-        {
-            Content = text,
-            Padding = new Thickness(8, 3, 8, 3),
-            FontSize = 11,
-            Cursor = Cursors.Hand,
-            BorderThickness = new Thickness(1)
-        };
-        btn.SetResourceReference(Button.BackgroundProperty, "BgCard");
-        btn.SetResourceReference(Button.BorderBrushProperty, "Border");
-        btn.SetResourceReference(Button.ForegroundProperty, "TextSecondary");
-
-        var style = new Style(typeof(Border));
-        style.Setters.Add(new Setter(Border.CornerRadiusProperty, new CornerRadius(6)));
-        btn.Resources.Add(typeof(Border), style);
-
-        btn.Click += (s, e) => onClick();
-        return btn;
     }
 }
