@@ -56,17 +56,17 @@ public partial class MainWindow : Window
     {
         UpdateFavoritesCount();
 
-        Badge_DIAGNOSTIC.Text       = ToolRegistry.GetByCategory("DIAGNOSTIC").Count().ToString();
-        Badge_MATERIEL.Text         = ToolRegistry.GetByCategory("MATERIEL").Count().ToString();
-        Badge_REPARATION.Text       = ToolRegistry.GetByCategory("REPARATION").Count().ToString();
-        Badge_NETTOYAGE.Text        = ToolRegistry.GetByCategory("NETTOYAGE").Count().ToString();
-        Badge_SECRETS.Text          = ToolRegistry.GetByCategory("SECRETS").Count().ToString();
-        Badge_RESEAU.Text           = ToolRegistry.GetByCategory("RESEAU").Count().ToString();
-        Badge_DISQUE.Text           = ToolRegistry.GetByCategory("DISQUE").Count().ToString();
         Badge_APPLICATIONS.Text     = ToolRegistry.GetByCategory("APPLICATIONS").Count().ToString();
+        Badge_DIAGNOSTIC.Text       = ToolRegistry.GetByCategory("DIAGNOSTIC").Count().ToString();
+        Badge_DISQUE.Text           = ToolRegistry.GetByCategory("DISQUE").Count().ToString();
+        Badge_MATERIEL.Text         = ToolRegistry.GetByCategory("MATERIEL").Count().ToString();
         Badge_MISES_A_JOUR.Text     = ToolRegistry.GetByCategory("MISES_A_JOUR").Count().ToString();
-        Badge_SECURITE.Text         = ToolRegistry.GetByCategory("SECURITE").Count().ToString();
+        Badge_NETTOYAGE.Text        = ToolRegistry.GetByCategory("NETTOYAGE").Count().ToString();
         Badge_PERSONNALISATION.Text = ToolRegistry.GetByCategory("PERSONNALISATION").Count().ToString();
+        Badge_REPARATION.Text       = ToolRegistry.GetByCategory("REPARATION").Count().ToString();
+        Badge_RESEAU.Text           = ToolRegistry.GetByCategory("RESEAU").Count().ToString();
+        Badge_SECRETS.Text          = ToolRegistry.GetByCategory("SECRETS").Count().ToString();
+        Badge_SECURITE.Text         = ToolRegistry.GetByCategory("SECURITE").Count().ToString();
     }
 
     private void UpdateFavoritesCount()
@@ -80,8 +80,8 @@ public partial class MainWindow : Window
         {
             string[] categories =
             {
-                "DIAGNOSTIC", "MATERIEL", "REPARATION", "NETTOYAGE", "SECRETS", "RESEAU",
-                "DISQUE", "APPLICATIONS", "MISES_A_JOUR", "SECURITE", "PERSONNALISATION"
+                "APPLICATIONS", "DIAGNOSTIC", "DISQUE", "MATERIEL", "MISES_A_JOUR",
+                "NETTOYAGE", "PERSONNALISATION", "REPARATION", "RESEAU", "SECRETS", "SECURITE"
             };
             foreach (var cat in categories)
             {

@@ -97,25 +97,30 @@ public static class SectionViewBuilder
         var toolList = tools.ToList();
         if (toolList.Count == 0) return controller;
 
-        // Grouper les outils : si showCategory est activé, grouper par Catégorie + Sous-titre
+        // Grouper et trier systématiquement les catégories et sous-catégories par ordre alphabétique
         var groups = showCategory
             ? toolList
                 .GroupBy(t => new { Category = t.Category ?? "AUTRE", SubHeading = string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading })
                 .Select(g => new
                 {
                     Category = g.Key.Category,
+                    CategoryName = GetCategoryMeta(g.Key.Category).Name,
                     SubHeading = g.Key.SubHeading,
-                    Tools = g.ToList()
+                    Tools = g.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
                 })
+                .OrderBy(g => g.CategoryName, StringComparer.CurrentCultureIgnoreCase)
+                .ThenBy(g => g.SubHeading, StringComparer.CurrentCultureIgnoreCase)
                 .ToList()
             : toolList
                 .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Général" : t.SubHeading)
                 .Select(g => new
                 {
                     Category = g.First().Category ?? "",
+                    CategoryName = GetCategoryMeta(g.First().Category ?? "").Name,
                     SubHeading = g.Key,
-                    Tools = g.ToList()
+                    Tools = g.OrderBy(t => t.Name, StringComparer.CurrentCultureIgnoreCase).ToList()
                 })
+                .OrderBy(g => g.SubHeading, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();
 
         // Barre d'information discrète
