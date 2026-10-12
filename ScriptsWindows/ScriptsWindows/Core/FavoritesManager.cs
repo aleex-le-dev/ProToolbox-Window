@@ -22,6 +22,8 @@ public class FavoritesManager
 
     public static FavoritesManager Default => _instance.Value;
 
+    public static event Action<string, bool>? FavoriteChanged;
+
     public static bool IsFavorite(string toolId) => Default.IsFav(toolId);
     public static void ToggleFavorite(string toolId) => Default.Toggle(toolId);
 
@@ -43,26 +45,40 @@ public class FavoritesManager
     /// <summary>Ajoute ou retire un outil des favoris (toggle).</summary>
     public void Toggle(string toolId)
     {
+        bool added;
         if (_favorites.Contains(toolId))
+        {
             _favorites.Remove(toolId);
+            added = false;
+        }
         else
+        {
             _favorites.Add(toolId);
+            added = true;
+        }
 
         Save();
+        FavoriteChanged?.Invoke(toolId, added);
     }
 
     /// <summary>Ajoute un outil aux favoris.</summary>
     public void Add(string toolId)
     {
-        _favorites.Add(toolId);
-        Save();
+        if (_favorites.Add(toolId))
+        {
+            Save();
+            FavoriteChanged?.Invoke(toolId, true);
+        }
     }
 
     /// <summary>Retire un outil des favoris.</summary>
     public void Remove(string toolId)
     {
-        _favorites.Remove(toolId);
-        Save();
+        if (_favorites.Remove(toolId))
+        {
+            Save();
+            FavoriteChanged?.Invoke(toolId, false);
+        }
     }
 
     private HashSet<string> Load()

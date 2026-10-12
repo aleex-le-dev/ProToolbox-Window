@@ -11,14 +11,16 @@ namespace ScriptsWindows.Views.Controls;
 
 public partial class ToolCard : UserControl
 {
-    // ── Brushes précalculés (zéro allocation à l'exécution) ──────────
-    private static readonly SolidColorBrush BrushFavOn  = new(Color.FromRgb(250, 204, 21));
-    private static readonly SolidColorBrush BrushFavOff = new(Color.FromRgb(226, 232, 240));
+    // ── Brushes précalculés pour l'étoile des favoris ──────────
+    private static readonly SolidColorBrush BrushFavGoldFill   = new(Color.FromRgb(251, 191, 36)); // Or éclatant
+    private static readonly SolidColorBrush BrushFavGoldStroke = new(Color.FromRgb(217, 119, 6));  // Filet or contrasté
+    private static readonly SolidColorBrush BrushFavEmptyStroke= new(Color.FromRgb(148, 163, 184)); // Gris ardoise épuré
 
     static ToolCard()
     {
-        BrushFavOn.Freeze();
-        BrushFavOff.Freeze();
+        BrushFavGoldFill.Freeze();
+        BrushFavGoldStroke.Freeze();
+        BrushFavEmptyStroke.Freeze();
     }
 
     // ── Champs ───────────────────────────────────────────────────────
@@ -51,8 +53,35 @@ public partial class ToolCard : UserControl
     {
         if (_tool == null) return;
         bool isFav = FavoritesManager.IsFavorite(_tool.Id);
-        TxtFavIcon.Text       = isFav ? "⭐" : "☆";
-        TxtFavIcon.Foreground = isFav ? BrushFavOn : BrushFavOff;
+
+        if (isFav)
+        {
+            // Étoile jaune/dorée : PLUS GRANDE (24x24) avec effet halo lumineux étincelant
+            FavViewbox.Width = 24;
+            FavViewbox.Height = 24;
+            PathFav.Fill = BrushFavGoldFill;
+            PathFav.Stroke = BrushFavGoldStroke;
+            PathFav.StrokeThickness = 1.0;
+            PathFav.Effect = new System.Windows.Media.Effects.DropShadowEffect
+            {
+                Color = Color.FromRgb(245, 158, 11),
+                BlurRadius = 8,
+                ShadowDepth = 0,
+                Opacity = 0.85
+            };
+            BtnFavorite.ToolTip = "⭐ Retirer des favoris";
+        }
+        else
+        {
+            // Étoile non-jaune (vide) : plus petite (20x20), sans remplissage
+            FavViewbox.Width = 20;
+            FavViewbox.Height = 20;
+            PathFav.Fill = Brushes.Transparent;
+            PathFav.Stroke = BrushFavEmptyStroke;
+            PathFav.StrokeThickness = 1.6;
+            PathFav.Effect = null;
+            BtnFavorite.ToolTip = "☆ Ajouter aux favoris";
+        }
     }
 
     private void BtnFavorite_Click(object sender, RoutedEventArgs e)

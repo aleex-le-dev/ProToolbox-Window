@@ -12,11 +12,18 @@ public partial class FavorisPage : Page
     {
         InitializeComponent();
         Loaded += FavorisPage_Loaded;
+        FavoritesManager.FavoriteChanged += OnFavoriteChanged;
     }
 
     private void FavorisPage_Loaded(object sender, RoutedEventArgs e)
     {
         RefreshFavoris();
+    }
+
+    private void OnFavoriteChanged(string toolId, bool isFav)
+    {
+        // Rafraîchir dynamiquement quand la page est active
+        Dispatcher.InvokeAsync(RefreshFavoris);
     }
 
     public void RefreshFavoris()
@@ -26,13 +33,17 @@ public partial class FavorisPage : Page
 
         if (favTools.Count == 0)
         {
-            EmptyState.Visibility = Visibility.Visible;
+            HeaderPanel.Visibility = Visibility.Collapsed;
+            EmptyState.Visibility  = Visibility.Visible;
             FavorisGrid.Visibility = Visibility.Collapsed;
         }
         else
         {
-            EmptyState.Visibility = Visibility.Collapsed;
+            HeaderPanel.Visibility = Visibility.Visible;
+            EmptyState.Visibility  = Visibility.Collapsed;
             FavorisGrid.Visibility = Visibility.Visible;
+
+            TxtFavCount.Text = $"{favTools.Count} outil{(favTools.Count > 1 ? "s" : "")} favori{(favTools.Count > 1 ? "s" : "")} enregistré{(favTools.Count > 1 ? "s" : "")}";
 
             foreach (var tool in favTools)
             {

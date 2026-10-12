@@ -69,13 +69,26 @@
                            TextWrapping="Wrap" VerticalAlignment="Center"
                            TextTrimming="CharacterEllipsis"/>
 
-                <!-- Favori -->
+                <!-- Favori vectoriel haute précision (étoile agrandie et dorée quand favorite) -->
                 <Button x:Name="BtnFavorite" Grid.Column="2"
                         Background="Transparent" BorderThickness="0" 
-                        Foreground="{DynamicResource TextSecondary}" FontSize="16" Cursor="Hand"
-                        Click="BtnFavorite_Click" Padding="4,2" VerticalAlignment="Top"
+                        Cursor="Hand" Click="BtnFavorite_Click" 
+                        Padding="4" VerticalAlignment="Top" Margin="4,-2,0,0"
                         ToolTip="Ajouter / Retirer des favoris">
-                    <TextBlock x:Name="TxtFavIcon" Text="☆"/>
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Viewbox x:Name="FavViewbox" Width="20" Height="20">
+                        <Path x:Name="PathFav"
+                              Data="M 12,1.75 L 15.2,8.25 L 22.4,9.27 L 17.2,14.34 L 18.4,21.5 L 12,18.13 L 5.6,21.5 L 6.8,14.34 L 1.6,9.27 L 8.8,8.25 Z"
+                              Fill="Transparent"
+                              Stroke="{DynamicResource TextMuted}"
+                              StrokeThickness="1.6"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform" />
+                    </Viewbox>
                 </Button>
             </Grid>
 

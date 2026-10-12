@@ -74,7 +74,8 @@ public partial class MainWindow : Window
     {
         var current = ThemeManager.CurrentTheme;
         TxtThemeIcon.Text = current.Icon;
-        BtnTheme.ToolTip  = $"Thème actif : {current.Name} ({current.VisualStyle})\nCliquez pour changer de style";
+        TxtThemeName.Text = current.Name;
+        BtnTheme.ToolTip  = $"Thème actif : {current.Name} ({current.VisualStyle})\nCliquez pour basculer vers le thème suivant";
     }
 
     // ─── Console Terminal Latéral ────────────────────────────────────

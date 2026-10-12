@@ -1,34 +1,69 @@
 <Page x:Class="ScriptsWindows.Views.Pages.FavorisPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Background="{StaticResource BgDeep}"
+      Background="{DynamicResource BgDeep}"
       Title="Mes Favoris">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24,20,24,24">
+        <StackPanel Margin="24,16,24,24">
+
+            <!-- En-tête des favoris avec compteur dynamique -->
+            <Border x:Name="HeaderPanel"
+                    Margin="0,0,0,16"
+                    Padding="16,12,16,12"
+                    Background="{DynamicResource BgCard}"
+                    BorderBrush="{DynamicResource Border}"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                <DockPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="⭐" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtFavCount"
+                                   Text="Vos raccourcis rapides"
+                                   FontSize="13.5"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimary}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Right"
+                               Text="Cliquez sur l'étoile d'un script pour l'épingler"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextMuted}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                </DockPanel>
+            </Border>
+
             <!-- Info si pas de favoris -->
             <Border x:Name="EmptyState"
-                    Background="{StaticResource BgCard}"
-                    BorderBrush="{StaticResource Border}"
+                    Background="{DynamicResource BgCard}"
+                    BorderBrush="{DynamicResource Border}"
                     BorderThickness="1"
-                    CornerRadius="{StaticResource RadiusMD}"
-                    Padding="40"
+                    CornerRadius="14"
+                    Padding="48,40"
                     HorizontalAlignment="Center"
                     Margin="0,40,0,0">
-                <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="⭐" FontSize="48" HorizontalAlignment="Center" />
-                    <TextBlock Text="Aucun favori pour l'instant"
+                <StackPanel HorizontalAlignment="Center" MaxWidth="440">
+                    <Border Width="64" Height="64"
+                            CornerRadius="32"
+                            Background="{DynamicResource AccentDim}"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,16">
+                        <TextBlock Text="⭐" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="Aucun favori enregistré"
                                FontFamily="{StaticResource FontMain}"
                                FontSize="18"
                                FontWeight="SemiBold"
-                               Foreground="{StaticResource TextPrimary}"
-                               HorizontalAlignment="Center"
-                               Margin="0,12,0,0" />
-                    <TextBlock Text="Cliquez sur ⭐ sur un outil pour l'ajouter ici"
+                               Foreground="{DynamicResource TextPrimary}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Vous n'avez pas encore d'outils favoris. Cliquez sur l'étoile en haut à droite de n'importe quelle carte pour l'ajouter ici et y accéder instantanément."
                                FontFamily="{StaticResource FontMain}"
-                               FontSize="13"
-                               Foreground="{StaticResource TextSecondary}"
+                               FontSize="12.5"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               Foreground="{DynamicResource TextSecondary}"
                                HorizontalAlignment="Center"
-                               Margin="0,6,0,0" />
+                               Margin="0,8,0,0" />
                 </StackPanel>
             </Border>
 

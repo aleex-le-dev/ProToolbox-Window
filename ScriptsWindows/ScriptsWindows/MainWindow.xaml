@@ -279,7 +279,7 @@
                                 Background="{DynamicResource BgCard}"
                                 BorderBrush="{DynamicResource Border}"
                                 BorderThickness="1"
-                                Padding="8,6,8,6"
+                                Padding="10,6,12,6"
                                 Cursor="Hand"
                                 ToolTip="Changer de style / thème">
                             <Button.Resources>
@@ -287,7 +287,10 @@
                                     <Setter Property="CornerRadius" Value="8"/>
                                 </Style>
                             </Button.Resources>
-                            <TextBlock x:Name="TxtThemeIcon" Text="💎" FontSize="14" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="TxtThemeIcon" Text="💎" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock x:Name="TxtThemeName" Text="Aero Glass" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
+                            </StackPanel>
                         </Button>
                     </StackPanel>
                 </Grid>
