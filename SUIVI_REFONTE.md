@@ -54,12 +54,17 @@
     2. ⚙️ **Services et Impression** : Gestionnaire des Services Windows (`ServicesManagerDialog.xaml`) & Déblocage / Purge file d'impression (`FixPrintSpooler`).
     3. 🏬 **Applications et Interface Windows** : Réparation Store UWP & Interface (`AppsShellRepairDialog.xaml`).
     4. 🔄 **Sauvegarde et Restauration** : Points de Restauration Système (`RestorePointDialog.xaml`) & Sauvegarder pilotes DISM.
-- **🌐 Centre de Contrôle Réseau (`NetworkCenterDialog.xaml`)** :
-  - **🩺 Onglet 1 - Diagnostic & Triage** : Interface active, IP locale, passerelle, DNS et tests en direct (ping Box, résolution DNS, accès Internet).
-  - **🌐 Onglet 2 - Serveurs DNS** : Sélecteur d'adaptateur et presets instantanés Cloudflare (1.1.1.1), Google (8.8.8.8), Quad9 (9.9.9.9) et DHCP automatique avec purge DNS.
-  - **⚡ Onglet 3 - Dépannage & Reset** : Redémarrage des cartes, purge DNS/ARP, renouvellement DHCP, réinitialisation TCP/IP & Winsock et Grand Reset en 7 étapes.
-  - **🔍 Onglet 4 - Scanners & Outils** : Scan des bornes Wi-Fi avec signal/canaux, rapport officiel Windows wlanreport, découverte LAN des machines locales, analyse des connexions TCP actives.
-  - **Grille directe fluide** : `ReseauPage` migrée vers `PopulateDirect` (accès instantané aux outils).
+- **🌐 Réseau et Configuration (`ReseauPage.xaml.cs`)** :
+  - Restructurée en **3 sous-catégories accordéons** élégantes via `PopulateSections` :
+    1. 🌐 **Connectivité et Configuration Globale** :
+       - *Centre de Contrôle Réseau* (`NetworkCenterDialog.xaml` avec 4 onglets : Diagnostic, Gestionnaire DNS Cloudflare/Google/Quad9/DHCP, Dépannage, Scanners).
+       - *Dépannage & Grand Reset Réseau* (protocole curatif en 7 étapes).
+    2. 📡 **Découverte Sans Fil et Wi-Fi** :
+       - *Scanner et Analyseur Wi-Fi (Graphique)* (`WifiScannerDialog.xaml`) : vue interactive des bornes Wi-Fi avec jauges de signal colorées en %, canaux et sécurité.
+       - *Rapport de Santé Wi-Fi (Graphique)* (`WifiReportDialog.xaml`) : visionneuse interactive intégrée du rapport officiel Windows avec graphiques des 3 derniers jours, export HTML et ouverture plein écran.
+    3. 🖥️ **Cartographie LAN et Surveillance des Flux** :
+       - *Scanner Réseau Local (LAN Graphique)* (`LanScannerDialog.xaml`) : détection interactive des appareils connectés sur la Box avec ping en direct et copie rapide d'IP.
+       - *Moniteur des Connexions TCP Actives* (`TcpConnectionsDialog.xaml`) : visualiseur filtrable des connexions établies avec logiciels émetteurs, ports et états.
 
 ---
 

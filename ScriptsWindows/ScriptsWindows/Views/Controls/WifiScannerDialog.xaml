@@ -1,0 +1,171 @@
+<Window x:Class="ScriptsWindows.Views.Controls.WifiScannerDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Scanner et Analyseur Wi-Fi"
+        Width="680" Height="580"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#111827"
+        Foreground="#F9FAFB"
+        WindowStyle="SingleBorderWindow">
+
+    <Window.Resources>
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Background" Value="#1F2937"/>
+            <Setter Property="Foreground" Value="#F9FAFB"/>
+            <Setter Property="BorderBrush" Value="#374151"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#374151"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#4B5563"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+            <Setter Property="Background" Value="#4F46E5"/>
+            <Setter Property="BorderBrush" Value="#6366F1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#6366F1"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- En-tête -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="📶" FontSize="26" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <StackPanel>
+                    <TextBlock Text="Scanner et Analyseur Wi-Fi" FontSize="19" FontWeight="Bold" Foreground="#F9FAFB"/>
+                    <TextBlock Text="Détection des bornes Wi-Fi environnantes, puissance du signal en temps réel et canaux radio."
+                               Foreground="#9CA3AF" FontSize="12" Margin="0,2,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Barre de contrôle & Filtre -->
+        <Border Grid.Row="1" Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" x:Name="BtnRefresh" Content="🔄 Actualiser le scan"
+                        Style="{StaticResource PrimaryActionButton}" Click="BtnRefresh_Click"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="14,0,0,0">
+                    <TextBlock x:Name="TxtSummary" Text="Recherche des réseaux sans fil..." Foreground="#D1D5DB" FontSize="12" FontWeight="SemiBold"/>
+                </StackPanel>
+                <Border Grid.Column="2" Background="#111827" CornerRadius="4" Padding="10,4" VerticalAlignment="Center">
+                    <TextBlock x:Name="TxtCount" Text="0 réseau(x)" Foreground="#60A5FA" FontWeight="Bold" FontSize="11"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Liste visuelle des réseaux Wi-Fi -->
+        <Border Grid.Row="2" Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="8" Margin="0,0,0,12">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="ItemsWifiList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#111827" BorderBrush="#374151" BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="4,3,4,3">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="36"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="130"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Icône Signal -->
+                                    <TextBlock Grid.Column="0" Text="{Binding SignalIcon}" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                                    <!-- Nom SSID et Détails -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="6,0,10,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Ssid}" FontWeight="Bold" Foreground="#F9FAFB" FontSize="13"/>
+                                            <Border Background="#374151" CornerRadius="3" Padding="4,1" Margin="8,0,0,0" VerticalAlignment="Center" Visibility="{Binding TagVisibility}">
+                                                <TextBlock Text="{Binding AuthShort}" Foreground="#D1D5DB" FontSize="10" FontWeight="SemiBold"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                            <TextBlock Text="Canal : " Foreground="#9CA3AF" FontSize="11"/>
+                                            <TextBlock Text="{Binding Channel}" Foreground="#60A5FA" FontSize="11" FontWeight="SemiBold" Margin="0,0,10,0"/>
+                                            <TextBlock Text="BSSID : " Foreground="#9CA3AF" FontSize="11"/>
+                                            <TextBlock Text="{Binding Bssid}" Foreground="#9CA3AF" FontSize="11"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Jauge et Pourcentage -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="{Binding SignalPercentText}" FontWeight="Bold" Foreground="{Binding SignalColor}" FontSize="12" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <ProgressBar Value="{Binding SignalPercent}" Maximum="100" Height="6"
+                                                     Foreground="{Binding SignalColor}" Background="#374151" BorderThickness="0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Pied de page -->
+        <Grid Grid.Row="3">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock x:Name="TxtFeedback" Text="Prêt." Foreground="#9CA3AF" VerticalAlignment="Center" FontSize="12"/>
+            </StackPanel>
+            <Button Content="Fermer" HorizontalAlignment="Right" Width="90"
+                    Style="{StaticResource ActionButton}" Click="BtnClose_Click"/>
+        </Grid>
+    </Grid>
+</Window>

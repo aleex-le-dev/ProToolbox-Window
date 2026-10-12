@@ -140,4 +140,43 @@ Get-NetAdapter | ForEach-Object {
             dialog.ShowDialog();
         });
     }
+
+    /// <summary>Ouvre l'interface graphique interactive du Scanner Wi-Fi.</summary>
+    public static async Task OpenWifiScannerDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.WifiScannerDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
+    /// <summary>Ouvre l'interface graphique interactive du Scanner Réseau Local (LAN).</summary>
+    public static async Task OpenLanScannerDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.LanScannerDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
+
+    /// <summary>Ouvre l'interface graphique interactive du Moniteur de Connexions TCP.</summary>
+    public static async Task OpenTcpConnectionsDialog(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new Views.Controls.TcpConnectionsDialog(onOutput, ct)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
 }

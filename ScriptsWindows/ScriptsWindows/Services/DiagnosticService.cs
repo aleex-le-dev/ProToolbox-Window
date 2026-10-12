@@ -491,43 +491,23 @@ Get-PhysicalDisk | ForEach-Object {
     }
 
     // ────────────────────────────────────────────────────────────────
-    //  RAPPORT WI-FI  (rpt_wifi_report)
+    // ────────────────────────────────────────────────────────────────
+    //  RAPPORT WI-FI VISUEL  (rpt_wifi_report)
     // ────────────────────────────────────────────────────────────────
     public static async Task GetWifiReport(Action<string> onOutput, CancellationToken ct = default)
+        => await OpenWifiReportDialog(onOutput, ct);
+
+    /// <summary>Ouvre l'interface visuelle interactive du Rapport de Santé Wi-Fi.</summary>
+    public static async Task OpenWifiReportDialog(Action<string> onOutput, CancellationToken ct = default)
     {
-        onOutput("[i] Génération du rapport Wi-Fi...");
-        await Core.CommandRunner.RunAsync("netsh wlan show wlanreport", onOutput, ct);
-        var sourceReportPath = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-            @"Microsoft\Windows\WlanReport\wlan-report-latest.html");
-
-        if (System.IO.File.Exists(sourceReportPath))
+        await Application.Current.Dispatcher.InvokeAsync(() =>
         {
-            var targetDir = Core.FolderDialogHelper.AskAndCreateDestinationFolder(
-                title: "Sélectionnez l'emplacement où sauvegarder le rapport Wi-Fi",
-                folderPrefix: "Rapport_WiFi",
-                confirmQuestion: "Le rapport Wi-Fi complet a été généré.\n\nSouhaitez-vous copier ce rapport dans un dossier de sauvegarde de votre choix ?",
-                confirmTitle: "Rapport Wi-Fi — Alex Toolkit"
-            );
-
-            if (!string.IsNullOrEmpty(targetDir))
+            var dialog = new Views.Controls.WifiReportDialog(onOutput, ct)
             {
-                string destFile = System.IO.Path.Combine(targetDir, "wlan-report.html");
-                System.IO.File.Copy(sourceReportPath, destFile, true);
-                onOutput($"✅ [SUCCÈS] Rapport Wi-Fi copié dans : {destFile}");
-                Core.CommandRunner.StartProcess(destFile);
-                Core.FolderDialogHelper.OpenInExplorer(targetDir);
-            }
-            else
-            {
-                onOutput($"[OK] Rapport Wi-Fi : {sourceReportPath}");
-                Core.CommandRunner.StartProcess(sourceReportPath);
-            }
-        }
-        else
-        {
-            onOutput("[i] Rapport généré — cherchez wlan-report-latest.html dans ProgramData\\Microsoft\\Windows\\WlanReport");
-        }
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
     }
 
     /// <summary>Ouvre l'interface interactive de gestion des applications au démarrage de Windows.</summary>

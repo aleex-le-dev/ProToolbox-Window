@@ -10,7 +10,7 @@ public partial class ReseauPage : Page, ISectionPage
     public ReseauPage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("RESEAU"));
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("RESEAU"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();

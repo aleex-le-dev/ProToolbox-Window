@@ -534,12 +534,12 @@ public static class ToolRegistry
         {
             Id = "net_center",
             Name = "Centre de Contrôle Réseau",
-            Description = "Interface unifiée tout-en-un : diagnostic en direct, gestionnaire DNS, dépannage de connexion et scanners.",
+            Description = "Interface unifiée tout-en-un : diagnostic en direct, gestionnaire DNS (Cloudflare, Google, Quad9), dépannage et scanners.",
             Category = "RESEAU",
-            SubHeading = "",
+            SubHeading = "Connectivité et Configuration Globale",
             Icon = "🌐",
             Action = (log, ct) => NetworkService.OpenNetworkCenterDialog(log, ct),
-            Tags = new[] { "centre", "réseau", "diagnostic", "dns", "triage", "reset", "wifi", "lan", "ip", "connectivité", "internet" }
+            Tags = new[] { "centre", "réseau", "diagnostic", "dns", "triage", "reset", "wifi", "lan", "ip", "connectivité", "internet", "cloudflare", "google", "quad9", "dhcp", "changer" }
         });
 
         _allTools.Add(new ScriptTool
@@ -548,7 +548,7 @@ public static class ToolRegistry
             Name = "Dépannage & Grand Reset Réseau",
             Description = "Protocole curatif complet en 7 étapes : purge DNS/ARP, réinitialisation Winsock et TCP/IP, renouvellement IP.",
             Category = "RESEAU",
-            SubHeading = "",
+            SubHeading = "Connectivité et Configuration Globale",
             Icon = "⚡",
             Action = (log, ct) => NetworkService.ResetAll(log, ct),
             Tags = new[] { "reset", "réinitialiser", "dépannage", "connexion", "coupure", "winsock", "tcpip", "dhcp", "arp", "flushdns" }
@@ -556,62 +556,50 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "net_dns_manager",
-            Name = "Gestionnaire et Changeur de DNS",
-            Description = "Consulter le DNS actif, tester et appliquer en 1 clic (Cloudflare, Google, Quad9, DHCP).",
-            Category = "RESEAU",
-            SubHeading = "",
-            Icon = "🛡️",
-            Action = (log, ct) => DnsService.OpenDnsManagerDialog(log, ct),
-            Tags = new[] { "dns", "cloudflare", "google", "quad9", "dhcp", "ipconfig", "changer", "serveurs", "sécurité" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "net_lan_scan",
-            Name = "Scanner Réseau Local (LAN)",
-            Description = "Découvrir tous les appareils et machines connectés sur la Box ou le sous-réseau local (IP et noms d'hôtes).",
-            Category = "RESEAU",
-            SubHeading = "",
-            Icon = "🖥️",
-            Action = (log, ct) => NetworkService.ScanLan(log, ct),
-            Tags = new[] { "lan", "scan", "découverte", "machines", "hotes", "adresses", "ip", "box", "routeur" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
             Id = "net_wifi_scan",
-            Name = "Scanner les réseaux Wi-Fi",
-            Description = "Analyse et inventaire des bornes sans fil environnantes avec puissance du signal en % et canaux (BSSID).",
+            Name = "Scanner et Analyseur Wi-Fi (Graphique)",
+            Description = "Visualiseur interactif des réseaux Wi-Fi voisins avec jauges de signal, pourcentages, canaux et sécurité.",
             Category = "RESEAU",
-            SubHeading = "",
+            SubHeading = "Découverte Sans Fil et Wi-Fi",
             Icon = "📶",
-            Action = (log, ct) => NetworkService.ScanWifi(log, ct),
-            Tags = new[] { "wifi", "scan", "bornes", "puissance", "canaux", "wlan", "ssid", "signal" }
+            Action = (log, ct) => NetworkService.OpenWifiScannerDialog(log, ct),
+            Tags = new[] { "wifi", "scan", "bornes", "puissance", "canaux", "wlan", "ssid", "signal", "jauges", "visuel" }
         });
 
         _allTools.Add(new ScriptTool
         {
             Id = "net_wifi_report",
-            Name = "Rapport Wi-Fi complet (wlanreport)",
-            Description = "Génération du rapport officiel Windows de diagnostic sans fil et ouverture automatique dans le navigateur.",
+            Name = "Rapport de Santé Wi-Fi (Graphique)",
+            Description = "Interface visuelle interactive du rapport officiel Windows avec graphiques des 3 derniers jours et export HTML.",
             Category = "RESEAU",
-            SubHeading = "",
+            SubHeading = "Découverte Sans Fil et Wi-Fi",
             Icon = "📊",
             Action = (log, ct) => DiagnosticService.GetWifiReport(log, ct),
-            Tags = new[] { "wifi", "rapport", "html", "wlanreport", "historique", "santé", "déconnexions" }
+            Tags = new[] { "wifi", "rapport", "html", "wlanreport", "historique", "santé", "déconnexions", "graphique", "visuel" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "net_lan_scan",
+            Name = "Scanner Réseau Local (LAN Graphique)",
+            Description = "Visualiseur des appareils et machines connectés sur la Box avec statut ping en direct et copie rapide d'IP.",
+            Category = "RESEAU",
+            SubHeading = "Cartographie LAN et Surveillance des Flux",
+            Icon = "🖥️",
+            Action = (log, ct) => NetworkService.OpenLanScannerDialog(log, ct),
+            Tags = new[] { "lan", "scan", "découverte", "machines", "hotes", "adresses", "ip", "box", "routeur", "visuel" }
         });
 
         _allTools.Add(new ScriptTool
         {
             Id = "net_flux_analysis",
-            Name = "Connexions et Flux TCP Actifs",
-            Description = "Afficher les connexions TCP établies en direct avec identification du processus Windows correspondant.",
+            Name = "Moniteur des Connexions TCP Actives",
+            Description = "Visualiseur filtrable des connexions TCP établies avec identification des logiciels et ports associés.",
             Category = "RESEAU",
-            SubHeading = "",
+            SubHeading = "Cartographie LAN et Surveillance des Flux",
             Icon = "🔍",
-            Action = (log, ct) => NetworkService.AnalyzeFlux(log, ct),
-            Tags = new[] { "connexions", "flux", "tcp", "ports", "processus", "netstat", "ip", "écoute" }
+            Action = (log, ct) => NetworkService.OpenTcpConnectionsDialog(log, ct),
+            Tags = new[] { "connexions", "flux", "tcp", "ports", "processus", "netstat", "ip", "écoute", "visuel", "moniteur" }
         });
     }
 

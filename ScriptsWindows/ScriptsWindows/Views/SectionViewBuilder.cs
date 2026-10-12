@@ -216,7 +216,7 @@ public static class SectionViewBuilder
         "NETTOYAGE"        => "Centre interactif de nettoyage de disque, caches, corbeille et magasin WinSxS",
         "PERSONNALISATION" => "God Mode et rétablissement du menu contextuel classique Windows 10",
         "REPARATION"       => "Centres interactifs d'intégrité DISM/SFC, CHKDSK, gestionnaire de services et Store UWP",
-        "RESEAU"           => "DNS Cloudflare/Google, purge ARP, rapport Wi-Fi et audit des connexions",
+        "RESEAU"           => "Centre de contrôle unifié, diagnostic, changement DNS, scanners LAN/Wi-Fi et analyse des flux",
         "SECRETS"          => "Mots de passe Wi-Fi, clés Windows, documents sensibles et profils web",
         "SECURITE"         => "Scan Defender, journaux d'erreurs, fiabilité perfmon et monitoring des ressources",
         _                  => "Outils système Windows"
