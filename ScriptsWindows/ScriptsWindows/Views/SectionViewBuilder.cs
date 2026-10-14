@@ -135,7 +135,10 @@ public static class SectionViewBuilder
         ["ScanHealth"] = "ScanHealth",
         ["RestoreHealth"] = "RestoreHealth",
         ["CheckHealth"] = "CheckHealth",
-        ["QuickScan"] = "QuickScan"
+        ["QuickScan"] = "QuickScan",
+        ["WinRE"] = "WinRE",
+        ["BCD"] = "BCD",
+        ["BCDBoot"] = "BCDBoot"
     };
 
     /// <summary>
@@ -190,6 +193,7 @@ public static class SectionViewBuilder
     public static (string Icon, string Name) GetCategoryMeta(string category) => (category ?? "").ToUpperInvariant() switch
     {
         "APPLICATIONS"     => ("📦", "Installer vos logiciels"),
+        "DEMARRAGE"        => ("⚡", "Démarrage & Récupération"),
         "DIAGNOSTIC"       => ("🔍", "Bilan & Santé du PC"),
         "DISQUE"           => ("💽", "Disques et stockage"),
         "MATERIEL"         => ("🖥️", "Performances & Énergie"),
@@ -209,6 +213,7 @@ public static class SectionViewBuilder
     public static string GetCategorySubtitle(string category) => (category ?? "").ToUpperInvariant() switch
     {
         "APPLICATIONS"     => "Installez ou mettez à jour en 1 clic vos applications indispensables du quotidien",
+        "DEMARRAGE"        => "Gérez le démarrage en mode sans échec, l'accès au BIOS/UEFI, la réparation du menu BCD et WinRE",
         "DIAGNOSTIC"       => "Vérifiez l'état de votre ordinateur, son matériel et accélérez son démarrage",
         "DISQUE"           => "Gérez vos disques durs et clés USB, boostez leur vitesse et protégez vos dossiers",
         "MATERIEL"         => "Ajustez la puissance du processeur (normal ou boost) et testez la rapidité du PC",

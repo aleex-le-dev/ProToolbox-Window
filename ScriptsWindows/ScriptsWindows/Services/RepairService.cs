@@ -194,43 +194,24 @@ Write-Output '[OK] Point de restauration créé avec succès'
     }
 
     // WinRE — Redémarrer  (winre_boot)
-    public static async Task RebootToWinRE(Action<string> onOutput, CancellationToken ct = default)
-    {
-        onOutput("[!] Redémarrage vers WinRE dans 5 secondes...");
-        await Task.Delay(3000, ct);
-        await CommandRunner.RunAsync("shutdown /r /o /f /t 5", onOutput, ct);
-    }
+    public static Task RebootToWinRE(Action<string> onOutput, CancellationToken ct = default)
+        => BootService.RebootToWinRE(true, onOutput, ct);
 
     // BIOS  (winre_bios)
-    public static async Task RebootToBios(Action<string> onOutput, CancellationToken ct = default)
-    {
-        onOutput("[!] Redémarrage vers le BIOS/UEFI...");
-        await PowerShellRunner.RunAsync("shutdown /r /fw /f /t 5", onOutput, ct);
-    }
+    public static Task RebootToBios(Action<string> onOutput, CancellationToken ct = default)
+        => BootService.RebootToBios(true, onOutput, ct);
 
     // Mode sans échec Minimal  (winre_safe_minimal)
-    public static async Task RebootSafeMinimal(Action<string> onOutput, CancellationToken ct = default)
-    {
-        onOutput("[i] Configuration du mode sans échec minimal...");
-        await CommandRunner.RunAsync("bcdedit /set {default} safeboot minimal", onOutput, ct);
-        onOutput("[!] Redémarrage dans 5 secondes...");
-        await CommandRunner.RunAsync("shutdown /r /f /t 5", onOutput, ct);
-    }
+    public static Task RebootSafeMinimal(Action<string> onOutput, CancellationToken ct = default)
+        => BootService.ConfigureSafeMode(SafeModeType.Minimal, true, onOutput, ct);
 
     // Mode sans échec Réseau  (winre_safe_network)
-    public static async Task RebootSafeNetwork(Action<string> onOutput, CancellationToken ct = default)
-    {
-        await CommandRunner.RunAsync("bcdedit /set {default} safeboot network", onOutput, ct);
-        await CommandRunner.RunAsync("shutdown /r /f /t 5", onOutput, ct);
-    }
+    public static Task RebootSafeNetwork(Action<string> onOutput, CancellationToken ct = default)
+        => BootService.ConfigureSafeMode(SafeModeType.Network, true, onOutput, ct);
 
     // Réinitialiser BCD (mode normal)  (winre_reset)
-    public static async Task ResetBcd(Action<string> onOutput, CancellationToken ct = default)
-    {
-        onOutput("[i] Réinitialisation du démarrage en mode normal...");
-        await CommandRunner.RunAsync("bcdedit /deletevalue {default} safeboot", onOutput, ct);
-        onOutput("[OK] BCD réinitialisé — démarrage normal restauré");
-    }
+    public static Task ResetBcd(Action<string> onOutput, CancellationToken ct = default)
+        => BootService.RepairBcd(onOutput, ct);
 
     // Installer gpedit.msc  (res_gpedit)
     public static async Task InstallGpedit(Action<string> onOutput, CancellationToken ct = default)

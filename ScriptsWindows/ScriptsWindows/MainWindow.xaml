@@ -167,7 +167,7 @@
                                    Foreground="{DynamicResource TextMuted}"
                                    Margin="10,2,0,6" />
 
-                        <!-- 11 Catégories Principales (Triées par ordre alphabétique) -->
+                        <!-- 12 Catégories Principales (Triées par ordre alphabétique) -->
                         <Button Tag="APPLICATIONS" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
@@ -186,6 +186,28 @@
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="📦" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Applications" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Button>
+
+                        <Button Tag="DEMARRAGE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                            <DockPanel LastChildFill="True">
+                                <Border DockPanel.Dock="Right"
+                                        Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="7,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock x:Name="Badge_DEMARRAGE"
+                                               Text="0"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimary}" />
+                                </Border>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="⚡" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Démarrage &amp; Récupération" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>

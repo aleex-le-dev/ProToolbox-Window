@@ -58,6 +58,7 @@ public partial class MainWindow : Window
         UpdateFavoritesCount();
 
         Badge_APPLICATIONS.Text     = ToolRegistry.GetByCategory("APPLICATIONS").Count().ToString();
+        Badge_DEMARRAGE.Text        = ToolRegistry.GetByCategory("DEMARRAGE").Count().ToString();
         Badge_DIAGNOSTIC.Text       = ToolRegistry.GetByCategory("DIAGNOSTIC").Count().ToString();
         Badge_DISQUE.Text           = ToolRegistry.GetByCategory("DISQUE").Count().ToString();
         Badge_MATERIEL.Text         = ToolRegistry.GetByCategory("MATERIEL").Count().ToString();
@@ -81,7 +82,7 @@ public partial class MainWindow : Window
         {
             string[] categories =
             {
-                "APPLICATIONS", "DIAGNOSTIC", "DISQUE", "MATERIEL", "MISES_A_JOUR",
+                "APPLICATIONS", "DEMARRAGE", "DIAGNOSTIC", "DISQUE", "MATERIEL", "MISES_A_JOUR",
                 "NETTOYAGE", "PERSONNALISATION", "REPARATION", "RESEAU", "SECRETS", "SECURITE", "PARAMETRES"
             };
             foreach (var cat in categories)
@@ -193,17 +194,18 @@ public partial class MainWindow : Window
 
         Page newPage = tag switch
         {
-            "DIAGNOSTIC"       => new DiagnosticPage(),
-            "MATERIEL"         => new MaterielPage(),
-            "REPARATION"       => new ReparationPage(),
-            "NETTOYAGE"        => new NettoyagePage(),
-            "SECRETS"          => new SecretsPage(),
-            "RESEAU"           => new ReseauPage(),
-            "DISQUE"           => new DisquePage(),
             "APPLICATIONS"     => new ApplicationsPage(),
+            "DEMARRAGE"        => new DemarragePage(),
+            "DIAGNOSTIC"       => new DiagnosticPage(),
+            "DISQUE"           => new DisquePage(),
+            "MATERIEL"         => new MaterielPage(),
             "MISES_A_JOUR"     => new MisesAJourPage(),
-            "SECURITE"         => new SecuritePage(),
+            "NETTOYAGE"        => new NettoyagePage(),
             "PERSONNALISATION" => new PersonnalisationPage(),
+            "REPARATION"       => new ReparationPage(),
+            "RESEAU"           => new ReseauPage(),
+            "SECRETS"          => new SecretsPage(),
+            "SECURITE"         => new SecuritePage(),
             "PARAMETRES"       => new ParametresPage(),
             _                  => new FavorisPage()
         };

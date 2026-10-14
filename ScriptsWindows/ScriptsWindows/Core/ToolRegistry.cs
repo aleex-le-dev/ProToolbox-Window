@@ -28,6 +28,7 @@ public static class ToolRegistry
         RegisterUpdatesTools();          // Catégorie 9 : Mises à Jour et Inventaire Logiciel
         RegisterSecurityTools();         // Catégorie 10 : Surveillance, Sécurité et Événements
         RegisterPersonalizationTools();  // Catégorie 11 : Personnalisation et Système
+        RegisterBootTools();             // Catégorie 12 : Démarrage & Récupération
     }
 
     public static IReadOnlyList<ScriptTool> AllTools => _allTools;
@@ -99,7 +100,14 @@ public static class ToolRegistry
 
         // ─── Personnalisation (2) ───
         ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
-        ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)"
+        ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)",
+
+        // ─── Démarrage & Récupération (5) ───
+        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération)",
+        ["boot_safemode"] = "bcdedit /set {current} safeboot minimal | network",
+        ["boot_winre"] = "shutdown.exe /r /o /f /t 00",
+        ["boot_uefi_bios"] = "shutdown.exe /r /fw /f /t 00",
+        ["boot_bcd_repair"] = "bcdboot.exe %SystemRoot% /l fr-fr"
     };
 
 
@@ -619,6 +627,72 @@ public static class ToolRegistry
             Icon = "🖱️",
             Action = (log, ct) => PersonalizationService.OpenContextMenuDialog(log, ct),
             Tags = new[] { "clic droit", "menu contextuel", "windows 10", "windows 11", "classique", "facile", "personnaliser" }
+        });
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // CATÉGORIE 12 : ⚡ DÉMARRAGE & RÉCUPÉRATION
+    // ─────────────────────────────────────────────────────────────────────────
+    private static void RegisterBootTools()
+    {
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_center",
+            Name = "Centre de démarrage et récupération",
+            Description = "Console interactive : gérez le mode sans échec, basculez vers le BIOS/UEFI, déclenchez WinRE et réparez les fichiers BCD.",
+            Category = "DEMARRAGE",
+            SubHeading = "Console interactive de démarrage",
+            Icon = "⚡",
+            Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
+            Tags = new[] { "démarrage", "récupération", "sans échec", "winre", "bios", "uefi", "bcd", "boot", "réparation" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_safemode",
+            Name = "Redémarrer en mode sans échec (Minimal / Réseau)",
+            Description = "Active le mode sans échec avec ou sans prise en charge réseau pour isoler les conflits logiciels et nettoyer les pannes de pilotes.",
+            Category = "DEMARRAGE",
+            SubHeading = "Modes de démarrage avancés",
+            Icon = "🛡️",
+            Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
+            Tags = new[] { "mode sans échec", "safe mode", "minimal", "réseau", "pilotes", "dépannage", "bcdedit" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_winre",
+            Name = "Accéder au WinRE (environnement de réparation)",
+            Description = "Redémarre directement sur l'environnement de secours Windows avec les outils de restauration, d'invite de commandes et de diagnostic.",
+            Category = "DEMARRAGE",
+            SubHeading = "Environnements de récupération",
+            Icon = "🚑",
+            Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
+            Tags = new[] { "winre", "récupération", "environnement", "secours", "dépannage", "restauration", "réparation" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_uefi_bios",
+            Name = "Redémarrer vers le BIOS/UEFI",
+            Description = "Accède instantanément à l'interface de configuration du micrologiciel de la carte mère sans avoir à presser les touches F2 ou Suppr.",
+            Category = "DEMARRAGE",
+            SubHeading = "Modes de démarrage avancés",
+            Icon = "💻",
+            Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
+            Tags = new[] { "bios", "uefi", "firmware", "carte mère", "redémarrer", "boot", "micrologiciel" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_bcd_repair",
+            Name = "Réinitialiser BCD (menu de démarrage cassé)",
+            Description = "Répare et reconstruit la configuration du chargeur de démarrage Windows (BCDBoot) et supprime les boucles de redémarrage sans échec.",
+            Category = "DEMARRAGE",
+            SubHeading = "Réparation du démarrage BCD",
+            Icon = "🔧",
+            Action = (log, ct) => BootService.RepairBcd(log, ct),
+            Tags = new[] { "bcd", "bcdboot", "démarrage cassé", "réinitialiser", "réparation", "bootloader", "safeboot" }
         });
     }
 
