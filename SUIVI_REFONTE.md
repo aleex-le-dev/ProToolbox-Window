@@ -185,18 +185,16 @@ Tous les textes ont été réécrits pour être compris instantanément par des 
   - Dès le clic dans la zone de contenu ou après perte de focus, la barre latérale se rétracte instantanément en mode compact.
 - **Calibrage de la console de logs** :
   - Largeur de console optimisée (360 px max, 740 px réservés) garantissant l'affichage systématique de 2 colonnes de cartes côte à côte.
-- **Fiche de spécifications unifiée dans les Paramètres (À propos)** :
-  - Remplacement des 5 cartes éparpillées par **1 seul bloc unifié ligne par ligne** façon fiche technique officielle (comme sur Windows 11 / macOS / rapports d'ingénierie).
-  - Présentation claire avec icônes, libellés uniformes et valeurs en gras :
-    1. 📦 *Application & Version* (Alex Toolkit v4.1.0, .NET 8.0 x64)
-    2. 🛡️ *Droits d'accès* (Administrateur / Standard)
-    3. 💻 *Ordinateur & Utilisateur* (Machine et nom de session active)
-    4. 🪟 *Système d'exploitation* (Édition, numéro de Build et architecture)
-    5. 🧠 *Processeur (CPU)* (Modèle exact et nombre de threads)
-    6. ⚡ *Mémoire vive (RAM)* (Capacité totale uniquement, ex. 32 Go)
-    7. 💽 *Disques & Stockage* (Liste de tous les lecteurs prêts : type physique SSD, SSD (NVMe), HDD, Amovible/USB, pourcentage d'utilisation %, espace libre et total — chaque disque sur sa propre ligne)
-  - Retrait du doublon « Dernière mise à jour » dans la fiche (déjà affiché en pied de page des paramètres).
-  - Bouton interactif `📋 Copier la fiche` pour exporter l'ensemble de la fiche technique formatée dans le presse-papiers en un clic.
+- **Fiche de spécifications 100% PC dans les Paramètres (Sans icônes)** :
+  - Remplacement des cartes éparpillées par **1 seul bloc unifié ligne par ligne** façon fiche technique officielle sobre et épurée (sans icônes, uniquement les libellés et caractéristiques) :
+    1. *Ordinateur & Utilisateur* (Machine et nom de session active)
+    2. *Droits d'accès* (Administrateur / Standard)
+    3. *Système d'exploitation* (Édition, numéro de Build et architecture)
+    4. *Processeur (CPU)* (Modèle exact et nombre de threads)
+    5. *Mémoire vive (RAM)* (Capacité totale uniquement, ex. 32 Go)
+    6. *Disques & Stockage* (Liste de tous les lecteurs prêts : type physique SSD, SSD (NVMe), HDD, Amovible/USB, pourcentage d'utilisation %, espace libre et total — chaque disque sur sa propre ligne)
+  - Retrait de toutes les icônes emoji (dans l'interface et dans le rapport texte) pour une présentation purement technique.
+  - Bouton interactif `Copier la fiche` pour exporter l'ensemble de la fiche technique formatée dans le presse-papiers en un clic.
 
 ---
 

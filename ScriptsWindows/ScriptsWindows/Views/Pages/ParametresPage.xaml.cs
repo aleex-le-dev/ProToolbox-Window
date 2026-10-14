@@ -52,12 +52,10 @@ public partial class ParametresPage : Page, ISectionPage
                 : "Dernière mise à jour le :";
 
             TxtAppBuildInfo.Text = $"{prefix} {buildDateStr}";
-            TxtSpecApp.Text = $"Alex Toolkit {versionStr} (.NET 8.0 Windows x64)";
         }
         catch
         {
             TxtAppBuildInfo.Text = $"Dernière mise à jour le : {DateTime.Now:dd/MM/yyyy}";
-            TxtSpecApp.Text = "Alex Toolkit v4.1.0 (.NET 8.0 Windows x64)";
         }
     }
 
@@ -121,7 +119,7 @@ public partial class ParametresPage : Page, ISectionPage
             // Droits d'administration
             bool isAdmin = AdminElevation.IsAdmin();
             string privileges = isAdmin
-                ? "Administrateur (Privilèges élevés ✔)"
+                ? "Administrateur (Privilèges élevés)"
                 : "Utilisateur standard (Droits restreints)";
 
             // Machine et Utilisateur
@@ -319,15 +317,14 @@ Get-Volume | Where-Object { $_.DriveLetter } | ForEach-Object {
     {
         var sb = new StringBuilder();
         sb.AppendLine("═══════════════════════════════════════════════════════════════");
-        sb.AppendLine("  FICHE TECHNIQUE & SPÉCIFICATIONS — ALEX TOOLKIT");
+        sb.AppendLine("  FICHE TECHNIQUE & SPÉCIFICATIONS DU PC");
         sb.AppendLine("═══════════════════════════════════════════════════════════════");
-        sb.AppendLine($"• Application          : {TxtSpecApp.Text}");
-        sb.AppendLine($"• Droits d'accès       : {TxtSpecPrivileges.Text}");
-        sb.AppendLine($"• Ordinateur & Session : {TxtSpecMachine.Text}");
-        sb.AppendLine($"• Système d'exploit.   : {TxtSpecOS.Text}");
-        sb.AppendLine($"• Processeur (CPU)     : {TxtSpecCPU.Text}");
-        sb.AppendLine($"• Mémoire vive (RAM)   : {TxtSpecRAM.Text}");
-        sb.AppendLine("• Disques & Stockage   :");
+        sb.AppendLine($"Ordinateur & Session : {TxtSpecMachine.Text}");
+        sb.AppendLine($"Droits d'accès       : {TxtSpecPrivileges.Text}");
+        sb.AppendLine($"Système d'exploit.   : {TxtSpecOS.Text}");
+        sb.AppendLine($"Processeur (CPU)     : {TxtSpecCPU.Text}");
+        sb.AppendLine($"Mémoire vive (RAM)   : {TxtSpecRAM.Text}");
+        sb.AppendLine("Disques & Stockage   :");
         foreach (var child in PanelDisksSpecs.Children)
         {
             if (child is DockPanel dp)
