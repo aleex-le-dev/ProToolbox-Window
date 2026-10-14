@@ -45,3 +45,7 @@ diag_*.txt
 v*_info.txt
 test_*.bat
 Critical_Assets_Report.html
+
+# Assistant / Tooling local
+.claude/
+.claudeignore

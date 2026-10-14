@@ -1,135 +1,108 @@
-# 🛠️ Alex Toolkit — AleexLeDev
+# Alex Toolkit
+by AleexLeDev – diagnostiquez, réparez, optimisez et sécurisez votre système Windows 10 & 11 au sein d'une interface néon moderne : bilan de santé matériel en direct, intégrité Windows en un clic, purge des caches, bouclier anti-télémétrie, optimisation gaming à faible latence et console de démarrage avancée. Aucun outil tiers requis, aucun cloud, aucun traceur, conçu pour un usage instantané et autonome.
 
-> Outil tout-en-un de diagnostic, réparation, optimisation et maintenance Windows 10/11.
+⚡ [Télécharger la dernière version (v4.x)](https://github.com/aleex-le-dev/SCRIPT-WINDOWS-ALEEXLEDEV/releases/latest) – exécutable autonome unique `AlexToolkit.exe` : double-cliquez et utilisez. Rien à installer.  
+📖 Documentation : [Guide d'utilisation](docs/manual.md) · [Suivi technique & Refonte](SUIVI_REFONTE.md) (également dans ce dépôt : [CLAUDE.md](CLAUDE.md))  
+💬 Communauté : [GitHub Discussions](https://github.com/aleex-le-dev/SCRIPT-WINDOWS-ALEEXLEDEV/discussions) – partagez vos retours d'expérience, posez vos questions, proposez de nouveaux scripts.  
+🗺️ Ce qui arrive ensuite : [Roadmap](ROADMAP.md) – fonctionnalités prévues, nouvelles catégories et optimisations de performance.
 
 ---
 
-## ⚡ 1. Compilation de l'exécutable
+## Ce qu'il fait
 
-L'application se compile en un **fichier unique `.exe` autonome** (`PublishSingleFile`), ultra réactif (ReadyToRun AOT) et optimisé pour Windows 10/11.
+* **Centre de Diagnostic & Santé Matérielle** – analyse en temps réel de votre configuration (processeur, barrettes et consommation RAM, santé S.M.A.R.T. des disques NVMe/SSD, jauge et usure de la batterie, bilan thermique). Inclut l'audit d'éligibilité complet Windows 11 24H2, TPM 2.0 et processeurs NPU IA Copilot+, ainsi que l'accès direct aux outils DxDiag et gestionnaire de démarrage.
+* **Intégrité & Réparation Système** – diagnostic et restauration automatique des fichiers corrompus via DISM Scan/Restore et SFC avec suivi en direct, interface interactive CHKDSK pour volumes NTFS, déblocage et purge instantanée du spouleur d'impression, réinitialisation du Windows Store UWP et sauvegarde en un clic de tous vos pilotes matériels.
+* **Démarrage Avancé & Récupération** – console unifiée de gestion du boot pour basculer en un clic vers le Mode Sans Échec (minimal ou réseau), redémarrer directement dans le BIOS/UEFI sans appuyer frénétiquement sur une touche, accéder à l'environnement WinRE ou reconstruire le magasin de démarrage BCD.
+* **Nettoyage & Optimisation d'Espace** – console interactive de purge unifiée ciblant les fichiers temporaires système et utilisateur, le cache Windows Update, le dossier WinSxS, la corbeille et les résidus de navigation (Google Chrome, Microsoft Edge, Brave, Mozilla Firefox).
+* **Bouclier de Confidentialité & Sécurité** – désactivation réversible de la télémétrie Windows et des mouchards publicitaires, contrôle de l'antivirus Windows Defender avec analyse rapide 1-clic, révélation immédiate des clés de sécurité Wi-Fi enregistrées, audit approfondi des fichiers sensibles (`.ssh`, `.aws`, `.env`) et extraction de la clé de licence Windows d'origine inscrite dans le BIOS.
+* **Optimiseur Réseau & Benchmark DNS** – protocole exclusif de réinitialisation réseau en 7 étapes (TCP/IP, Winsock, DNS, ARP), scanner visuel des réseaux Wi-Fi environnants et des périphériques LAN, moniteur des flux et connexions TCP actives, et banc d'essai comparatif de vitesse DNS en temps réel (Cloudflare, Google, Quad9, OpenDNS).
+* **Mode Gaming & Latence Minimale** – optimiseur dédié aux joueurs pour minimiser la latence système : activation en un clic du plan d'alimentation *Performances Ultimes*, réduction de l'algorithme TCP Nagle, accélération matérielle graphique (HAGS) et priorisation Game Mode.
+* **Terminal Latéral Intégré & Thèmes Néon** – console latérale rétractable (240px) avec affichage en direct et en continu des flux PowerShell et CMD, recherche instantanée parmi plus de 50 outils, gestionnaire de favoris locaux avec persistance, et bascule instantanée entre 5 thèmes visuels dynamiques (*Aero Glass*, *Cyberpunk Neon*, *Matrix Phosphor*, *Nordic Frost*, *Obsidian Luxury*).
 
-### En 1 clic (recommandé)
-Lance simplement le script à la racine :
-> [`build.bat`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/build.bat)  
-Il compile le projet en Release et dépose directement [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe) à la racine.
+**Également inclus** : gestionnaire d'installation unifié d'applications populaires via Winget, bascule rapide du menu contextuel Windows 11 vers le style classique Windows 10, raccourci direct vers le dossier Tous les Réglages (*God Mode*), auto-élévation UAC avec conservation des privilèges et exécution asynchrone non-bloquante pour une fluidité absolue.
 
-### En ligne de commande (PowerShell)
+---
+
+## Gratuit & 100% Open Source
+
+L'application et l'intégralité des modules décrits ci-dessus sont entièrement gratuits et sous licence open source **MIT**.
+
+* 🚀 Aucun compte requis, aucune inscription.
+* 🛡️ Aucun composant payant masqué ni publicité.
+* 📦 Architecture 100% autonome sans dépendance DLL externe résiduelle.
+
+---
+
+## Installation
+
+### Exécutable autonome (Recommandé)
+1. Rendez-vous dans la section [Releases](https://github.com/aleex-le-dev/SCRIPT-WINDOWS-ALEEXLEDEV/releases/latest).
+2. Téléchargez [`AlexToolkit.exe`](AlexToolkit.exe).
+3. Lancez l'exécutable (une invite UAC vous demandera les droits administrateur pour permettre les réparations système).
+4. Profitez immédiatement de tous les outils sans rien installer.
+
+### Prérequis
+* Windows 10 ou Windows 11 (64 bits).
+* Droits d'administrateur recommandés pour les actions système de bas niveau (réparations DISM/SFC, pilotes, BCD, réseau).
+* Runtime .NET 8.0 pour Windows Desktop (si vous utilisez la version non autonome ; la version `AlexToolkit.exe` SingleFile intègre tout le nécessaire).
+
+---
+
+## Confidentialité & Souveraineté (Privacy)
+
+Alex Toolkit fonctionne **100% en local et hors-ligne** :
+* Aucune donnée personnelle, identifiant ou diagnostic n'est envoyé vers des serveurs externes.
+* Aucun traceur d'utilisation, aucune télémétrie tierce intégrée.
+* Vos favoris et réglages d'interface sont stockés uniquement sur votre machine locale dans `%LocalAppData%\AlexToolkit`.
+* Vous gardez le contrôle total sur chaque commande exécutée : chaque script est prévisualisable et transparent.
+
+---
+
+## Développement & Compilation
+
+Pour cloner et compiler le projet localement avec le SDK .NET 8 :
+
 ```powershell
+# Cloner le dépôt
+git clone https://github.com/aleex-le-dev/SCRIPT-WINDOWS-ALEEXLEDEV.git
+cd SCRIPT-WINDOWS-ALEEXLEDEV
+
+# Compiler l'exécutable autonome en 1 clic
+.\build.bat
+```
+
+### Commandes manuelles (PowerShell / CLI)
+
+```powershell
+# Compilation Release Single-File optimisée (ReadyToRun AOT)
 dotnet publish ScriptsWindows/ScriptsWindows/ScriptsWindows.csproj -c Release -r win-x64 --no-self-contained -p:PublishSingleFile=true
-```
-L'exécutable généré se trouve dans :
-`ScriptsWindows/ScriptsWindows/bin/Release/net8.0-windows/win-x64/publish/AlexToolkit.exe`
 
-*(Note : Si le SDK .NET 8 n'est pas installé sur la machine :)*
-```powershell
-& ([scriptblock]::Create((Invoke-RestMethod -Uri https://dot.net/v1/dotnet-install.ps1))) -Channel 8.0 -InstallDir "$env:LOCALAPPDATA\Microsoft\dotnet"
+# Nettoyer les caches temporaires, logs et builds résiduels
+.\clean.bat
 ```
 
----
-
-## 🧹 2. Nettoyage Automatique
-
-Le nettoyage des fichiers temporaires et des caches est **100% automatisé**.
-
-Il suffit de double-cliquer sur :
-> 👉 **[`clean.bat`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/clean.bat)**
-
-### Ce que le script nettoie automatiquement :
-* 🗑️ **Dossiers de collecte & tests** : supprime `DiagNav/`
-* 🗑️ **Rapports & logs résiduels** : supprime `Intelligence_Report.txt` et tous les fichiers `*.log`
-* 🗑️ **Caches de compilation** : purge les dossiers `bin/` et `obj/` de Visual Studio / .NET
-
-### Ce qui est conservé et sécurisé :
-* ✅ Vos fichiers sources C# / WPF (`ScriptsWindows/`)
-* ✅ Votre exécutable principal [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe)
-
----
-
-## 📁 3. Architecture du Projet C# / WPF
+### Architecture du Code
 
 ```text
 SCRIPT-WINDOWS-ALEEXLEDEV/
-├── AlexToolkit.exe                        ← Exécutable autonome compilé
-├── build.bat                              ← Script de build en 1 clic
-├── clean.bat                              ← Script de purge des caches
-├── SUIVI_REFONTE.md                       ← Suivi d'avancement technique
+├── AlexToolkit.exe                        ← Exécutable autonome final généré
+├── build.bat                              ← Script de compilation automatique en 1 clic
+├── clean.bat                              ← Script de purge des caches et logs
 │
 └── ScriptsWindows/ScriptsWindows/
-    ├── App.xaml / App.xaml.cs             ← Point d'entrée, styles globaux, élévation UAC
-    ├── MainWindow.xaml / .cs              ← Fenêtre principale (Sidebar + Topbar + Terminal latéral à droite)
-    │
-    ├── Core/                              ← Moteurs et utilitaires
-    │   ├── ThemeManager.cs                ← 5 thèmes visuels dynamiques (Glassmorphism, Néon, Matrix...)
-    │   ├── AdminElevation.cs              ← Auto-élévation UAC admin si nécessaire
-    │   ├── PowerShellRunner.cs            ← Exécuteur PowerShell async avec streaming live
-    │   ├── CommandRunner.cs               ← Exécuteur de commandes CMD / Process
-    │   ├── ToolRegistry.cs                ← Catalogue central de TOUS les outils
-    │   └── FavoritesManager.cs            ← Persistance locale des favoris (%LocalAppData%)
-    │
-    ├── Services/                          ← Logique métier de chaque catégorie (100% C#)
-    │   ├── DiagnosticService.cs           ← Infos système, WMI, batterie, RAM, thermal
-    │   ├── RepairService.cs               ← SFC, DISM, CHKDSK, reset Windows Update, Explorer
-    │   ├── BootService.cs                 ← Démarrage avancé, SafeBoot, WinRE, BIOS/UEFI, réparation BCD
-    │   ├── CleaningService.cs             ← Temp, purge WU, Cleanmgr, DNS, navigateurs, clean unifié
-    │   ├── NetworkService.cs              ← Wi-Fi scan, ARP, reset TCP/IP & Winsock
-    │   ├── DnsService.cs                  ← Cloudflare (1.1.1.1), Google (8.8.8.8), DHCP
-    │   ├── AppService.cs                  ← Winget (check MAJ, upgrade all)
-    │   ├── SecurityService.cs             ← Mots de passe Wi-Fi, CredMan, Defender, EICAR
-    │   ├── UserService.cs                 ← Comptes locaux, admin, SuperAdmin
-    │   ├── HardwareService.cs             ← SMART disques, WinSAT, écran tactile, profil Ultimate
-    │   ├── ExportService.cs               ← Clé Windows BIOS/UEFI, backup pilotes DISM
-    │   ├── PersonalizationService.cs      ← God Mode, menu contextuel classique Win10
-    │   └── InnovationService.cs           ← Télémétrie, débloat, mode gaming, audit IA 24H2, top fichiers, DNS bench
-    │
-    ├── Views/
-    │   ├── Controls/
-    │   │   ├── ToolCard.xaml / .cs        ← Carte d'outil avec halo/ombre dynamique, favori ⭐ et badge Admin
-    │   │   ├── [PrivacyShield, Debloat, GamingOptimizer, Win11AiAudit, TopFiles, DnsBenchmark]Dialog.xaml / .cs ← Dialogues graphiques réversibles
-    │   │   └── BootRecoveryDialog.xaml / .cs ← Console interactive de démarrage et choix du redémarrage
-    │   └── Pages/
-    │       ├── FavorisPage.xaml           ← Page d'accueil dynamique des favoris
-    │       ├── SearchResultsPage.xaml     ← Page de recherche en direct instantanée
-    │       └── [Applications, Demarrage, Diagnostic, Disque, Materiel, MisesAJour, Nettoyage, Nouveaute, Personnalisation, Reparation, Reseau, Secrets, Securite]Page.xaml
-    │
-    └── Assets/Styles/
-        ├── Theme.xaml                     ← Variables de thèmes, transparence, gradients, lueurs néon
-        └── Controls.xaml                  ← Styles des boutons, cartes, sidebar, scrollbars
+    ├── App.xaml / App.xaml.cs             ← Point d'entrée, UAC, styles et injection
+    ├── MainWindow.xaml / .cs              ← Vue maîtresse (Sidebar, Topbar et Terminal latéral)
+    ├── Core/                              ← Moteurs d'exécution asynchrones, thèmes, registre d'outils
+    ├── Services/                          ← Logique métier C# (Diagnostic, Réparation, Boot, Nettoyage...)
+    ├── Views/                             ← Dialogues spécialisés, cartes interactives et pages
+    └── Assets/Styles/                     ← Feuilles de style XAML (lueurs, glassmorphism, contrôles)
 ```
 
 ---
 
-## 🎨 4. Nouveautés d'Interface & Expérience Visuelle
+## Idées, questions et signalements
 
-### ⬛ Terminal Latéral à Droite (Contrôles 100% Internes)
-* **Header épuré** : aucun bouton console ni indicateur dans la barre supérieure ; le haut de la fenêtre reste net et minimaliste.
-* **Ouverture automatique** : la console (240px) s'ouvre à droite dès qu'un outil ou un script est lancé.
-* **Bouton de fermeture direct sur la console** :
-  * Cliquez sur **`✕`** dans la barre d'outils de la console pour la masquer.
-  * Cliquez sur **`🗑️`** pour vider le flux de texte.
-  * L'état **`● En cours`** est affiché directement dans l'en-tête de la console.
-
-### 💎 Sélecteur de Thèmes Dynamique avec Transparence & Néon
-Cliquez sur le bouton `🎨 Thème` dans le bandeau supérieur pour faire défiler instantanément **5 styles visuels complets** :
-1. 💎 **Aero Glass (Translucide)** : Dégradé profond atmosphérique, cartes translucides effet verre fumé givré.
-2. ⚡ **Cyberpunk Neon** : Contrastes intenses et halo néon rose rubis sous les cartes d'outils.
-3. 🟢 **Matrix Phosphor** : Ambiance terminal hacker, vert phosphore émeraude.
-4. ❄️ **Nordic Frost** : Verre polaire translucide givré et accents cyan glacier.
-5. 👑 **Obsidian Luxury** : Noir OLED absolu, biseau et lueur dorée pour une finition de haute précision.
-
----
-
-## 🧰 5. Récapitulatif des 13 Catégories d'Outils
-
-1. **Applications** : Gestionnaire d'installation unifié et mise à jour de logiciels essentiels (Chrome, VLC, 7-Zip, Office...).
-2. **Démarrage & Récupération** : Centre interactif unifié de démarrage et récupération (mode sans échec minimal/réseau, accès direct WinRE, bascule vers le BIOS/UEFI, réparation et réinitialisation du magasin BCD).
-3. **Diagnostic** : Bilan de santé unifié (sondes CPU, barrettes et conso RAM, SMART, batterie, réseau), Audit d'éligibilité complet Windows 11 24H2 & NPU IA Copilot+, DirectX / DxDiag, programmes au démarrage.
-4. **Disque** : Gestion des disques (diskmgmt), DISKPART, défragmentation / optimisation TRIM et chiffrement BitLocker.
-5. **Matériel** : Optimiseur gaming et latence minimale (CPU 100%, TCP Nagle, HAGS), gestionnaire des plans d'alimentation (Normal, Élevé, Ultime), indice de performance WinSAT et rapport d'efficacité énergétique.
-6. **Mises à jour** : Gestionnaire interactif des mises à jour applicatives via Winget.
-7. **Nettoyage** : Console interactive de nettoyage (fichiers temporaires, Cleanmgr, caches navigateurs, corbeille et nettoyage WinSxS).
-8. **Nouveautés & Innovations** : Espace dédié prêt à recevoir vos prochains scripts et outils innovants.
-9. **Personnalisation** : Dossier Tous les Réglages (God Mode) et bascule vers le clic droit classique Windows 10.
-10. **Réparation** : Centre d'intégrité Windows (DISM Scan/Restore & SFC), CHKDSK interactif, gestionnaire des services, déblocage spouleur et points de restauration.
-11. **Réseau** : Centre de contrôle réseau, Benchmark de vitesse DNS en direct avec mesure de latence et ping, protocole de reset en 7 étapes, scanners Wi-Fi et LAN, analyse des connexions TCP actives.
-12. **Secrets & Licences** : Affichage des clés Wi-Fi en clair, audit des fichiers sensibles (.ssh, .env), clé originale Windows BIOS et générateur de mots de passe.
-13. **Sécurité** : Centre de protection antivirus Defender, Bouclier de confidentialité et anti-télémétrie réversible, analyse rapide 1-clic et moniteur de fiabilité des plantages (perfmon /rel).
+* 💡 **Idées & suggestions** : [GitHub Discussions → Ideas](https://github.com/aleex-le-dev/SCRIPT-WINDOWS-ALEEXLEDEV/discussions) – votez et proposez les prochains scripts ou outils à intégrer.
+* 💬 **Questions & entraide** : [GitHub Discussions → Q&A](https://github.com/aleex-le-dev/SCRIPT-WINDOWS-ALEEXLEDEV/discussions).
+* 🐛 **Signaler un bug** : [Ouvrir un ticket d'incident](https://github.com/aleex-le-dev/SCRIPT-WINDOWS-ALEEXLEDEV/issues/new).
+* 📜 **Historique des versions** : [Consulter le journal des modifications](CHANGELOG.md).
