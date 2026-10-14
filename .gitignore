@@ -23,6 +23,7 @@ DiagNav.zip
 
 # Ignore Windows executables (sauf l'exe de distribution si souhaité)
 # *.exe
+*.old.exe
 *.cfg
 
 # Ignore Chromium/Edge profile state files anywhere in the repo

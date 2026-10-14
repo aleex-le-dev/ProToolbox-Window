@@ -1,43 +1,18 @@
-# CLAUDE.md — Scripts-by-AleexLeDev (v3.5+)
-> Instructions machine prioritaires. Mode : Performance & Token-Saving.
+# CLAUDE.md — Alex Toolkit (v4.x C# / WPF)
+> Instructions machine prioritaires. Mode : Performance & Qualité C# / WPF.
 
-## 🎯 Principes d'Exécution
-1. **Concision :** Pas de blabla. Code direct + explications vitales uniquement.
-2. **Conformité :** Respect strict du système `:AutoMenu` et du dictionnaire `t[N]`.
-3. **Admin-First :** Vérifier `fsutil dirty query %systemdrive%` avant toute action système.
+## 🎯 Architecture du Projet
+1. **Application principale :** C# / WPF (.NET 8.0-windows x64).
+2. **Exécutable :** `AlexToolkit.exe` à la racine (généré via `build.bat` en SingleFile autonome).
+3. **Structure des sources :**
+   - `ScriptsWindows/ScriptsWindows/Core/` : Moteurs d'exécution (PowerShell async, CMD, élévation UAC, thèmes, registre d'outils, favoris).
+   - `ScriptsWindows/ScriptsWindows/Services/` : Services métiers (Diagnostic, Réparation, Nettoyage, Réseau, Dns, Matériel, Sécurité, etc.).
+   - `ScriptsWindows/ScriptsWindows/Views/` : Fenêtres de contrôles/dialogues XAML et pages de catégories.
 
-## 🏗️ Standards Techniques (Lois du Projet)
-- **Routage :** Batch (`.bat`) gère la navigation et les menus.
-- **Logique :** PowerShell (`.ps1`) gère WMI, Web, Parsing, et UI complexes.
-- **Indexation `t[N]` :** - Format : `set "t[N]=label:Titre~Description[:HIDDEN]"` (en début de script).
-  - Outils hors `t[N]` : Définir `set "map_label=Titre~Description"`.
-  - `total_tools` : Laisser le script l'auto-calculer via la boucle `for /l`.
-- **Interface :** Interdiction de boucles `for` manuelles pour les menus. **Interdiction de `set /p` pour la navigation** (jamais de numéros saisis au clavier).
-  - Toujours utiliser les flèches : `call :AutoMenu "TITRE" "label1;[---];label2" "OPTIONS"` ou `call :DynamicMenu "TITRE" "!opts!"`
-  - `AutoMenu` : pour des labels fixes issus de `t[N]` (avec `map_label` optionnel).
-  - `DynamicMenu` : pour des options construites dynamiquement (texte libre, état détecté à la volée).
-  - **INTERDIT absolu** : demander à l'utilisateur de saisir une lettre (O/N, Y/N, `Read-Host`, `$host.UI.PromptForChoice`, etc.). Navigation uniquement aux flèches.
-  - **Règle de la page :** le choix doit toujours apparaître **en bas du contenu actuel**, jamais sur une nouvelle page.
-    - Si le choix suit un affichage Batch → `DynamicMenu`.
-    - Si le choix suit un affichage PS1 → **sélecteur inline PS1** (flèches gauche/droite, `[>> OUI <<]  [ NON ]`, `ReadKey`, `exit 0/1`). Le PS1 gère lui-même l'export et retourne son code à Batch. **Ne jamais passer la main à `DynamicMenu` après un PS1** : ça efface l'écran.
-
-## 🛠️ Skills de Développement (Anti-Bug IA)
-### 1. Gestion des chaînes complexes (Règle d'Or)
-- **SI** code PS > 3 lignes **OU** contient `"`/`'` imbriqués **OU** symboles `&|< >`.
-- **ALORS** : Écrire dans `%TEMP%\tmp.ps1` -> Exécuter -> Supprimer.
-- **JAMAIS** de "one-liners" PS complexes (risque de crash syntaxique Batch).
-
-### 2. Sécurité & Furtivité
-- **Payloads/EICAR :** Encodage **Base64 OBLIGATOIRE**. Jamais de chaînes sensibles en clair.
-- **Anti-Forensics :** `del /f /q` systématique des fichiers temporaires après usage.
-
-### 3. Syntaxe Batch Robuste
-- Déclaration : `set "var=valeur"` (guillemets obligatoires pour éviter les espaces).
-- Scoping : `setlocal / endlocal` dans chaque nouveau module : **OBLIGATOIRE**.
-- DNS : Si modif DNS -> `net stop Dnscache /y` avant et `net start Dnscache` après.
-
-## 🚨 Check-list de Validation (Pre-Response)
-1. **Dictionnaire :** La fonction est-elle déclarée dans `t[N]` au début du script ?
-2. **Admin :** Le script vérifie-t-il les privilèges avant de s'exécuter ?
-3. **Favoris :** La logique `NONUMS` est-elle préservée ?
-4. **Boot Loop :** Si modif `RunOnce` -> Routine `SafeModeRevert` incluse ?
+## 🏗️ Standards Techniques C# / WPF
+- **Async/Await & UI Thread :** Tout traitement long ou externe s'exécute de façon asynchrone sans bloquer l'UI (`Dispatcher` pour les retours visuels).
+- **Encodage & Sorties :** Forcer UTF-8 pour tous les flux PowerShell / CMD afin d'éviter la corruption des accents.
+- **Single-File Release :** Les bibliothèques natives (SQLite, etc.) sont incluses pour auto-extraction (`IncludeNativeLibrariesForSelfExtract`). Aucun fichier DLL résiduel ne doit être commité à la racine ou dans git.
+- **Scripts de maintenance :**
+  - `build.bat` : compile en Release x64 SingleFile et dépose `AlexToolkit.exe` à la racine.
+  - `clean.bat` : supprime les dossiers temporaires de compilation `bin/` et `obj/` et les logs résiduels.

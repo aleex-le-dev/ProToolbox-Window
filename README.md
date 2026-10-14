@@ -40,9 +40,8 @@ Il suffit de double-cliquer sur :
 * 🗑️ **Caches de compilation** : purge les dossiers `bin/` et `obj/` de Visual Studio / .NET
 
 ### Ce qui est conservé et sécurisé :
-* ✅ Vos fichiers sources (`ScriptsWindows/`, scripts `.sh` et `.bat`)
-* ✅ Votre exécutable principal [`ScriptsWindows.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows.exe)
-* 🔒 Vos identifiants locaux (`credentials.txt`, `webhook_tokens.txt`), qui restent protégés et ignorés par [`.gitignore`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/.gitignore)
+* ✅ Vos fichiers sources C# / WPF (`ScriptsWindows/`)
+* ✅ Votre exécutable principal [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe)
 
 ---
 
@@ -50,7 +49,7 @@ Il suffit de double-cliquer sur :
 
 ```text
 SCRIPT-WINDOWS-ALEEXLEDEV/
-├── ScriptsWindows.exe                     ← Exécutable autonome compilé
+├── AlexToolkit.exe                        ← Exécutable autonome compilé
 ├── build.bat                              ← Script de build en 1 clic
 ├── clean.bat                              ← Script de purge des caches
 ├── SUIVI_REFONTE.md                       ← Suivi d'avancement technique

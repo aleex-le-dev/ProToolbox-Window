@@ -175,7 +175,7 @@ public static class ToolRegistry
             Name = "Changer la vitesse du PC (Normal / Rapide)",
             Description = "Bascule facile : économisez de l'énergie en mode normal ou libérez toute la puissance du processeur pour les jeux et logiciels lourds.",
             Category = "MATERIEL",
-            SubHeading = "",
+            SubHeading = "Gestion de l'alimentation et vitesse",
             Icon = "⚡",
             Action = (log, ct) => HardwareService.OpenPowerPlanDialog(log, ct),
             Tags = new[] { "vitesse", "puissance", "mode", "alimentation", "performances", "normal", "équilibré", "rapide", "batterie", "jeux" }
@@ -187,7 +187,7 @@ public static class ToolRegistry
             Name = "Tester la puissance globale de mon PC",
             Description = "Calcule une note de performance pour mesurer la rapidité réelle de votre processeur, mémoire, carte graphique et disque dur.",
             Category = "MATERIEL",
-            SubHeading = "",
+            SubHeading = "Banc d'essai et performances",
             Icon = "⚙️",
             Action = (log, ct) => HardwareService.RunWinSat(log, ct),
             Tags = new[] { "tester", "note", "puissance", "vitesse", "benchmark", "score", "processeur", "graphique" }
@@ -199,7 +199,7 @@ public static class ToolRegistry
             Name = "Détecter ce qui vide la batterie",
             Description = "Analyse pendant 1 minute comment votre ordinateur utilise l'énergie et liste les réglages ou applications qui consomment trop.",
             Category = "MATERIEL",
-            SubHeading = "",
+            SubHeading = "Banc d'essai et performances",
             Icon = "🔋",
             Action = (log, ct) => HardwareService.RunPowercfgEnergy(log, ct),
             Tags = new[] { "batterie", "autonomie", "énergie", "consommation", "économiser", "rapport", "portable" }
@@ -307,7 +307,7 @@ public static class ToolRegistry
             Name = "Grand nettoyage du PC et des fichiers inutiles",
             Description = "Supprime les fichiers temporaires, vide la corbeille, nettoie les traces de navigation et libère plusieurs gigaoctets d'espace disque en toute sécurité.",
             Category = "NETTOYAGE",
-            SubHeading = "",
+            SubHeading = "Nettoyage système et disque",
             Icon = "🧹",
             Action = (log, ct) => CleaningService.OpenSystemCleanupDialog(log, ct),
             Tags = new[] { "nettoyer", "libérer", "espace", "disque", "temporaires", "corbeille", "cache", "navigateurs", "cleanmgr", "accélérer" }
@@ -325,7 +325,7 @@ public static class ToolRegistry
             Name = "Retrouver mes mots de passe Wi-Fi enregistrés",
             Description = "Affiche immédiatement en clair le mot de passe de votre box Wi-Fi ainsi que tous les réseaux auxquels votre PC s'est déjà connecté.",
             Category = "SECRETS",
-            SubHeading = "",
+            SubHeading = "Mots de passe et Wi-Fi",
             Icon = "📶",
             Action = (log, ct) => SecurityService.DumpWifiPasswords(log, ct),
             Tags = new[] { "wifi", "mot de passe", "box", "clé", "clair", "retrouver", "code", "sans fil" }
@@ -337,34 +337,10 @@ public static class ToolRegistry
             Name = "Générateur de mots de passe ultra-sécurisés",
             Description = "Crée en 1 clic des mots de passe incassables et aléatoires pour vos comptes en ligne et vous permet de les enregistrer en toute sécurité.",
             Category = "SECRETS",
-            SubHeading = "",
+            SubHeading = "Mots de passe et Wi-Fi",
             Icon = "🔐",
             Action = (log, ct) => SecurityService.GenerateSecurePasswords(log, ct),
             Tags = new[] { "mot de passe", "générer", "créer", "sécurisé", "fort", "aléatoire", "comptes", "mdp" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_audit_sensitive",
-            Name = "Rechercher mes documents et codes confidentiels",
-            Description = "Recherche dans vos dossiers personnels les fichiers contenant des mots de passe oubliés, des identifiants cloud ou des clés de sécurité.",
-            Category = "SECRETS",
-            SubHeading = "",
-            Icon = "🔍",
-            Action = (log, ct) => ExportService.ScanSensitiveDocs(log, ct),
-            Tags = new[] { "recherche", "documents", "secrets", "confidentiels", "mots de passe", "ssh", "tokens", "sécurité" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_win_key",
-            Name = "Retrouver ma clé d'activation Windows originale",
-            Description = "Lit la clé de licence officielle gravée dans la carte mère de votre PC, indispensable en cas de réinstallation complète de Windows.",
-            Category = "SECRETS",
-            SubHeading = "",
-            Icon = "🔑",
-            Action = (log, ct) => ExportService.GetWindowsKey(log, ct),
-            Tags = new[] { "clé", "licence", "windows", "activation", "produit", "carte mère", "oem", "bios", "uefi" }
         });
 
         _allTools.Add(new ScriptTool
@@ -373,10 +349,34 @@ public static class ToolRegistry
             Name = "Consulter l'historique de mes navigateurs web",
             Description = "Affiche les 35 dernières pages visitées sur vos navigateurs (Google Chrome, Edge, Firefox, Brave) sans même avoir besoin de les ouvrir.",
             Category = "SECRETS",
-            SubHeading = "",
+            SubHeading = "Mots de passe et Wi-Fi",
             Icon = "🌐",
             Action = (log, ct) => ExportService.AnalyzeBrowserHistory(log, ct),
             Tags = new[] { "historique", "sites", "web", "pages", "chrome", "edge", "firefox", "brave", "navigation" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_win_key",
+            Name = "Retrouver ma clé d'activation Windows originale",
+            Description = "Lit la clé de licence officielle gravée dans la carte mère de votre PC, indispensable en cas de réinstallation complète de Windows.",
+            Category = "SECRETS",
+            SubHeading = "Licences et documents confidentiels",
+            Icon = "🔑",
+            Action = (log, ct) => ExportService.GetWindowsKey(log, ct),
+            Tags = new[] { "clé", "licence", "windows", "activation", "produit", "carte mère", "oem", "bios", "uefi" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_audit_sensitive",
+            Name = "Rechercher mes documents et codes confidentiels",
+            Description = "Recherche dans vos dossiers personnels les fichiers contenant des mots de passe oubliés, des identifiants cloud ou des clés de sécurité.",
+            Category = "SECRETS",
+            SubHeading = "Licences et documents confidentiels",
+            Icon = "🔍",
+            Action = (log, ct) => ExportService.ScanSensitiveDocs(log, ct),
+            Tags = new[] { "recherche", "documents", "secrets", "confidentiels", "mots de passe", "ssh", "tokens", "sécurité" }
         });
     }
 
@@ -525,7 +525,7 @@ public static class ToolRegistry
             Name = "Installer vos applications indispensables",
             Description = "Installez ou mettez à jour facilement vos logiciels du quotidien (Google Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell, Office) en cochant simplement ceux que vous voulez.",
             Category = "APPLICATIONS",
-            SubHeading = "",
+            SubHeading = "Installation et déploiement rapide",
             Icon = "📦",
             Action = (log, ct) => AppService.OpenAppInstallerDialog(log, ct),
             Tags = new[] { "installer", "applications", "logiciels", "programmes", "chrome", "vlc", "7zip", "office", "sumatra", "facile", "1-clic" }
@@ -543,7 +543,7 @@ public static class ToolRegistry
             Name = "Mettre à jour tous vos programmes",
             Description = "Recherche automatiquement les nouvelles versions de vos applications installées et met tout à jour en un seul clic.",
             Category = "MISES_A_JOUR",
-            SubHeading = "",
+            SubHeading = "Gestionnaire de mises à jour",
             Icon = "🔄",
             Action = (log, ct) => AppService.OpenWingetManagerDialog(log, ct),
             Tags = new[] { "mises à jour", "programmes", "logiciels", "nouvelle version", "upgrade", "sécurité", "tout mettre à jour" }
@@ -603,7 +603,7 @@ public static class ToolRegistry
             Name = "Activer le dossier Tous les Réglages (God Mode)",
             Description = "Crée sur votre Bureau un dossier pratique regroupant plus de 200 raccourcis directs vers tous les réglages et options de Windows.",
             Category = "PERSONNALISATION",
-            SubHeading = "",
+            SubHeading = "Options et réglages système",
             Icon = "👑",
             Action = (log, ct) => PersonalizationService.CreateGodMode(log, ct),
             Tags = new[] { "god mode", "réglages", "options", "panneau de configuration", "raccourci", "pratique", "bureau" }
@@ -615,7 +615,7 @@ public static class ToolRegistry
             Name = "Retrouver le clic droit classique (Windows 10 / 11)",
             Description = "Bascule en 1 clic : réactivez le menu complet d'un clic droit comme sur Windows 10, ou revenez au menu moderne de Windows 11.",
             Category = "PERSONNALISATION",
-            SubHeading = "",
+            SubHeading = "Options et réglages système",
             Icon = "🖱️",
             Action = (log, ct) => PersonalizationService.OpenContextMenuDialog(log, ct),
             Tags = new[] { "clic droit", "menu contextuel", "windows 10", "windows 11", "classique", "facile", "personnaliser" }

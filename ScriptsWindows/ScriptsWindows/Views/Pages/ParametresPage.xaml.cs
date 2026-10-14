@@ -239,33 +239,21 @@ public partial class ParametresPage : Page, ISectionPage
         {
             var (icon, name) = SectionViewBuilder.GetCategoryMeta(catGroup.Key);
             int totalTools = catGroup.Count();
-            bool hasSubHeadings = catGroup.Any(t => !string.IsNullOrWhiteSpace(t.SubHeading));
 
-            if (!hasSubHeadings)
+            sb.AppendLine($"{icon} {name.ToUpperInvariant()} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
+
+            var subGroups = catGroup
+                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et outils rapides" : t.SubHeading.Trim())
+                .OrderBy(sg => sg.Key);
+
+            foreach (var sub in subGroups)
             {
-                sb.AppendLine($"{icon} {name.ToUpperInvariant()} ({totalTools} outil{(totalTools > 1 ? "s" : "")} — Affichage direct en grille)");
-                foreach (var tool in catGroup.OrderBy(t => t.Title))
+                int count = sub.Count();
+                sb.AppendLine($"   📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
+                foreach (var tool in sub.OrderBy(t => t.Title))
                 {
                     string cmd = tool.ExecutableOrCommand;
-                    sb.AppendLine($"   • {tool.Title}  →  [{cmd}]");
-                }
-            }
-            else
-            {
-                sb.AppendLine($"{icon} {name.ToUpperInvariant()} ({totalTools} outil{(totalTools > 1 ? "s" : "")} — Sous-menus accordéons)");
-                var subGroups = catGroup
-                    .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et Outils Rapides" : t.SubHeading.Trim())
-                    .OrderBy(sg => sg.Key);
-
-                foreach (var sub in subGroups)
-                {
-                    int count = sub.Count();
-                    sb.AppendLine($"   📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
-                    foreach (var tool in sub.OrderBy(t => t.Title))
-                    {
-                        string cmd = tool.ExecutableOrCommand;
-                        sb.AppendLine($"      • {tool.Title}  →  [{cmd}]");
-                    }
+                    sb.AppendLine($"      • {tool.Title}  →  [{cmd}]");
                 }
             }
 
@@ -293,38 +281,24 @@ public partial class ParametresPage : Page, ISectionPage
         {
             var (icon, name) = SectionViewBuilder.GetCategoryMeta(catGroup.Key);
             int totalTools = catGroup.Count();
-            bool hasSubHeadings = catGroup.Any(t => !string.IsNullOrWhiteSpace(t.SubHeading));
 
-            if (!hasSubHeadings)
+            sb.AppendLine($"## {icon} {name} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
+            sb.AppendLine();
+
+            var subGroups = catGroup
+                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et outils rapides" : t.SubHeading.Trim())
+                .OrderBy(sg => sg.Key);
+
+            foreach (var sub in subGroups)
             {
-                sb.AppendLine($"## {icon} {name} ({totalTools} outil{(totalTools > 1 ? "s" : "")} — Affichage direct)");
-                sb.AppendLine();
-                foreach (var tool in catGroup.OrderBy(t => t.Title))
+                int count = sub.Count();
+                sb.AppendLine($"### 📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
+                foreach (var tool in sub.OrderBy(t => t.Title))
                 {
                     string cmd = tool.ExecutableOrCommand;
                     sb.AppendLine($"- **{tool.Title}** : `{cmd}`");
                 }
                 sb.AppendLine();
-            }
-            else
-            {
-                sb.AppendLine($"## {icon} {name} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
-                sb.AppendLine();
-                var subGroups = catGroup
-                    .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et Outils Rapides" : t.SubHeading.Trim())
-                    .OrderBy(sg => sg.Key);
-
-                foreach (var sub in subGroups)
-                {
-                    int count = sub.Count();
-                    sb.AppendLine($"### 📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
-                    foreach (var tool in sub.OrderBy(t => t.Title))
-                    {
-                        string cmd = tool.ExecutableOrCommand;
-                        sb.AppendLine($"- **{tool.Title}** : `{cmd}`");
-                    }
-                    sb.AppendLine();
-                }
             }
         }
 
