@@ -10,7 +10,7 @@ public partial class DemarragePage : Page, ISectionPage
     public DemarragePage()
     {
         InitializeComponent();
-        _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("DEMARRAGE"));
+        _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("DEMARRAGE"));
     }
 
     public void ResetSections() => _controller?.CollapseAll();

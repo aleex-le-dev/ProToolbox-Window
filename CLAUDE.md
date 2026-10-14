@@ -16,3 +16,7 @@
 - **Scripts de maintenance :**
   - `build.bat` : compile en Release x64 SingleFile et dépose `AlexToolkit.exe` à la racine.
   - `clean.bat` : supprime les dossiers temporaires de compilation `bin/` et `obj/` et les logs résiduels.
+- **Mise à jour obligatoire de l'arborescence :** À CHAQUE ajout ou modification d'outils/scripts :
+  1. Enregistrer l'outil dans `Core/ToolRegistry.cs` avec sa catégorie, son `SubHeading` (sous-catégorie) et sa commande associée dans `CommandMap`.
+  2. S'assurer que l'arborescence dans `ParametresPage.xaml.cs` (prévisualisation & copie) le référence automatiquement.
+  3. Mettre à jour la documentation du projet (`README.md`, liste des catégories et architecture des fichiers).

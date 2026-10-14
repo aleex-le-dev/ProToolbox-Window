@@ -239,4 +239,68 @@ public static class BootService
         onOutput("\n[OK] Réinitialisation et reconstruction du magasin BCD terminées avec succès.");
         onOutput("[i] Le système démarrera de manière fluide en mode normal au prochain redémarrage.");
     }
+
+    /// <summary>
+    /// Demande confirmation à l'utilisateur puis redémarre vers WinRE.
+    /// </summary>
+    public static async Task PromptAndRebootWinRE(Action<string> onOutput, CancellationToken ct = default)
+    {
+        bool confirmed = false;
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var res = MessageBox.Show(
+                "Votre ordinateur va redémarrer immédiatement pour accéder aux options avancées de récupération (WinRE).\n\nAssurez-vous d'avoir sauvegardé tous vos travaux en cours.\nConfirmez-vous le redémarrage vers WinRE ?",
+                "Accès WinRE — Confirmation",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            confirmed = (res == MessageBoxResult.Yes);
+        });
+
+        if (confirmed)
+        {
+            await RebootToWinRE(true, onOutput, ct);
+        }
+        else
+        {
+            onOutput("[i] Redémarrage vers WinRE annulé par l'utilisateur.");
+        }
+    }
+
+    /// <summary>
+    /// Demande confirmation à l'utilisateur puis redémarre vers le BIOS / UEFI.
+    /// </summary>
+    public static async Task PromptAndRebootBios(Action<string> onOutput, CancellationToken ct = default)
+    {
+        bool confirmed = false;
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            if (!IsUefiSystem())
+            {
+                var warnRes = MessageBox.Show(
+                    "Votre ordinateur semble être configuré en BIOS Hérité (Legacy) et non en UEFI.\nLe redémarrage direct vers le firmware risque d'échouer.\n\nVoulez-vous quand même tenter l'opération ?",
+                    "Avertissement Micrologiciel",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+                confirmed = (warnRes == MessageBoxResult.Yes);
+            }
+            else
+            {
+                var res = MessageBox.Show(
+                    "Votre ordinateur va redémarrer directement dans les réglages du BIOS / UEFI.\n\nAssurez-vous d'avoir fermé vos applications et sauvegardé vos fichiers.\nConfirmez-vous le redémarrage vers le BIOS / UEFI ?",
+                    "Accès BIOS / UEFI — Confirmation",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                confirmed = (res == MessageBoxResult.Yes);
+            }
+        });
+
+        if (confirmed)
+        {
+            await RebootToBios(true, onOutput, ct);
+        }
+        else
+        {
+            onOutput("[i] Redémarrage vers le BIOS / UEFI annulé par l'utilisateur.");
+        }
+    }
 }

@@ -69,6 +69,7 @@ SCRIPT-WINDOWS-ALEEXLEDEV/
     ├── Services/                          ← Logique métier de chaque catégorie (100% C#)
     │   ├── DiagnosticService.cs           ← Infos système, WMI, batterie, RAM, thermal
     │   ├── RepairService.cs               ← SFC, DISM, CHKDSK, reset Windows Update, Explorer
+    │   ├── BootService.cs                 ← Démarrage avancé, SafeBoot, WinRE, BIOS/UEFI, réparation BCD
     │   ├── CleaningService.cs             ← Temp, purge WU, Cleanmgr, DNS, navigateurs, clean unifié
     │   ├── NetworkService.cs              ← Wi-Fi scan, ARP, reset TCP/IP & Winsock
     │   ├── DnsService.cs                  ← Cloudflare (1.1.1.1), Google (8.8.8.8), DHCP
@@ -81,11 +82,12 @@ SCRIPT-WINDOWS-ALEEXLEDEV/
     │
     ├── Views/
     │   ├── Controls/
-    │   │   └── ToolCard.xaml / .cs        ← Carte d'outil avec halo/ombre dynamique, favori ⭐ et badge Admin
+    │   │   ├── ToolCard.xaml / .cs        ← Carte d'outil avec halo/ombre dynamique, favori ⭐ et badge Admin
+    │   │   └── BootRecoveryDialog.xaml / .cs ← Console interactive de démarrage et choix du redémarrage
     │   └── Pages/
     │       ├── FavorisPage.xaml           ← Page d'accueil dynamique des favoris
     │       ├── SearchResultsPage.xaml     ← Page de recherche en direct instantanée
-    │       └── [Diagnostic, Reparation, Nettoyage, Reseau, Disque, Applications, Securite, Extraction, Materiel, Personnalisation]Page.xaml
+    │       └── [Applications, Demarrage, Diagnostic, Disque, Materiel, MisesAJour, Nettoyage, Personnalisation, Reparation, Reseau, Secrets, Securite]Page.xaml
     │
     └── Assets/Styles/
         ├── Theme.xaml                     ← Variables de thèmes, transparence, gradients, lueurs néon
@@ -114,15 +116,17 @@ Cliquez sur le bouton `🎨 Thème` dans le bandeau supérieur pour faire défil
 
 ---
 
-## 🧰 5. Récapitulatif des 10 Catégories d'Outils
+## 🧰 5. Récapitulatif des 12 Catégories d'Outils
 
-1. **Diagnostic** : Rapport complet WMI, santé batterie HTML, statut live, sondes CPU, barrettes et conso RAM, BitLocker, Defender, SMART.
-2. **Réparation** : SFC /scannow, DISM Check & RestoreHealth, CHKDSK C:, reset composants WU, redémarrage Explorer, cache icônes, points de restauration.
-3. **Nettoyage** : Vider temporaires, purge téléchargements WU, flush DNS, Cleanmgr, clés orphelines, caches navigateurs (Chrome, Edge, Firefox, Brave), nettoyage unifié.
-4. **Réseau** : Appliquer DNS Cloudflare 1.1.1.1 / Google 8.8.8.8, restaurer DHCP, scan Wi-Fi, purge ARP, reset réseau TCP/IP et Winsock.
-5. **Applications** : Lister les logiciels obsolètes et tout mettre à niveau via Winget.
-6. **Sécurité** : Extraction des clés Wi-Fi en clair, Credential Manager, scans Defender rapide et complet, test EICAR.
-7. **Utilisateurs** : Liste des comptes Windows locaux, ajout, droits admin, compte Super-Administrateur.
-8. **Matériel** : Santé SMART approfondie, score WinSAT, on/off tactile, file d'impression spooler.
-9. **Extraction** : Clé produit Windows originale (BIOS OA3x), sauvegarde de tous les pilotes tiers avec DISM.
-10. **Personnalisation** : Dossier God Mode bureau, rétablissement du clic droit classique Windows 10 sur Windows 11.
+1. **Applications** : Gestionnaire d'installation unifié et mise à jour de logiciels essentiels (Chrome, VLC, 7-Zip, Office...).
+2. **Démarrage & Récupération** : Console de choix du redémarrage, mode sans échec (minimal ou réseau), accès au WinRE, redémarrage vers le BIOS/UEFI, réparation et réinitialisation du magasin BCD.
+3. **Diagnostic** : Bilan de santé unifié (sondes CPU, barrettes et conso RAM, SMART, batterie, réseau), DirectX / DxDiag, programmes au démarrage.
+4. **Disque** : Gestion des disques (diskmgmt), DISKPART, défragmentation / optimisation TRIM et chiffrement BitLocker.
+5. **Matériel** : Indice de performance WinSAT, rapport d'efficacité énergétique et gestionnaire des plans d'alimentation (Normal, Élevé, Ultime).
+6. **Mises à jour** : Gestionnaire interactif des mises à jour applicatives via Winget.
+7. **Nettoyage** : Console interactive de nettoyage (fichiers temporaires, Cleanmgr, caches navigateurs, corbeille et nettoyage WinSxS).
+8. **Personnalisation** : Dossier Tous les Réglages (God Mode) et bascule vers le clic droit classique Windows 10.
+9. **Réparation** : Centre d'intégrité Windows (DISM Scan/Restore & SFC), CHKDSK interactif, gestionnaire des services, déblocage spouleur et points de restauration.
+10. **Réseau** : Centre de contrôle réseau, protocole de reset en 7 étapes, scanners Wi-Fi et LAN, analyse des connexions TCP actives.
+11. **Secrets & Licences** : Affichage des clés Wi-Fi en clair, audit des fichiers sensibles (.ssh, .env), clé originale Windows BIOS et générateur de mots de passe.
+12. **Sécurité** : Centre de protection antivirus Defender, analyse rapide 1-clic et moniteur de fiabilité des plantages (perfmon /rel).

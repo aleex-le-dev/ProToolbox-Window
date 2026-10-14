@@ -102,8 +102,12 @@ public static class ToolRegistry
         ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
         ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)",
 
-        // ─── Démarrage & Récupération (1) ───
-        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage : Sans échec, WinRE, BIOS/UEFI, Réparation BCD)"
+        // ─── Démarrage & Récupération (5) ───
+        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération)",
+        ["boot_safemode"] = "bcdedit.exe /set {current} safeboot minimal | network",
+        ["boot_winre"] = "shutdown.exe /r /o /f /t 00",
+        ["boot_uefi_bios"] = "shutdown.exe /r /fw /f /t 00",
+        ["boot_bcd_repair"] = "bcdboot.exe %SystemRoot% /l fr-fr"
     };
 
 
@@ -634,13 +638,61 @@ public static class ToolRegistry
         _allTools.Add(new ScriptTool
         {
             Id = "boot_center",
-            Name = "Options de démarrage et récupération avancée",
-            Description = "Interface interactive unifiée : redémarrez en mode sans échec (minimal ou réseau), accédez au WinRE, basculez vers le BIOS/UEFI ou réparez le menu de démarrage cassé (BCD).",
+            Name = "Centre de démarrage et récupération",
+            Description = "Interface unifiée : redémarrez en mode sans échec (minimal ou réseau), accédez au WinRE, basculez vers le BIOS/UEFI ou réparez le menu de démarrage cassé (BCD).",
             Category = "DEMARRAGE",
-            SubHeading = "Options de démarrage et dépannage",
+            SubHeading = "Console interactive de démarrage",
             Icon = "⚡",
             Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
             Tags = new[] { "démarrage", "récupération", "sans échec", "winre", "bios", "uefi", "bcd", "boot", "réparation", "redémarrage" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_safemode",
+            Name = "Redémarrer en mode sans échec (Minimal / Réseau)",
+            Description = "Active le mode sans échec avec ou sans prise en charge réseau pour isoler les conflits logiciels et nettoyer les pannes de pilotes.",
+            Category = "DEMARRAGE",
+            SubHeading = "Modes de démarrage avancés",
+            Icon = "🛡️",
+            Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
+            Tags = new[] { "mode sans échec", "safe mode", "minimal", "réseau", "pilotes", "dépannage", "bcdedit" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_winre",
+            Name = "Accéder au WinRE (environnement de réparation)",
+            Description = "Redémarre directement sur l'environnement de secours Windows avec les outils de restauration, d'invite de commandes et de diagnostic.",
+            Category = "DEMARRAGE",
+            SubHeading = "Environnements de récupération",
+            Icon = "🚑",
+            Action = (log, ct) => BootService.PromptAndRebootWinRE(log, ct),
+            Tags = new[] { "winre", "récupération", "environnement", "secours", "dépannage", "restauration", "réparation" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_uefi_bios",
+            Name = "Redémarrer vers le BIOS/UEFI",
+            Description = "Accède instantanément à l'interface de configuration du micrologiciel de la carte mère sans avoir à presser les touches F2 ou Suppr.",
+            Category = "DEMARRAGE",
+            SubHeading = "Modes de démarrage avancés",
+            Icon = "💻",
+            Action = (log, ct) => BootService.PromptAndRebootBios(log, ct),
+            Tags = new[] { "bios", "uefi", "firmware", "carte mère", "redémarrer", "boot", "micrologiciel" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "boot_bcd_repair",
+            Name = "Réinitialiser BCD (menu de démarrage cassé)",
+            Description = "Répare et reconstruit la configuration du chargeur de démarrage Windows (BCDBoot) et supprime les boucles de redémarrage sans échec.",
+            Category = "DEMARRAGE",
+            SubHeading = "Réparation du démarrage BCD",
+            Icon = "🔧",
+            Action = (log, ct) => BootService.RepairBcd(log, ct),
+            Tags = new[] { "bcd", "bcdboot", "démarrage cassé", "réinitialiser", "réparation", "bootloader", "safeboot" }
         });
     }
 
