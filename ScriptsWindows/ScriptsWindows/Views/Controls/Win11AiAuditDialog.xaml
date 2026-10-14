@@ -1,0 +1,208 @@
+<Window x:Class="ScriptsWindows.Views.Controls.Win11AiAuditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Audit d'Éligibilité Windows 11 24H2 &amp; Capacités IA"
+        Width="820" Height="640"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#111827"
+        Foreground="#F9FAFB"
+        WindowStyle="SingleBorderWindow">
+
+    <Window.Resources>
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Background" Value="#1F2937"/>
+            <Setter Property="Foreground" Value="#F9FAFB"/>
+            <Setter Property="BorderBrush" Value="#374151"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#374151"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#4B5563"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+            <Setter Property="Background" Value="#3B82F6"/>
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#2563EB"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- En-tête -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="🔍" FontSize="26" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Audit Windows 11 24H2 &amp; NPU IA" FontSize="20" FontWeight="Bold" Foreground="#F9FAFB" VerticalAlignment="Center"/>
+            </StackPanel>
+            <TextBlock Text="Vérification des prérequis matériels stricts de la mise à jour 24H2 et détection de processeurs neuronaux IA."
+                       Foreground="#9CA3AF" FontSize="12" Margin="36,4,0,0"/>
+        </StackPanel>
+
+        <!-- Cartes d'audit avec marge ScrollBar préservée -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,14,0">
+            <StackPanel>
+                <!-- 1. Processeur & Instructions -->
+                <Border Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="💻" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock Text="Processeur (CPU) &amp; Instructions POPCNT / SSE4.2" FontWeight="Bold" FontSize="13" Foreground="#F9FAFB"/>
+                            <TextBlock x:Name="TxtCpuDetails" Text="Détection..." FontSize="12" Foreground="#9CA3AF" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtCpuStatus" Grid.Column="2" Text="✅ Conforme" Foreground="#10B981" FontWeight="Bold" VerticalAlignment="Center" TextAlignment="Right"/>
+                    </Grid>
+                </Border>
+
+                <!-- 2. Puce TPM 2.0 -->
+                <Border Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="🛡️" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock Text="Puce de sécurité TPM 2.0" FontWeight="Bold" FontSize="13" Foreground="#F9FAFB"/>
+                            <TextBlock x:Name="TxtTpmDetails" Text="Interrogation de la puce TPM..." FontSize="12" Foreground="#9CA3AF" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtTpmStatus" Grid.Column="2" Text="..." FontWeight="Bold" VerticalAlignment="Center" TextAlignment="Right"/>
+                    </Grid>
+                </Border>
+
+                <!-- 3. Secure Boot -->
+                <Border Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="🔒" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock Text="Démarrage Sécurisé (Secure Boot UEFI)" FontWeight="Bold" FontSize="13" Foreground="#F9FAFB"/>
+                            <TextBlock x:Name="TxtSecureBootDetails" Text="Vérification du firmware..." FontSize="12" Foreground="#9CA3AF" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtSecureBootStatus" Grid.Column="2" Text="..." FontWeight="Bold" VerticalAlignment="Center" TextAlignment="Right"/>
+                    </Grid>
+                </Border>
+
+                <!-- 4. Mémoire RAM -->
+                <Border Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="🧠" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock Text="Mémoire Système (RAM)" FontWeight="Bold" FontSize="13" Foreground="#F9FAFB"/>
+                            <TextBlock x:Name="TxtRamDetails" Text="Calcul de la mémoire..." FontSize="12" Foreground="#9CA3AF" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtRamStatus" Grid.Column="2" Text="..." FontWeight="Bold" VerticalAlignment="Center" TextAlignment="Right"/>
+                    </Grid>
+                </Border>
+
+                <!-- 5. Disque de démarrage -->
+                <Border Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="💽" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock Text="Disque Système (C:)" FontWeight="Bold" FontSize="13" Foreground="#F9FAFB"/>
+                            <TextBlock x:Name="TxtDiskDetails" Text="Vérification du stockage..." FontSize="12" Foreground="#9CA3AF" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtDiskStatus" Grid.Column="2" Text="✅ Conforme" Foreground="#10B981" FontWeight="Bold" VerticalAlignment="Center" TextAlignment="Right"/>
+                    </Grid>
+                </Border>
+
+                <!-- 6. Coprocesseur NPU (IA locale) -->
+                <Border Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="14">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="✨" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock Text="Accélérateur IA (NPU / Copilot+ PC)" FontWeight="Bold" FontSize="13" Foreground="#F9FAFB"/>
+                            <TextBlock x:Name="TxtNpuDetails" Text="Recherche de puces neuronales dédiées..." FontSize="12" Foreground="#9CA3AF" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtNpuStatus" Grid.Column="2" Text="..." FontWeight="Bold" VerticalAlignment="Center" TextAlignment="Right"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Barre inférieure -->
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Button Content="📋 Copier le rapport" Style="{StaticResource ActionButton}" Padding="12,6" FontSize="12" HorizontalAlignment="Left" Click="BtnCopyReport_Click"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="🔄 Actualiser" Style="{StaticResource ActionButton}" Padding="12,6" FontSize="12" Margin="0,0,8,0" Click="BtnRefresh_Click"/>
+                <Button Content="Fermer" Style="{StaticResource PrimaryActionButton}" Padding="16,6" FontSize="12" Click="BtnClose_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

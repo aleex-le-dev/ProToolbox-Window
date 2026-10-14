@@ -12,29 +12,29 @@ namespace ScriptsWindows.Views;
 
 /// <summary>
 /// Contrôleur de gestion des sous-sections pour une catégorie donnée.
-/// Garantit qu'une seule sous-catégorie est ouverte à la fois et permet de tout replier.
+/// <summary>
+/// Contrôleur de gestion des sous-sections pour une catégorie donnée.
+/// Toutes les sous-catégories sont dépliées par défaut afin qu'aucun script ne soit masqué.
+/// Permet de déplier/replier individuellement chaque sous-catégorie par simple clic sur son en-tête.
 /// </summary>
 public class SectionController
 {
     private readonly List<Action<bool>> _expandActions = new();
-    private int _expandedIndex = -1;
+    private readonly List<bool> _isExpanded = new();
 
-    public void RegisterSection(Action<bool> setExpanded)
+    public void RegisterSection(Action<bool> setExpanded, bool initialExpanded = true)
     {
         _expandActions.Add(setExpanded);
+        _isExpanded.Add(initialExpanded);
+        setExpanded(initialExpanded);
     }
 
     public void Toggle(int index)
     {
-        if (_expandedIndex == index)
+        if (index >= 0 && index < _expandActions.Count)
         {
-            // Déjà ouvert : on replie tout
-            CollapseAll();
-        }
-        else
-        {
-            // Ouvre seulement la section demandée et ferme toutes les autres
-            ExpandOnly(index);
+            _isExpanded[index] = !_isExpanded[index];
+            _expandActions[index](_isExpanded[index]);
         }
     }
 
@@ -42,25 +42,25 @@ public class SectionController
     {
         for (int i = 0; i < _expandActions.Count; i++)
         {
-            if (i == index)
-            {
-                _expandActions[i](true);
-            }
-            else
-            {
-                _expandActions[i](false);
-            }
+            bool expand = (i == index);
+            _isExpanded[i] = expand;
+            _expandActions[i](expand);
         }
-        _expandedIndex = index;
+    }
+
+    public void ExpandAll()
+    {
+        for (int i = 0; i < _expandActions.Count; i++)
+        {
+            _isExpanded[i] = true;
+            _expandActions[i](true);
+        }
     }
 
     public void CollapseAll()
     {
-        for (int i = 0; i < _expandActions.Count; i++)
-        {
-            _expandActions[i](false);
-        }
-        _expandedIndex = -1;
+        // Maintient toutes les sous-catégories ouvertes par défaut pour ne masquer aucun script
+        ExpandAll();
     }
 }
 
@@ -203,6 +203,7 @@ public static class SectionViewBuilder
         "REPARATION"       => ("🔧", "Dépannage & Réparation"),
         "RESEAU"           => ("🌐", "Internet & Réseau"),
         "SECRETS"          => ("🔑", "Mots de passe & Clés de licence"),
+        "NOUVEAUTE"        => ("✨", "Nouveautés & Innovations"),
         "SECURITE"         => ("🛡️", "Sécurité & Antivirus"),
         _                  => ("⚙️", string.IsNullOrWhiteSpace(category) ? "Général" : FormatFrenchTitle(category))
     };
@@ -219,6 +220,7 @@ public static class SectionViewBuilder
         "MATERIEL"         => "Ajustez la puissance du processeur (normal ou boost) et testez la rapidité du PC",
         "MISES_A_JOUR"     => "Recherchez et installez les dernières versions de tous vos programmes en un clic",
         "NETTOYAGE"        => "Libérez de l'espace disque en supprimant les fichiers temporaires et inutiles en toute sécurité",
+        "NOUVEAUTE"        => "Découvrez les derniers scripts et outils innovants : confidentialité, débloat, optimisation gaming et audit IA",
         "PERSONNALISATION" => "Simplifiez votre usage en retrouvant le clic droit classique ou le dossier Tous les Réglages",
         "REPARATION"       => "Réparez automatiquement les bugs de Windows, les blocages d'impression et les erreurs",
         "RESEAU"           => "Résolvez les coupures de connexion, optimisez votre Wi-Fi et inspectez vos équipements",
@@ -357,7 +359,7 @@ public static class SectionViewBuilder
 
             var chevron = new TextBlock
             {
-                Text = "▶",
+                Text = "▼",
                 FontSize = 11,
                 FontWeight = FontWeights.Bold,
                 Margin = new Thickness(0, 0, 10, 0),
@@ -389,12 +391,13 @@ public static class SectionViewBuilder
             dock.Children.Add(leftPanel);
 
             headerBorder.Child = dock;
+            headerBorder.SetResourceReference(Border.BorderBrushProperty, "AccentDim");
 
-            // Grille des cartes (repliée par défaut)
+            // Grille des cartes (dépliée par défaut pour ne masquer aucun script)
             var wrapPanel = new WrapPanel
             {
                 Margin = new Thickness(6, 10, 0, 6),
-                Visibility = Visibility.Collapsed
+                Visibility = Visibility.Visible
             };
 
             foreach (var tool in group.Tools)
@@ -420,8 +423,8 @@ public static class SectionViewBuilder
                 }
             }
 
-            // Enregistrer dans le contrôleur exclusif
-            controller.RegisterSection(SetExpanded);
+            // Enregistrer dans le contrôleur (déplié par défaut)
+            controller.RegisterSection(SetExpanded, initialExpanded: true);
 
             // Effet hover visuel sur l'en-tête
             headerBorder.MouseEnter += (s, e) =>
@@ -563,7 +566,7 @@ public static class SectionViewBuilder
 
             var chevron = new TextBlock
             {
-                Text = "▶",
+                Text = "▼",
                 FontSize = 11,
                 FontWeight = FontWeights.Bold,
                 Margin = new Thickness(0, 0, 10, 0),
@@ -606,12 +609,13 @@ public static class SectionViewBuilder
             dock.Children.Add(leftPanel);
 
             headerBorder.Child = dock;
+            headerBorder.SetResourceReference(Border.BorderBrushProperty, "AccentDim");
 
-            // Panneau déroulant : sous-catégories et outils de la catégorie
+            // Panneau déroulant : sous-catégories et outils de la catégorie (déplié par défaut)
             var contentPanel = new StackPanel
             {
                 Margin = new Thickness(8, 12, 0, 8),
-                Visibility = Visibility.Collapsed
+                Visibility = Visibility.Visible
             };
 
             foreach (var subCat in catGroup.SubCategories)
@@ -706,8 +710,8 @@ public static class SectionViewBuilder
                 }
             }
 
-            // Enregistrer dans le contrôleur exclusif
-            controller.RegisterSection(SetExpanded);
+            // Enregistrer dans le contrôleur (déplié par défaut)
+            controller.RegisterSection(SetExpanded, initialExpanded: true);
 
             // Effet hover visuel sur l'en-tête
             headerBorder.MouseEnter += (s, e) =>

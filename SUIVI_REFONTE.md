@@ -22,14 +22,18 @@
 ### 1. Modernisation UI/UX de Pointe (Inspirée de Linear, Raycast & Fluent 2)
 - **Élimination complète des doublons de titre** : suppression des en-têtes redondants qui doublaient le titre du header dans les 10 pages de catégories. La grille d'outils démarre directement avec un espacement aéré.
 - **Correction des caractères accentués (UTF-8)** : forçage de l'encodage `[Console]::OutputEncoding` et `$OutputEncoding` en UTF-8 dans [`PowerShellRunner.cs`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows/ScriptsWindows/Core/PowerShellRunner.cs), éliminant définitivement les caractères corrompus (ex: `Santé` au lieu de `Sant`).
-- **Cartes d'outils (`ToolCard`) style SaaS / Desktop moderne** :
+- **Cartes d'outils (`ToolCard`) style SaaS / Desktop moderne avec listes d'actions directes** :
+  - **Description agrandie et aérée** : dimensions portées à `325 × 215 px` (au lieu de 308 × 148 px) offrant une visibilité immédiate sur les fonctionnalités de chaque outil sans coupure de texte.
+  - **Listes à puces directes (`Features`) intégrées sur chaque carte** : 3 actions ou composants clés réels affichés avec puces colorées dynamiques (couleur d'accent du thème actif) pour identifier instantanément ce que fait l'outil.
+  - **Recherche enrichie** : le moteur de recherche universel scanne désormais également les éléments de liste (`Features`) en plus du titre, de la description et des tags.
   - **Badge d'icône structuré** : l'icône de chaque outil est logée dans un carré arrondi (`CornerRadius="8"`) avec fond d'accent doux translucide.
   - **Badge Admin translucide** : pilule discrète (`#1EF43F5E`) avec contour fin et typographie soignée.
   - **Bouton d'action interactif** : libellé `▶ Exécuter` avec icône de lecture intégrée et rayon moderne.
   - Rayons de courbure harmonisés à `12px` et ombres douces plus diffuses.
 - **Barre de recherche avec Watermark dynamique** : texte indicatif *"Rechercher un outil..."* automatique lorsque le champ est vide.
 - **Header épuré & Sélecteur Pill** : bouton de thème transformé en badge pilule élégant avec bordure fine et hover subtil.
-- **Console latérale style Dev Tools** : en-tête `>_ Console` en Cascadia Code avec boutons `🗑️` et `✕` sans bordures superflues.
+- **Sous-catégories toutes dépliées par défaut** : toutes les sous-catégories de toutes les pages (et favoris) sont désormais dépliées par défaut (`Visibility.Visible`, chevron `▼`), garantissant qu'aucun script n'est masqué et que l'ensemble des outils est visible immédiatement. Le clic sur un en-tête permet de basculer indépendamment la section souhaitée.
+- **Console latérale style Dev Tools** : en-tête `>_ Console` en Cascadia Code avec boutons `🗑️` et `✕` sans bordures superflues, largeur compacte calibrée (réservant 740 px pour les cartes) pour maintenir 2 colonnes de cartes côte à côte.
 
 ### 2. Sélecteur de Thèmes Dynamique avec Transparence & Effets Néon
 - Gestionnaire de thèmes dédié : [`ThemeManager.cs`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/ScriptsWindows/ScriptsWindows/Core/ThemeManager.cs).
@@ -133,6 +137,18 @@
   - Doublon `diag_battery` retiré (déjà disponible dans l'onglet 4 du Centre de Diagnostic avec génération HTML).
   - Organisation épurée : Centre de Diagnostic unifié (5 onglets) + DxDiag et Gestionnaire de démarrage rapide.
 
+- **⚡ Démarrage et Récupération (`DemarragePage.xaml.cs`)** :
+  - Suppression des 4 doublons redondants (`boot_safemode`, `boot_winre`, `boot_uefi_bios`, `boot_bcd_repair`) entièrement unifiés dans la boîte de dialogue du Centre.
+  - Bascule en **affichage direct** (`PopulateDirect`) avec le **Centre de Démarrage et Récupération** (`BootRecoveryDialog.xaml`) en pleine page sans accordéons superflus.
+
+- **✨ Nouveautés & Innovations (`NouveautePage.xaml.cs`)** :
+  - **Intégration native des 4 outils** dans leurs catégories de référence :
+    1. 🛡️ **Bouclier de confidentialité et anti-télémétrie (`PrivacyShieldDialog.xaml`)** -> Reclassé dans **🛡️ Sécurité** (`SECURITE`, section *« Confidentialité et vie privée »*).
+    2. ⚡ **Optimiseur de latence et Mode Gaming Ultime (`GamingOptimizerDialog.xaml`)** -> Reclassé dans **🖥️ Matériel / Performances** (`MATERIEL`, section *« Gestion de l'alimentation et vitesse »*).
+    3. 🔍 **Audit d'éligibilité Windows 11 24H2 & IA (`Win11AiAuditDialog.xaml`)** -> Reclassé dans **🔍 Diagnostic** (`DIAGNOSTIC`, section *« Bilan général de l'ordinateur »*).
+    4. 🌐 **Benchmark de vitesse DNS en temps réel (`DnsBenchmarkDialog.xaml`)** -> Reclassé dans **🌐 Réseau** (`RESEAU`, section *« Dépannage et amélioration de la connexion »*).
+  - La catégorie **Nouveautés & Innovations** reste présente dans le menu avec un composant d'accueil épuré (*Empty State* stylisé), prête à accueillir les futurs scripts et ajouts.
+
 ---
 
 ## 👥 Refonte des Textes & Vulgarisation Grand Public
@@ -144,10 +160,52 @@ Tous les textes ont été réécrits pour être compris instantanément par des 
 
 ---
 
+## 🖱️ Navigation Intuitive au Survol & Stabilité des Sous-Catégories
+
+- **Navigation instantanée au survol (Hover)** :
+  - Passer le curseur de la souris sur une catégorie de la barre latérale gauche affiche immédiatement la page correspondante avec un micro-délai de 50 ms (anti-flicker lors des passages rapides).
+  - Le clic reste fonctionnel à 0 ms de délai.
+- **Réduction automatique de la colonne catégories en mode compact (Mini-sidebar)** :
+  - Dès que la souris se déplace vers les sous-catégories et les cartes d'outils, la barre latérale se rétracte automatiquement à **64 px** avec une animation fluide (`DoubleAnimation`).
+  - **Vue épurée en mode compact** : seuls le logo (`⚡`), l'icône de recherche (`🔍`) et les icônes des catégories / favoris / paramètres restent visibles, parfaitement centrés verticalement et horizontalement dans leur contour (48x36 px avec bords arrondis). Tous les textes, badges et libellés superflus sont masqués.
+  - **Survol et Tooltips** : chaque icône dispose d'un `ToolTip` explicatif au survol.
+  - **Dépliage automatique au retour** : lorsque le curseur revient sur la barre latérale, celle-ci s'agrandit instantanément à **240 px** pour retrouver l'intégralité des noms et des compteurs de scripts.
+  - **Accès rapide à la recherche** : cliquer sur l'icône `🔍` en mode compact déplie la barre latérale et place directement le focus dans le champ de saisie.
+- **Maintien de la catégorie active lors du déplacement vers les sous-catégories** :
+  - Dès que la souris quitte la barre latérale pour entrer dans la zone de contenu (cartes et sous-catégories), les timers sont verrouillés et la catégorie active reste figée.
+  - L'utilisateur peut explorer, faire défiler et cliquer sur les outils sans aucun changement intempestif de page.
+- **Dépliage automatique complet** :
+  - Toutes les sous-catégories et sections sont désormais dépliées par défaut dès l'ouverture d'une page.
+- **Masquage moderne de l'ascenseur de la barre latérale** :
+  - L'ascenseur vertical a été complètement masqué (`VerticalScrollBarVisibility="Hidden"`), offrant un design épuré, ultra-moderne et uniforme (sans barre de défilement apparente).
+  - Le défilement fluide à la molette de la souris reste 100% actif et fonctionnel.
+- **Défocalisation intuitive de la barre de recherche** :
+  - Tout clic dans les sous-catégories, sur une carte, un bouton ou en dehors de la boîte de recherche retire immédiatement et obligatoirement le focus et le curseur clignotant via `ClearSearchFocus()` (avec dissociation du `FocusScope` WPF et transfert du focus vers la racine `MainRootGrid`).
+  - L'appui sur la touche `Échap` (`Escape`) réinitialise également le texte de recherche et retire le focus.
+  - Dès le clic dans la zone de contenu ou après perte de focus, la barre latérale se rétracte instantanément en mode compact.
+- **Calibrage de la console de logs** :
+  - Largeur de console optimisée (360 px max, 740 px réservés) garantissant l'affichage systématique de 2 colonnes de cartes côte à côte.
+- **Fiche de spécifications unifiée dans les Paramètres (À propos)** :
+  - Remplacement des 5 cartes éparpillées par **1 seul bloc unifié ligne par ligne** façon fiche technique officielle (comme sur Windows 11 / macOS / rapports d'ingénierie).
+  - Présentation claire avec icônes, libellés uniformes et valeurs en gras :
+    1. 📦 *Application & Version* (Alex Toolkit v4.1.0, .NET 8.0 x64)
+    2. 🛡️ *Droits d'accès* (Administrateur / Standard)
+    3. 💻 *Ordinateur & Utilisateur* (Machine et nom de session active)
+    4. 🪟 *Système d'exploitation* (Édition, numéro de Build et architecture)
+    5. 🧠 *Processeur (CPU)* (Modèle exact et nombre de threads)
+    6. ⚡ *Mémoire vive (RAM)* (Capacité totale uniquement, ex. 32 Go)
+    7. 💽 *Disques & Stockage* (Liste de tous les lecteurs prêts : type physique SSD, SSD (NVMe), HDD, Amovible/USB, pourcentage d'utilisation %, espace libre et total — chaque disque sur sa propre ligne)
+  - Retrait du doublon « Dernière mise à jour » dans la fiche (déjà affiché en pied de page des paramètres).
+  - Bouton interactif `📋 Copier la fiche` pour exporter l'ensemble de la fiche technique formatée dans le presse-papiers en un clic.
+
+---
+
 ## 🚀 Résultat de Publication
 
 - **Fichier exécutable unique** : [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe) (à la racine)
-- **Taille** : **~10 Mo** (autonome, single-file autonome Release x64)
+- **Taille** : **~10.8 Mo** (autonome, single-file Release x64)
 - **Architecture** : Windows x64
 - **Manifeste** : Élévation automatique UAC Administrateur requise
+
+
 

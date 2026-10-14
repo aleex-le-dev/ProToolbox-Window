@@ -29,6 +29,7 @@ public static class ToolRegistry
         RegisterSecurityTools();         // Catégorie 10 : Surveillance, Sécurité et Événements
         RegisterPersonalizationTools();  // Catégorie 11 : Personnalisation et Système
         RegisterBootTools();             // Catégorie 12 : Démarrage & Récupération
+        RegisterInnovationTools();       // Catégorie 13 : Nouveautés & Innovations
     }
 
     public static IReadOnlyList<ScriptTool> AllTools => _allTools;
@@ -44,15 +45,17 @@ public static class ToolRegistry
 
     private static readonly Dictionary<string, string> CommandMap = new(StringComparer.OrdinalIgnoreCase)
     {
-        // ─── Diagnostic (3) ───
+        // ─── Diagnostic (4) ───
         ["diag_center"] = "AlexToolkit.exe (Centre de diagnostic unifié : carte mère, BIOS, CPU, RAM, disques S.M.A.R.T., batterie, réseau)",
         ["diag_dxdiag"] = "dxdiag.exe",
         ["diag_startup_manager"] = "AlexToolkit.exe (Gestionnaire des programmes au démarrage de Windows)",
+        ["nov_win11_ai_audit"] = "AlexToolkit.exe (Audit d'éligibilité Windows 11 24H2, TPM 2.0 et NPU)",
 
-        // ─── Matériel (3) ───
+        // ─── Matériel (4) ───
         ["hw_winsat"] = "winsat.exe formal",
         ["hw_powercfg_energy"] = "powercfg.exe /energy /output energy-report.html",
         ["hw_power_perf"] = "AlexToolkit.exe (Interface de gestion des modes d'alimentation : Normal, Performances élevées, Performances ultimes)",
+        ["nov_gaming_optimizer"] = "AlexToolkit.exe (Optimisation de latence, HAGS et Game Mode)",
 
         // ─── Réparation (7) ───
         ["repair_system_integrity"] = "AlexToolkit.exe (Centre d'intégrité Windows : DISM Scan/Restore et SFC)",
@@ -73,8 +76,9 @@ public static class ToolRegistry
         ["sec_win_key"] = "wmic.exe path softwarelicensingservice get OA3xOriginalProductKey",
         ["sec_browser_profiles"] = "AlexToolkit.exe (Lecteur SQLite natif Chrome, Edge, Brave, Firefox)",
 
-        // ─── Réseau (6) ───
+        // ─── Réseau (7) ───
         ["net_center"] = "AlexToolkit.exe (Centre de contrôle réseau : diagnostic, DNS, scan et triage)",
+        ["nov_dns_speed_test"] = "AlexToolkit.exe (Benchmark de latence et vitesse des serveurs DNS)",
         ["net_reset_all"] = "AlexToolkit.exe (Protocole de réinitialisation réseau en 7 étapes)",
         ["net_wifi_scan"] = "netsh.exe wlan show networks mode=bssid (Scanner visuel)",
         ["net_wifi_report"] = "netsh.exe wlan show wlanreport (Rapport graphique)",
@@ -93,8 +97,9 @@ public static class ToolRegistry
         // ─── Mises à jour (1) ───
         ["upd_winget_manager"] = "winget.exe upgrade (Gestionnaire de paquets interactif Winget)",
 
-        // ─── Sécurité (3) ───
+        // ─── Sécurité (4) ───
         ["sec_center"] = "AlexToolkit.exe (Centre de surveillance et sécurité unifié Defender, BSOD et RAM)",
+        ["nov_privacy_shield"] = "AlexToolkit.exe (Bouclier de confidentialité et blocage télémétrie Windows)",
         ["sec_defender_quickscan"] = "powershell Start-MpScan -ScanType QuickScan",
         ["sec_perfmon_rel"] = "perfmon.exe /rel",
 
@@ -102,12 +107,10 @@ public static class ToolRegistry
         ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
         ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)",
 
-        // ─── Démarrage & Récupération (5) ───
-        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération)",
-        ["boot_safemode"] = "bcdedit.exe /set {current} safeboot minimal | network",
-        ["boot_winre"] = "shutdown.exe /r /o /f /t 00",
-        ["boot_uefi_bios"] = "shutdown.exe /r /fw /f /t 00",
-        ["boot_bcd_repair"] = "bcdboot.exe %SystemRoot% /l fr-fr"
+        // ─── Démarrage & Récupération (1) ───
+        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)"
+
+        // ─── Nouveautés & Innovations (0 - Réservé aux futurs ajouts) ───
     };
 
 
@@ -127,7 +130,8 @@ public static class ToolRegistry
             t.Description.ToLowerInvariant().Contains(q) ||
             t.Category.ToLowerInvariant().Contains(q) ||
             t.SubHeading.ToLowerInvariant().Contains(q) ||
-            t.Tags.Any(tag => tag.ToLowerInvariant().Contains(q)));
+            t.Tags.Any(tag => tag.ToLowerInvariant().Contains(q)) ||
+            t.Features.Any(feat => feat.ToLowerInvariant().Contains(q)));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -140,6 +144,12 @@ public static class ToolRegistry
             Id = "diag_center",
             Name = "Bilan de santé complet du PC",
             Description = "Vérifie d'un coup d'œil l'état de votre processeur, mémoire, disques durs, batterie et connexion pour s'assurer que tout fonctionne bien.",
+            Features = new[]
+            {
+                "Processeur (CPU), mémoire vive (RAM) et charge",
+                "Santé des disques durs & alertes S.M.A.R.T.",
+                "Autonomie de la batterie & état du réseau"
+            },
             Category = "DIAGNOSTIC",
             SubHeading = "Bilan général de l'ordinateur",
             Icon = "🔍",
@@ -149,9 +159,33 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
+            Id = "nov_win11_ai_audit",
+            Name = "Audit d'éligibilité Windows 11 24H2 et NPU IA",
+            Description = "Vérifie les prérequis matériels avancés (POPCNT, SSE4.2, TPM 2.0, Secure Boot, RAM et présence d'un processeur neuronal NPU Copilot+).",
+            Features = new[]
+            {
+                "Instructions CPU requises (POPCNT, SSE4.2)",
+                "Sécurité matérielle : puce TPM 2.0 & Secure Boot",
+                "Détection du processeur neuronal (NPU Copilot+)"
+            },
+            Category = "DIAGNOSTIC",
+            SubHeading = "Bilan général de l'ordinateur",
+            Icon = "🔍",
+            Action = (log, ct) => InnovationService.OpenWin11AiAuditDialog(log, ct),
+            Tags = new[] { "windows 11", "24h2", "tpm", "secure boot", "popcnt", "ia", "npu", "copilot", "éligibilité", "audit" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
             Id = "diag_dxdiag",
             Name = "Vérifier l'écran, les jeux et le son (DxDiag)",
             Description = "Teste le bon fonctionnement de votre carte graphique, de votre affichage et de vos haut-parleurs en cas de problème vidéo ou audio.",
+            Features = new[]
+            {
+                "Diagnostic de la carte graphique (DirectX / GPU)",
+                "Vérification des écrans, pilotes et rafraîchissement",
+                "Test des périphériques audio et haut-parleurs"
+            },
             Category = "DIAGNOSTIC",
             SubHeading = "Vérifications rapides",
             Icon = "🎮",
@@ -164,6 +198,12 @@ public static class ToolRegistry
             Id = "diag_startup_manager",
             Name = "Accélérer le démarrage de Windows",
             Description = "Affiche la liste des logiciels qui se lancent au démarrage et vous permet de désactiver ceux qui ralentissent inutilement votre PC.",
+            Features = new[]
+            {
+                "Inventaire des applications lancées au boot",
+                "Mesure de l'impact sur le temps de démarrage",
+                "Activation / désactivation en 1 clic sans risque"
+            },
             Category = "DIAGNOSTIC",
             SubHeading = "Vérifications rapides",
             Icon = "🚀",
@@ -182,6 +222,12 @@ public static class ToolRegistry
             Id = "hw_power_perf",
             Name = "Changer la vitesse du PC (Normal / Rapide)",
             Description = "Bascule facile : économisez de l'énergie en mode normal ou libérez toute la puissance du processeur pour les jeux et logiciels lourds.",
+            Features = new[]
+            {
+                "Bascule instantanée : Économie ou Performance",
+                "Optimisation de la fréquence d'horloge du CPU",
+                "Idéal pour prolonger la batterie ou booster les jeux"
+            },
             Category = "MATERIEL",
             SubHeading = "Gestion de l'alimentation et vitesse",
             Icon = "⚡",
@@ -191,9 +237,33 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
+            Id = "nov_gaming_optimizer",
+            Name = "Optimiseur de latence et Mode Gaming Ultime",
+            Description = "Configure la planification GPU matérielle accélérée (HAGS), désactive l'algorithme de Nagle pour réduire le ping et alloue 100% du CPU aux jeux.",
+            Features = new[]
+            {
+                "Planification GPU matérielle accélérée (HAGS)",
+                "Désactivation algorithme de Nagle (réduit le ping)",
+                "Priorité CPU maximale allouée aux jeux vidéo"
+            },
+            Category = "MATERIEL",
+            SubHeading = "Gestion de l'alimentation et vitesse",
+            Icon = "⚡",
+            Action = (log, ct) => InnovationService.OpenGamingOptimizerDialog(log, ct),
+            Tags = new[] { "gaming", "jeu", "latence", "ping", "nagle", "fps", "hags", "boost", "vitesse", "réactivité" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
             Id = "hw_winsat",
             Name = "Tester la puissance globale de mon PC",
             Description = "Calcule une note de performance pour mesurer la rapidité réelle de votre processeur, mémoire, carte graphique et disque dur.",
+            Features = new[]
+            {
+                "Indice de performance officiel Windows (WinSAT)",
+                "Scores détaillés : Processeur, RAM, 3D et Disque",
+                "Rapport chiffré complet sur la vélocité matérielle"
+            },
             Category = "MATERIEL",
             SubHeading = "Banc d'essai et performances",
             Icon = "⚙️",
@@ -206,6 +276,12 @@ public static class ToolRegistry
             Id = "hw_powercfg_energy",
             Name = "Détecter ce qui vide la batterie",
             Description = "Analyse pendant 1 minute comment votre ordinateur utilise l'énergie et liste les réglages ou applications qui consomment trop.",
+            Features = new[]
+            {
+                "Audit d'efficacité énergétique pendant 60 secondes",
+                "Identification des applications énergivores en veille",
+                "Génération d'un rapport d'autonomie HTML complet"
+            },
             Category = "MATERIEL",
             SubHeading = "Banc d'essai et performances",
             Icon = "🔋",
@@ -224,6 +300,12 @@ public static class ToolRegistry
             Id = "repair_system_integrity",
             Name = "Réparer les fichiers système endommagés (SFC & DISM)",
             Description = "Scanne les fichiers internes de Windows et remplace automatiquement ceux qui sont cassés pour stopper les bugs, ralentissements et plantages.",
+            Features = new[]
+            {
+                "Scan approfondi de tous les fichiers protégés (SFC)",
+                "Restauration de l'image Windows Update (DISM)",
+                "Résolution automatique des corruptions et bugs"
+            },
             Category = "REPARATION",
             SubHeading = "Réparation du système et des disques",
             Icon = "🩺",
@@ -236,6 +318,12 @@ public static class ToolRegistry
             Id = "repair_chkdsk",
             Name = "Réparer les erreurs de disque dur (CHKDSK)",
             Description = "Vérifie la santé de votre disque dur ou SSD, détecte les erreurs d'écriture et répare les fichiers qui refusent de s'ouvrir.",
+            Features = new[]
+            {
+                "Analyse des métadonnées système de fichiers NTFS",
+                "Détection et isolation des secteurs défectueux",
+                "Récupération automatique des dossiers illisibles"
+            },
             Category = "REPARATION",
             SubHeading = "Réparation du système et des disques",
             Icon = "🔍",
@@ -248,6 +336,12 @@ public static class ToolRegistry
             Id = "repair_spooler",
             Name = "Débloquer l'imprimante et relancer les impressions",
             Description = "Votre impression est coincée ? Cette action vide la file d'attente bloquée, redémarre le service d'impression et débloque votre imprimante en 1 clic.",
+            Features = new[]
+            {
+                "Purge immédiate des documents bloqués dans la file",
+                "Arrêt, nettoyage du cache et relance du spouleur",
+                "Résout les imprimantes bloquées en état 'Erreur'"
+            },
             Category = "REPARATION",
             SubHeading = "Dépannage de l'imprimante et des services",
             Icon = "🖨️",
@@ -260,6 +354,12 @@ public static class ToolRegistry
             Id = "repair_services_manager",
             Name = "Gérer et redémarrer les services Windows",
             Description = "Pilotez facilement les programmes d'arrière-plan de Windows : redémarrez Windows Update, le son ou arrêtez les tâches bloquées.",
+            Features = new[]
+            {
+                "Supervision des services système d'arrière-plan",
+                "Redémarrage en 1 clic de Windows Update, Audio, etc.",
+                "Arrêt immédiat des services figés ou en surcharge"
+            },
             Category = "REPARATION",
             SubHeading = "Dépannage de l'imprimante et des services",
             Icon = "⚙️",
@@ -272,6 +372,12 @@ public static class ToolRegistry
             Id = "repair_apps_shell",
             Name = "Réparer le Microsoft Store et les icônes blanches",
             Description = "Répare la boutique Microsoft Store si elle refuse de s'ouvrir et reconstruit les images de vos raccourcis si vos icônes s'affichent en blanc.",
+            Features = new[]
+            {
+                "Réinitialisation complète du Microsoft Store (wsreset)",
+                "Purge et reconstruction du cache IconCache.db",
+                "Restauration de l'affichage normal dans l'Explorateur"
+            },
             Category = "REPARATION",
             SubHeading = "Boutique d'applications et affichage",
             Icon = "🏬",
@@ -284,6 +390,12 @@ public static class ToolRegistry
             Id = "repair_restore_point",
             Name = "Créer ou restaurer un point de retour",
             Description = "Créez une sauvegarde de secours pour pouvoir revenir en arrière à tout moment en cas de bug ou de mauvaise manipulation.",
+            Features = new[]
+            {
+                "Création d'un point de sauvegarde immédiat",
+                "Restauration facile en cas de fausse manipulation",
+                "Accès direct à l'assistant officiel Windows (rstrui)"
+            },
             Category = "REPARATION",
             SubHeading = "Sauvegardes et points de retour",
             Icon = "🔄",
@@ -296,6 +408,12 @@ public static class ToolRegistry
             Id = "repair_export_drivers",
             Name = "Sauvegarder les pilotes de mes équipements",
             Description = "Copie tous les pilotes de vos composants (carte graphique, Wi-Fi, son) dans un dossier pour pouvoir les réinstaller facilement.",
+            Features = new[]
+            {
+                "Exportation des pilotes tiers vers C:\\DriversBackup",
+                "Sauvegarde Carte graphique, Wi-Fi, Audio, Chipset",
+                "Réinstallation express sans connexion Internet"
+            },
             Category = "REPARATION",
             SubHeading = "Sauvegardes et points de retour",
             Icon = "💾",
@@ -314,6 +432,12 @@ public static class ToolRegistry
             Id = "clean_system_unified",
             Name = "Grand nettoyage du PC et des fichiers inutiles",
             Description = "Supprime les fichiers temporaires, vide la corbeille, nettoie les traces de navigation et libère plusieurs gigaoctets d'espace disque en toute sécurité.",
+            Features = new[]
+            {
+                "Fichiers temporaires utilisateur, système et caches",
+                "Vidage automatique de la Corbeille de tous les disques",
+                "Nettoyage du magasin de composants Windows WinSxS"
+            },
             Category = "NETTOYAGE",
             SubHeading = "Nettoyage système et disque",
             Icon = "🧹",
@@ -332,6 +456,12 @@ public static class ToolRegistry
             Id = "sec_wifi_show",
             Name = "Retrouver mes mots de passe Wi-Fi enregistrés",
             Description = "Affiche immédiatement en clair le mot de passe de votre box Wi-Fi ainsi que tous les réseaux auxquels votre PC s'est déjà connecté.",
+            Features = new[]
+            {
+                "Scan de tous les profils Wi-Fi mémorisés sur le PC",
+                "Affichage instantané des clés de sécurité en clair",
+                "Copie en 1 clic du mot de passe dans le presse-papiers"
+            },
             Category = "SECRETS",
             SubHeading = "Mots de passe et Wi-Fi",
             Icon = "📶",
@@ -344,6 +474,12 @@ public static class ToolRegistry
             Id = "sec_pwd_generator",
             Name = "Générateur de mots de passe ultra-sécurisés",
             Description = "Crée en 1 clic des mots de passe incassables et aléatoires pour vos comptes en ligne et vous permet de les enregistrer en toute sécurité.",
+            Features = new[]
+            {
+                "Création de clés cryptographiques à haute entropie",
+                "Choix des longueurs et types de caractères",
+                "Test visuel de robustesse et copie sécurisée"
+            },
             Category = "SECRETS",
             SubHeading = "Mots de passe et Wi-Fi",
             Icon = "🔐",
@@ -356,6 +492,12 @@ public static class ToolRegistry
             Id = "sec_browser_profiles",
             Name = "Consulter l'historique de mes navigateurs web",
             Description = "Affiche les 35 dernières pages visitées sur vos navigateurs (Google Chrome, Edge, Firefox, Brave) sans même avoir besoin de les ouvrir.",
+            Features = new[]
+            {
+                "Support de Chrome, Edge, Brave et Firefox",
+                "Lecture directe des bases SQLite sans ouvrir les applis",
+                "Affichage des 35 dernières pages et horodatages"
+            },
             Category = "SECRETS",
             SubHeading = "Mots de passe et Wi-Fi",
             Icon = "🌐",
@@ -368,6 +510,12 @@ public static class ToolRegistry
             Id = "sec_win_key",
             Name = "Retrouver ma clé d'activation Windows originale",
             Description = "Lit la clé de licence officielle gravée dans la carte mère de votre PC, indispensable en cas de réinstallation complète de Windows.",
+            Features = new[]
+            {
+                "Lecture de la clé OEM gravée dans le BIOS / UEFI",
+                "Indispensable pour réactiver lors d'une réinstallation",
+                "Copie immédiate de la licence officielle en 25 caractères"
+            },
             Category = "SECRETS",
             SubHeading = "Licences et documents confidentiels",
             Icon = "🔑",
@@ -380,6 +528,12 @@ public static class ToolRegistry
             Id = "sec_audit_sensitive",
             Name = "Rechercher mes documents et codes confidentiels",
             Description = "Recherche dans vos dossiers personnels les fichiers contenant des mots de passe oubliés, des identifiants cloud ou des clés de sécurité.",
+            Features = new[]
+            {
+                "Recherche de clés SSH, tokens AWS, fichiers .env",
+                "Scan ciblé des dossiers personnels et profils",
+                "Rapport préventif pour protéger vos données sensibles"
+            },
             Category = "SECRETS",
             SubHeading = "Licences et documents confidentiels",
             Icon = "🔍",
@@ -398,6 +552,12 @@ public static class ToolRegistry
             Id = "net_center",
             Name = "Centre de contrôle Internet & Réseau",
             Description = "Vérifiez votre connexion, testez la rapidité d'accès et changez de serveur DNS (Cloudflare, Google) pour accélérer le chargement des sites web.",
+            Features = new[]
+            {
+                "Test de connectivité passerelle, Internet et DNS",
+                "Changement rapide de DNS (Cloudflare, Google, Quad9)",
+                "Affichage IP publique, locale et statut de carte"
+            },
             Category = "RESEAU",
             SubHeading = "Dépannage et amélioration de la connexion",
             Icon = "🌐",
@@ -407,9 +567,33 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
+            Id = "nov_dns_speed_test",
+            Name = "Benchmark de vitesse DNS et test de latence",
+            Description = "Compare en direct les performances et le ping de Cloudflare, Google, Quad9 et de votre FAI pour vous recommander le DNS le plus rapide.",
+            Features = new[]
+            {
+                "Mesure du ping réel en millisecondes sur 10 requêtes",
+                "Comparatif Cloudflare (1.1.1.1), Google (8.8.8.8) et FAI",
+                "Recommandation automatique du serveur le plus réactif"
+            },
+            Category = "RESEAU",
+            SubHeading = "Dépannage et amélioration de la connexion",
+            Icon = "🌐",
+            Action = (log, ct) => InnovationService.OpenDnsBenchmarkDialog(log, ct),
+            Tags = new[] { "dns", "benchmark", "vitesse", "latence", "ping", "cloudflare", "google", "quad9", "internet", "connexion" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
             Id = "net_reset_all",
             Name = "Réparer la connexion Internet (Grand Reset)",
             Description = "Plus d'Internet ou connexion bloquée ? Remet à neuf l'ensemble des réglages réseau de Windows en 7 étapes automatiques.",
+            Features = new[]
+            {
+                "Purge du cache DNS et vidage de la table ARP",
+                "Réinitialisation complète pile TCP/IP et Winsock",
+                "Libération et renouvellement immédiat de l'adresse IP"
+            },
             Category = "RESEAU",
             SubHeading = "Dépannage et amélioration de la connexion",
             Icon = "⚡",
@@ -422,6 +606,12 @@ public static class ToolRegistry
             Id = "net_wifi_scan",
             Name = "Détecteur des réseaux Wi-Fi voisins",
             Description = "Affiche les box et bornes Wi-Fi autour de chez vous avec des jauges visuelles colorées pour trouver le meilleur canal sans interférences.",
+            Features = new[]
+            {
+                "Affichage box voisines et canaux (2.4 / 5 GHz)",
+                "Jauges visuelles colorées de puissance de signal (dBm)",
+                "Détection des interférences pour choisir le meilleur canal"
+            },
             Category = "RESEAU",
             SubHeading = "Diagnostic et analyse du Wi-Fi",
             Icon = "📶",
@@ -434,6 +624,12 @@ public static class ToolRegistry
             Id = "net_wifi_report",
             Name = "Bilan des déconnexions Wi-Fi (Graphique)",
             Description = "Affiche un graphique visuel des déconnexions et de la stabilité de votre connexion sans fil au cours des 3 derniers jours.",
+            Features = new[]
+            {
+                "Génération du rapport officiel Windows wlanreport",
+                "Historique visuel des pertes de signal sur 3 jours",
+                "Diagnostic des erreurs de pilote ou de veille"
+            },
             Category = "RESEAU",
             SubHeading = "Diagnostic et analyse du Wi-Fi",
             Icon = "📊",
@@ -446,6 +642,12 @@ public static class ToolRegistry
             Id = "net_lan_scan",
             Name = "Voir les appareils connectés sur ma Box",
             Description = "Découvre en direct les smartphones, ordinateurs, télés connectées et imprimantes branchés sur votre réseau avec leur adresse IP.",
+            Features = new[]
+            {
+                "Scan rapide du sous-réseau local (192.168.x.x)",
+                "Découverte des PC, smartphones, imprimantes et TV",
+                "Affichage des adresses IP et adresses MAC détectées"
+            },
             Category = "RESEAU",
             SubHeading = "Appareils branchés et connexions actives",
             Icon = "🖥️",
@@ -458,6 +660,12 @@ public static class ToolRegistry
             Id = "net_flux_analysis",
             Name = "Voir les applications connectées à Internet",
             Description = "Liste filtrable en temps réel des logiciels qui communiquent avec l'extérieur, pratique pour débusquer les programmes suspects.",
+            Features = new[]
+            {
+                "Moniteur en temps réel des flux TCP établis",
+                "Identification du nom de processus, port et IP distante",
+                "Détection facile des logiciels suspects ou espions"
+            },
             Category = "RESEAU",
             SubHeading = "Appareils branchés et connexions actives",
             Icon = "🔍",
@@ -477,6 +685,12 @@ public static class ToolRegistry
             Id = "disk_mgmt_gui",
             Name = "Gestionnaire de disques et clés USB",
             Description = "Outil visuel officiel de Windows pour voir vos disques durs, créer des espaces de stockage ou formater vos clés USB.",
+            Features = new[]
+            {
+                "Visualisation graphique des volumes et partitions",
+                "Création, réduction ou extension de volumes",
+                "Attribution et modification des lettres de lecteurs"
+            },
             Category = "DISQUE",
             SubHeading = "Organisation et gestion des disques",
             Icon = "💽",
@@ -489,6 +703,12 @@ public static class ToolRegistry
             Id = "disk_diskpart",
             Name = "Nettoyage avancé de disque (Diskpart)",
             Description = "Invite de commandes avancée pour formater, effacer ou réparer un disque dur ou une clé USB récalcitrante.",
+            Features = new[]
+            {
+                "Console système pour disques ou clés USB bloqués",
+                "Nettoyage complet (clean), conversion GPT / MBR",
+                "Déblocage des partitions protégées en écriture"
+            },
             Category = "DISQUE",
             SubHeading = "Organisation et gestion des disques",
             Icon = "💻",
@@ -502,6 +722,12 @@ public static class ToolRegistry
             Id = "disk_defrag_gui",
             Name = "Optimiser et accélérer les disques",
             Description = "Donne un coup de boost à vos disques : accélère les disques durs classiques et rafraîchit la mémoire des SSD récents.",
+            Features = new[]
+            {
+                "Défragmentation ciblée des disques magnétiques",
+                "Envoi de la commande TRIM pour rafraîchir les SSD",
+                "Analyse et planification de l'état de fragmentation"
+            },
             Category = "DISQUE",
             SubHeading = "Santé et sécurité de vos fichiers",
             Icon = "⚡",
@@ -514,6 +740,12 @@ public static class ToolRegistry
             Id = "disk_bitlocker",
             Name = "Protéger et verrouiller un disque (BitLocker)",
             Description = "Verrouille l'accès à vos disques avec un mot de passe sécurisé pour que personne d'autre ne puisse lire vos données personnelles.",
+            Features = new[]
+            {
+                "Statut de chiffrement en direct de chaque lecteur",
+                "Verrouillage par mot de passe ou puce TPM",
+                "Sauvegarde de la clé de récupération de secours"
+            },
             Category = "DISQUE",
             SubHeading = "Santé et sécurité de vos fichiers",
             Icon = "🔒",
@@ -532,6 +764,12 @@ public static class ToolRegistry
             Id = "app_installer_center",
             Name = "Installer vos applications indispensables",
             Description = "Installez ou mettez à jour facilement vos logiciels du quotidien (Google Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell, Office) en cochant simplement ceux que vous voulez.",
+            Features = new[]
+            {
+                "Navigateurs modernes (Chrome, Firefox, Brave)",
+                "Utilitaires essentiels (VLC, 7-Zip, Sumatra PDF)",
+                "Outils bureautiques et pro (PowerShell 7, VS Code)"
+            },
             Category = "APPLICATIONS",
             SubHeading = "Installation et déploiement rapide",
             Icon = "📦",
@@ -550,6 +788,12 @@ public static class ToolRegistry
             Id = "upd_winget_manager",
             Name = "Mettre à jour tous vos programmes",
             Description = "Recherche automatiquement les nouvelles versions de vos applications installées et met tout à jour en un seul clic.",
+            Features = new[]
+            {
+                "Détection des mises à jour disponibles (Winget)",
+                "Mise à jour sélective ou globale en 1 clic",
+                "Téléchargement et installation silencieuse"
+            },
             Category = "MISES_A_JOUR",
             SubHeading = "Gestionnaire de mises à jour",
             Icon = "🔄",
@@ -568,6 +812,12 @@ public static class ToolRegistry
             Id = "sec_center",
             Name = "Centre de protection antivirus et surveillance",
             Description = "Tableau de bord : vérifie si l'antivirus Windows est actif, surveille les plantages récents et identifie les logiciels qui saturent votre mémoire.",
+            Features = new[]
+            {
+                "Statut de l'antivirus et du pare-feu Defender",
+                "Surveillance des derniers plantages système (BSOD)",
+                "Analyse des applications qui saturent la RAM"
+            },
             Category = "SECURITE",
             SubHeading = "Protection globale de votre ordinateur",
             Icon = "🛡️",
@@ -577,9 +827,33 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
+            Id = "nov_privacy_shield",
+            Name = "Bouclier de confidentialité et anti-télémétrie",
+            Description = "Désactive la télémétrie agressive de Microsoft, l'identifiant publicitaire ciblé, le suivi des frappes clavier et les suggestions de pub dans Démarrer.",
+            Features = new[]
+            {
+                "Désactivation télémétrie et traçage Windows",
+                "Blocage de l'identifiant pub et des suggestions",
+                "Protection des frappes clavier et diagnostics"
+            },
+            Category = "SECURITE",
+            SubHeading = "Confidentialité et vie privée",
+            Icon = "🛡️",
+            Action = (log, ct) => InnovationService.OpenPrivacyShieldDialog(log, ct),
+            Tags = new[] { "confidentialité", "vie privée", "télémétrie", "diagtrack", "mouchard", "publicité", "sécurité", "tracking", "espion" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
             Id = "sec_defender_quickscan",
             Name = "Analyse antivirus rapide en 1 clic",
             Description = "Lance une vérification immédiate des fichiers sensibles et de la mémoire par Microsoft Defender pour s'assurer qu'aucun virus n'est actif.",
+            Features = new[]
+            {
+                "Scan express des fichiers système et de la RAM",
+                "Détection des malwares actifs en tâche de fond",
+                "Exécution non-bloquante avec rapport immédiat"
+            },
             Category = "SECURITE",
             SubHeading = "Vérifications express",
             Icon = "⚡",
@@ -592,6 +866,12 @@ public static class ToolRegistry
             Id = "sec_perfmon_rel",
             Name = "Historique des plantages et bugs du PC",
             Description = "Affiche une frise chronologique officielle Windows avec une note de stabilité montrant les jours où des logiciels ou pilotes ont planté.",
+            Features = new[]
+            {
+                "Frise chronologique de stabilité Windows (note 1-10)",
+                "Détail des plantages matériels, pilotes ou logiciels",
+                "Idéal pour repérer l'origine d'un bug récurrent"
+            },
             Category = "SECURITE",
             SubHeading = "Vérifications express",
             Icon = "📉",
@@ -610,6 +890,12 @@ public static class ToolRegistry
             Id = "tweak_godmode",
             Name = "Activer le dossier Tous les Réglages (God Mode)",
             Description = "Crée sur votre Bureau un dossier pratique regroupant plus de 200 raccourcis directs vers tous les réglages et options de Windows.",
+            Features = new[]
+            {
+                "Création directe du dossier spécial sur le Bureau",
+                "Plus de 200 réglages Windows classés par thème",
+                "Accès rapide sans fouiller dans les paramètres"
+            },
             Category = "PERSONNALISATION",
             SubHeading = "Options et réglages système",
             Icon = "👑",
@@ -622,6 +908,12 @@ public static class ToolRegistry
             Id = "tweak_classic_context",
             Name = "Retrouver le clic droit classique (Windows 10 / 11)",
             Description = "Bascule en 1 clic : réactivez le menu complet d'un clic droit comme sur Windows 10, ou revenez au menu moderne de Windows 11.",
+            Features = new[]
+            {
+                "Bascule en 1 clic sans redémarrer l'ordinateur",
+                "Restaure le menu complet classique Windows 10",
+                "Ou rétablit le menu moderne de Windows 11"
+            },
             Category = "PERSONNALISATION",
             SubHeading = "Options et réglages système",
             Icon = "🖱️",
@@ -640,61 +932,33 @@ public static class ToolRegistry
             Id = "boot_center",
             Name = "Centre de démarrage et récupération",
             Description = "Interface unifiée : redémarrez en mode sans échec (minimal ou réseau), accédez au WinRE, basculez vers le BIOS/UEFI ou réparez le menu de démarrage cassé (BCD).",
+            Features = new[]
+            {
+                "Redémarrage direct en Mode sans échec (Safe Mode)",
+                "Accès en 1 clic au dépannage Windows (WinRE)",
+                "Bascule immédiate vers le BIOS/UEFI et BCD"
+            },
             Category = "DEMARRAGE",
             SubHeading = "Console interactive de démarrage",
             Icon = "⚡",
             Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
             Tags = new[] { "démarrage", "récupération", "sans échec", "winre", "bios", "uefi", "bcd", "boot", "réparation", "redémarrage" }
         });
+    }
 
-        _allTools.Add(new ScriptTool
-        {
-            Id = "boot_safemode",
-            Name = "Redémarrer en mode sans échec (Minimal / Réseau)",
-            Description = "Active le mode sans échec avec ou sans prise en charge réseau pour isoler les conflits logiciels et nettoyer les pannes de pilotes.",
-            Category = "DEMARRAGE",
-            SubHeading = "Modes de démarrage avancés",
-            Icon = "🛡️",
-            Action = (log, ct) => BootService.OpenBootRecoveryDialog(log, ct),
-            Tags = new[] { "mode sans échec", "safe mode", "minimal", "réseau", "pilotes", "dépannage", "bcdedit" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "boot_winre",
-            Name = "Accéder au WinRE (environnement de réparation)",
-            Description = "Redémarre directement sur l'environnement de secours Windows avec les outils de restauration, d'invite de commandes et de diagnostic.",
-            Category = "DEMARRAGE",
-            SubHeading = "Environnements de récupération",
-            Icon = "🚑",
-            Action = (log, ct) => BootService.PromptAndRebootWinRE(log, ct),
-            Tags = new[] { "winre", "récupération", "environnement", "secours", "dépannage", "restauration", "réparation" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "boot_uefi_bios",
-            Name = "Redémarrer vers le BIOS/UEFI",
-            Description = "Accède instantanément à l'interface de configuration du micrologiciel de la carte mère sans avoir à presser les touches F2 ou Suppr.",
-            Category = "DEMARRAGE",
-            SubHeading = "Modes de démarrage avancés",
-            Icon = "💻",
-            Action = (log, ct) => BootService.PromptAndRebootBios(log, ct),
-            Tags = new[] { "bios", "uefi", "firmware", "carte mère", "redémarrer", "boot", "micrologiciel" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "boot_bcd_repair",
-            Name = "Réinitialiser BCD (menu de démarrage cassé)",
-            Description = "Répare et reconstruit la configuration du chargeur de démarrage Windows (BCDBoot) et supprime les boucles de redémarrage sans échec.",
-            Category = "DEMARRAGE",
-            SubHeading = "Réparation du démarrage BCD",
-            Icon = "🔧",
-            Action = (log, ct) => BootService.RepairBcd(log, ct),
-            Tags = new[] { "bcd", "bcdboot", "démarrage cassé", "réinitialiser", "réparation", "bootloader", "safeboot" }
-        });
+    // ─────────────────────────────────────────────────────────────────────────
+    // CATÉGORIE 13 : ✨ NOUVEAUTÉS & INNOVATIONS (RÉSERVÉE AUX PROCHAINS SCRIPTS)
+    // ─────────────────────────────────────────────────────────────────────────
+    private static void RegisterInnovationTools()
+    {
+        // Les 4 outils initiaux ont été intégrés dans leurs catégories respectives :
+        // - Bouclier de confidentialité -> SECURITE
+        // - Optimiseur Gaming -> MATERIEL
+        // - Audit Win11 24H2 & IA -> DIAGNOSTIC
+        // - Benchmark de vitesse DNS -> RESEAU
+        // Cette catégorie reste active et prête à accueillir vos prochains scripts.
     }
 
 }
+
 

@@ -13,5 +13,5 @@ public partial class ReseauPage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("RESEAU"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

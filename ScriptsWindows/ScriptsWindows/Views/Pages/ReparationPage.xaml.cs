@@ -13,5 +13,5 @@ public partial class ReparationPage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("REPARATION"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

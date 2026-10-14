@@ -1,0 +1,9 @@
+<Page x:Class="ScriptsWindows.Views.Pages.NouveautePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{DynamicResource BgDeep}"
+      Title="Nouveautés &amp; Outils Innovants">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,16,24,24" x:Name="ToolsPanel" />
+    </ScrollViewer>
+</Page>

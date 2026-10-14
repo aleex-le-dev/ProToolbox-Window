@@ -13,5 +13,5 @@ public partial class MisesAJourPage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("MISES_A_JOUR"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

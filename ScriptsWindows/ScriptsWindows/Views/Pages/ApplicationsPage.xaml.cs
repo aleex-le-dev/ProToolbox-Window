@@ -13,5 +13,5 @@ public partial class ApplicationsPage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("APPLICATIONS"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

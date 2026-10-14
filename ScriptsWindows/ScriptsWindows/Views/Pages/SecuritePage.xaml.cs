@@ -13,5 +13,5 @@ public partial class SecuritePage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("SECURITE"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

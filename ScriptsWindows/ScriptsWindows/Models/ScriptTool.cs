@@ -44,6 +44,9 @@ public class ScriptTool
     /// <summary>Action à exécuter quand l'outil est lancé</summary>
     public Func<Action<string>, CancellationToken, Task>? Action { get; set; }
 
+    /// <summary>Points clés ou actions réalisées affichés sous forme de liste dans la carte</summary>
+    public string[] Features { get; init; } = Array.Empty<string>();
+
     /// <summary>Tags pour la recherche</summary>
     public string[] Tags { get; init; } = Array.Empty<string>();
 }

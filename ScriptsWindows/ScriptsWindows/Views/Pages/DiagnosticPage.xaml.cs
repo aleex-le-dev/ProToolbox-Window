@@ -13,5 +13,5 @@ public partial class DiagnosticPage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateSections(ToolsPanel, ToolRegistry.GetByCategory("DIAGNOSTIC"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

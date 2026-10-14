@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Win32;
 using ScriptsWindows.Core;
@@ -49,10 +52,12 @@ public partial class ParametresPage : Page, ISectionPage
                 : "Dernière mise à jour le :";
 
             TxtAppBuildInfo.Text = $"{prefix} {buildDateStr}";
+            TxtSpecApp.Text = $"Alex Toolkit {versionStr} (.NET 8.0 Windows x64)";
         }
         catch
         {
             TxtAppBuildInfo.Text = $"Dernière mise à jour le : {DateTime.Now:dd/MM/yyyy}";
+            TxtSpecApp.Text = "Alex Toolkit v4.1.0 (.NET 8.0 Windows x64)";
         }
     }
 
@@ -107,10 +112,18 @@ public partial class ParametresPage : Page, ISectionPage
     }
 
     // ─── Spécifications PC (À propos) ─────────────────────────────────
+    private DispatcherTimer? _specsFeedbackTimer;
+
     private async Task LoadSystemSpecsAsync()
     {
         await Task.Run(() =>
         {
+            // Droits d'administration
+            bool isAdmin = AdminElevation.IsAdmin();
+            string privileges = isAdmin
+                ? "Administrateur (Privilèges élevés ✔)"
+                : "Utilisateur standard (Droits restreints)";
+
             // Machine et Utilisateur
             string machine = $"{Environment.MachineName} (Session : {Environment.UserName})";
 
@@ -132,7 +145,7 @@ public partial class ParametresPage : Page, ISectionPage
                 cpu = Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER") ?? "Processeur";
             cpu += $" ({Environment.ProcessorCount} threads)";
 
-            // RAM
+            // RAM : Total uniquement (pas de RAM libre)
             string ram = "Non disponible";
             try
             {
@@ -141,35 +154,206 @@ public partial class ParametresPage : Page, ISectionPage
                 if (GlobalMemoryStatusEx(memStatus))
                 {
                     double totalGb = Math.Round(memStatus.ullTotalPhys / (1024.0 * 1024.0 * 1024.0), 1);
-                    double freeGb = Math.Round(memStatus.ullAvailPhys / (1024.0 * 1024.0 * 1024.0), 1);
-                    ram = $"{totalGb} Go ({freeGb} Go libres)";
+                    int roundedGb = (int)Math.Round(totalGb);
+                    ram = (Math.Abs(totalGb - roundedGb) < 0.3) ? $"{roundedGb} Go" : $"{totalGb} Go";
                 }
             }
             catch { }
 
-            // Disque C:
-            string disk = "Non disponible";
+            // ─── Disques & Stockage (Inventaire complet avec SSD/HDD/autre et %) ───
+            var diskItems = new List<(string drive, string type, int usedPct, double freeGb, double totalGb, string label)>();
             try
             {
-                var drive = new DriveInfo("C");
-                if (drive.IsReady)
+                // Détection des types physiques (SSD, NVMe, HDD)
+                var typeMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                try
                 {
+                    string psTypes = @"
+$pDisks = @(Get-PhysicalDisk -ErrorAction SilentlyContinue)
+Get-Volume | Where-Object { $_.DriveLetter } | ForEach-Object {
+    $letter = $_.DriveLetter
+    $part = Get-Partition -DriveLetter $letter -ErrorAction SilentlyContinue
+    $type = 'Disque'
+    if ($part) {
+        $pd = $pDisks | Where-Object { $_.DeviceId -eq $part.DiskNumber }
+        if ($pd) {
+            if ($pd.BusType -eq 'NVMe') { $type = 'SSD (NVMe)' }
+            elseif ($pd.MediaType) { $type = [string]$pd.MediaType }
+            elseif ($pd.BusType) { $type = [string]$pd.BusType }
+        }
+    }
+    ""$letter`t$type""
+}
+";
+                    var psi = new ProcessStartInfo("powershell.exe")
+                    {
+                        Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"{psTypes.Replace("\"", "\\\"")}\"",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        StandardOutputEncoding = Encoding.UTF8
+                    };
+                    using var p = Process.Start(psi);
+                    if (p != null)
+                    {
+                        string outTypes = p.StandardOutput.ReadToEnd();
+                        p.WaitForExit(3000);
+                        foreach (var line in outTypes.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var parts = line.Split('\t');
+                            if (parts.Length >= 2)
+                                typeMap[parts[0].Trim()] = parts[1].Trim();
+                        }
+                    }
+                }
+                catch { }
+
+                foreach (var drive in DriveInfo.GetDrives())
+                {
+                    if (!drive.IsReady) continue;
+                    if (drive.DriveType != DriveType.Fixed && drive.DriveType != DriveType.Removable) continue;
+
+                    string letter = drive.Name.TrimEnd('\\').TrimEnd(':');
+                    string type = typeMap.TryGetValue(letter, out var t) && !string.IsNullOrWhiteSpace(t)
+                        ? t
+                        : (drive.DriveType == DriveType.Removable ? "Amovible / USB" : "Disque");
+
                     double totalGb = Math.Round(drive.TotalSize / (1024.0 * 1024.0 * 1024.0), 1);
-                    double freeGb = Math.Round(drive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0), 1);
-                    disk = $"{freeGb} Go libres sur {totalGb} Go ({drive.DriveFormat})";
+                    double freeGb  = Math.Round(drive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0), 1);
+                    int usedPct    = drive.TotalSize > 0
+                        ? (int)Math.Round(((double)(drive.TotalSize - drive.TotalFreeSpace) / drive.TotalSize) * 100)
+                        : 0;
+                    string label   = !string.IsNullOrWhiteSpace(drive.VolumeLabel) ? drive.VolumeLabel : "";
+
+                    diskItems.Add(($"{letter}:", type, usedPct, freeGb, totalGb, label));
                 }
             }
             catch { }
 
             Dispatcher.InvokeAsync(() =>
             {
+                TxtSpecPrivileges.Text = privileges;
                 TxtSpecMachine.Text = machine;
                 TxtSpecOS.Text = os;
                 TxtSpecCPU.Text = cpu;
                 TxtSpecRAM.Text = ram;
-                TxtSpecDisk.Text = disk;
+
+                PanelDisksSpecs.Children.Clear();
+                if (diskItems.Count == 0)
+                {
+                    PanelDisksSpecs.Children.Add(new TextBlock
+                    {
+                        Text = "Aucun disque détecté",
+                        FontSize = 13,
+                        Foreground = (Brush)FindResource("TextSecondary")
+                    });
+                }
+                else
+                {
+                    for (int i = 0; i < diskItems.Count; i++)
+                    {
+                        var d = diskItems[i];
+                        var row = new DockPanel
+                        {
+                            Margin = new Thickness(0, i == 0 ? 0 : 5, 0, 0),
+                            LastChildFill = true
+                        };
+
+                        // 1. Lettre de lecteur
+                        var tbLetter = new TextBlock
+                        {
+                            Text = d.drive,
+                            FontWeight = FontWeights.Bold,
+                            FontSize = 13,
+                            Margin = new Thickness(0, 0, 7, 0),
+                            VerticalAlignment = VerticalAlignment.Center
+                        };
+                        tbLetter.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+                        DockPanel.SetDock(tbLetter, Dock.Left);
+                        row.Children.Add(tbLetter);
+
+                        // 2. Badge du type physique (SSD, SSD (NVMe), HDD, etc.)
+                        var badgeType = new Border
+                        {
+                            CornerRadius = new CornerRadius(4),
+                            Padding = new Thickness(6, 1.5, 6, 1.5),
+                            Margin = new Thickness(0, 0, 8, 0),
+                            VerticalAlignment = VerticalAlignment.Center,
+                            BorderThickness = new Thickness(0.8)
+                        };
+                        badgeType.SetResourceReference(Border.BackgroundProperty, "AccentDim");
+                        badgeType.SetResourceReference(Border.BorderBrushProperty, "BorderAccent");
+
+                        var tbType = new TextBlock
+                        {
+                            Text = d.type,
+                            FontSize = 10.5,
+                            FontWeight = FontWeights.SemiBold
+                        };
+                        tbType.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
+                        badgeType.Child = tbType;
+                        DockPanel.SetDock(badgeType, Dock.Left);
+                        row.Children.Add(badgeType);
+
+                        // 3. Pourcentage d'occupation & Espace (ex: "21% utilisé — 1 466 Go libres sur 1 862 Go")
+                        string labelPart = string.IsNullOrWhiteSpace(d.label) ? "" : $" ({d.label})";
+                        string diskDesc = $"{d.usedPct}% utilisé{labelPart} — {d.freeGb:N0} Go libres sur {d.totalGb:N0} Go";
+
+                        var tbDesc = new TextBlock
+                        {
+                            Text = diskDesc,
+                            FontSize = 12.5,
+                            VerticalAlignment = VerticalAlignment.Center
+                        };
+                        tbDesc.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+                        row.Children.Add(tbDesc);
+
+                        PanelDisksSpecs.Children.Add(row);
+                    }
+                }
             });
         });
+    }
+
+    private void BtnCopySpecs_Click(object sender, RoutedEventArgs e)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("═══════════════════════════════════════════════════════════════");
+        sb.AppendLine("  FICHE TECHNIQUE & SPÉCIFICATIONS — ALEX TOOLKIT");
+        sb.AppendLine("═══════════════════════════════════════════════════════════════");
+        sb.AppendLine($"• Application          : {TxtSpecApp.Text}");
+        sb.AppendLine($"• Droits d'accès       : {TxtSpecPrivileges.Text}");
+        sb.AppendLine($"• Ordinateur & Session : {TxtSpecMachine.Text}");
+        sb.AppendLine($"• Système d'exploit.   : {TxtSpecOS.Text}");
+        sb.AppendLine($"• Processeur (CPU)     : {TxtSpecCPU.Text}");
+        sb.AppendLine($"• Mémoire vive (RAM)   : {TxtSpecRAM.Text}");
+        sb.AppendLine("• Disques & Stockage   :");
+        foreach (var child in PanelDisksSpecs.Children)
+        {
+            if (child is DockPanel dp)
+            {
+                var texts = dp.Children.OfType<TextBlock>().Select(t => t.Text).ToList();
+                var badge = dp.Children.OfType<Border>().FirstOrDefault()?.Child as TextBlock;
+                string line = $"  - {texts.FirstOrDefault()} [{badge?.Text}] {texts.LastOrDefault()}";
+                sb.AppendLine(line);
+            }
+        }
+        sb.AppendLine("═══════════════════════════════════════════════════════════════");
+
+        try
+        {
+            Clipboard.SetText(sb.ToString());
+            CopySpecsFeedbackBorder.Visibility = Visibility.Visible;
+            _specsFeedbackTimer?.Stop();
+            _specsFeedbackTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+            _specsFeedbackTimer.Tick += (_, _) =>
+            {
+                _specsFeedbackTimer?.Stop();
+                CopySpecsFeedbackBorder.Visibility = Visibility.Collapsed;
+            };
+            _specsFeedbackTimer.Start();
+        }
+        catch { }
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]

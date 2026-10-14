@@ -9,12 +9,14 @@
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Display"
         RenderOptions.ClearTypeHint="Enabled"
-        Background="{DynamicResource WindowGradientBrush}">
+        Background="{DynamicResource WindowGradientBrush}"
+        Focusable="True"
+        PreviewMouseDown="Window_PreviewMouseDown">
 
-    <Grid>
+    <Grid x:Name="MainRootGrid" Focusable="True" FocusVisualStyle="{x:Null}">
         <Grid.ColumnDefinitions>
             <!-- 1. Sidebar gauche -->
-            <ColumnDefinition Width="240" />
+            <ColumnDefinition x:Name="SidebarColumn" Width="Auto" />
             <!-- 2. Contenu central -->
             <ColumnDefinition Width="*" />
             <!-- 3. Terminal latéral à droite -->
@@ -25,49 +27,85 @@
         <!--             1. SIDEBAR GAUCHE              -->
         <!-- ══════════════════════════════════════════ -->
         <Border Grid.Column="0"
+                x:Name="SidebarBorder"
+                Width="240"
                 Background="{DynamicResource BgSidebar}"
                 BorderBrush="{DynamicResource Border}"
-                BorderThickness="0,0,1,0">
+                BorderThickness="0,0,1,0"
+                ClipToBounds="True"
+                MouseEnter="Sidebar_MouseEnter"
+                MouseLeave="Sidebar_MouseLeave">
             <DockPanel>
 
                 <!-- Logo / Header -->
                 <Border DockPanel.Dock="Top"
+                        x:Name="SidebarHeaderBorder"
                         Padding="16,20,16,16"
                         BorderBrush="{DynamicResource Border}"
                         BorderThickness="0,0,0,1">
-                    <StackPanel>
-                        <TextBlock Text="⚡ ALEEXLEDEV"
-                                   FontFamily="{StaticResource FontMain}"
-                                   FontSize="11"
-                                   FontWeight="Bold"
-                                   Foreground="{DynamicResource Accent}" />
-                        <TextBlock Text="Alex Toolkit"
-                                   FontFamily="{StaticResource FontMain}"
-                                   FontSize="15"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextPrimary}"
-                                   Margin="0,4,0,0" />
-                    </StackPanel>
+                    <Grid>
+                        <!-- Mode étendu -->
+                        <StackPanel x:Name="HeaderExpanded">
+                            <TextBlock Text="⚡ ALEEXLEDEV"
+                                       FontFamily="{StaticResource FontMain}"
+                                       FontSize="11"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource Accent}" />
+                            <TextBlock Text="Alex Toolkit"
+                                       FontFamily="{StaticResource FontMain}"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimary}"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                        <!-- Mode réduit : seulement le logo ⚡ -->
+                        <TextBlock x:Name="HeaderCollapsed"
+                                   Text="⚡"
+                                   Visibility="Collapsed"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource FontEmoji}"
+                                   FontSize="20"
+                                   Foreground="{DynamicResource Accent}"
+                                   ToolTip="⚡ ALEEXLEDEV - Alex Toolkit" />
+                    </Grid>
                 </Border>
 
                 <!-- Barre de recherche moderne avec watermark -->
-                <Border DockPanel.Dock="Top" Padding="12,10,12,10">
-                    <Border Background="{DynamicResource BgCard}"
+                <Border DockPanel.Dock="Top" x:Name="SidebarSearchBorder" Padding="12,10,12,10">
+                    <Border x:Name="SearchBoxBorder"
+                            Background="{DynamicResource BgCard}"
                             BorderBrush="{DynamicResource Border}"
                             BorderThickness="1"
-                            CornerRadius="8">
+                            CornerRadius="8"
+                            Cursor="Hand"
+                            ToolTip="Rechercher un outil..."
+                            MouseLeftButtonUp="SearchBorder_MouseLeftButtonUp">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="🔍" Grid.Column="0"
-                                       Padding="8,6,4,6"
+                            <!-- Mode réduit : icône loupe 100% centrée dans tout le rectangle (48x36 px) -->
+                            <TextBlock x:Name="SearchIconCollapsed"
+                                       Text="🔍"
+                                       Visibility="Collapsed"
+                                       HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
+                                       TextAlignment="Center"
                                        FontFamily="{StaticResource FontEmoji}"
                                        Foreground="{DynamicResource TextPrimary}"
-                                       FontSize="13" />
-                            <Grid Grid.Column="1">
+                                       FontSize="14" />
+
+                            <!-- Mode étendu : icône + champ de saisie -->
+                            <Grid x:Name="SearchExpandedGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="🔍" Grid.Column="0"
+                                           Padding="8,6,4,6"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource FontEmoji}"
+                                           Foreground="{DynamicResource TextPrimary}"
+                                           FontSize="13" />
+                                <Grid x:Name="SearchInputGrid" Grid.Column="1">
                                 <!-- Watermark Text -->
                                 <TextBlock Text="Rechercher un outil..."
                                            VerticalAlignment="Center"
@@ -95,13 +133,15 @@
                                          FontFamily="{StaticResource FontMain}"
                                          FontSize="12.5"
                                          VerticalContentAlignment="Center"
-                                         TextChanged="SearchBox_TextChanged">
+                                         TextChanged="SearchBox_TextChanged"
+                                         KeyDown="SearchBox_KeyDown">
                                     <TextBox.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="0" />
                                         </Style>
                                     </TextBox.Resources>
                                 </TextBox>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Border>
@@ -109,12 +149,15 @@
 
                 <!-- Section basse ancrée en bas de la barre latérale : Paramètres -->
                 <Border DockPanel.Dock="Bottom"
+                        x:Name="SidebarSettingsBorder"
                         BorderBrush="{DynamicResource Border}"
                         BorderThickness="0,1,0,0"
                         Padding="8,8,8,8">
                     <Button x:Name="NavParametres"
+                            ToolTip="Paramètres"
                             Style="{StaticResource SidebarItem}"
-                            Click="NavParametres_Click">
+                            Click="NavParametres_Click"
+                            MouseEnter="NavCategory_MouseEnter">
                         <DockPanel LastChildFill="True">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="⚙️" Style="{StaticResource SidebarIcon}" />
@@ -124,15 +167,18 @@
                     </Button>
                 </Border>
 
-                <!-- Navigation principale défilable -->
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                <!-- Navigation principale défilable (ascenseur masqué, molette active) -->
+                <ScrollViewer x:Name="SidebarScrollViewer"
+                              VerticalScrollBarVisibility="Hidden"
                               HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="8,0,8,0">
+                    <StackPanel x:Name="CategoryStackPanel" Margin="8,0,8,0">
 
                         <!-- Favoris -->
                         <Button x:Name="NavFavoris"
+                                ToolTip="Favoris"
                                 Style="{StaticResource SidebarItem}"
-                                Click="NavFavoris_Click">
+                                Click="NavFavoris_Click"
+                                MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -160,15 +206,16 @@
                         </Button>
 
                         <!-- Séparateur & En-tête Catégories -->
-                        <Border Height="1" Background="{DynamicResource Border}" Margin="4,8,4,8" />
-                        <TextBlock Text="CATÉGORIES"
+                        <Border x:Name="CategoriesSeparator" Height="1" Background="{DynamicResource Border}" Margin="4,8,4,8" />
+                        <TextBlock x:Name="CategoriesHeader"
+                                   Text="CATÉGORIES"
                                    FontSize="10"
                                    FontWeight="Bold"
                                    Foreground="{DynamicResource TextMuted}"
                                    Margin="10,2,0,6" />
 
-                        <!-- 12 Catégories Principales (Triées par ordre alphabétique) -->
-                        <Button Tag="APPLICATIONS" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <!-- 13 Catégories Principales (Triées par ordre alphabétique) -->
+                        <Button Tag="APPLICATIONS" ToolTip="Applications" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -190,7 +237,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="DEMARRAGE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="DEMARRAGE" ToolTip="Démarrage &amp; Récupération" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -212,7 +259,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="DIAGNOSTIC" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="DIAGNOSTIC" ToolTip="Diagnostic" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -234,7 +281,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="DISQUE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="DISQUE" ToolTip="Disque" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -256,7 +303,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="MATERIEL" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="MATERIEL" ToolTip="Matériel" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -278,7 +325,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="MISES_A_JOUR" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="MISES_A_JOUR" ToolTip="Mises à jour" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -300,7 +347,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="NETTOYAGE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="NETTOYAGE" ToolTip="Nettoyage" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -322,7 +369,29 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="PERSONNALISATION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="NOUVEAUTE" ToolTip="Nouveauté" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                            <DockPanel LastChildFill="True">
+                                <Border DockPanel.Dock="Right"
+                                        Background="{DynamicResource BgInput}"
+                                        BorderBrush="{DynamicResource Border}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="7,2"
+                                        VerticalAlignment="Center">
+                                    <TextBlock x:Name="Badge_NOUVEAUTE"
+                                               Text="0"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimary}" />
+                                </Border>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="✨" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Nouveauté" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Button>
+
+                        <Button Tag="PERSONNALISATION" ToolTip="Personnalisation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -344,7 +413,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="REPARATION" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="REPARATION" ToolTip="Réparation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -366,7 +435,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="RESEAU" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="RESEAU" ToolTip="Réseau" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -388,7 +457,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="SECRETS" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="SECRETS" ToolTip="Secrets et clés" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -410,7 +479,7 @@
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="SECURITE" Style="{StaticResource SidebarItem}" Click="NavCategory_Click">
+                        <Button Tag="SECURITE" ToolTip="Sécurité" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
                                 <Border DockPanel.Dock="Right"
                                         Background="{DynamicResource BgInput}"
@@ -441,7 +510,7 @@
         <!-- ══════════════════════════════════════════ -->
         <!--           2. CONTENU PRINCIPAL             -->
         <!-- ══════════════════════════════════════════ -->
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" MouseEnter="MainContent_MouseEnter" PreviewMouseDown="MainContent_PreviewMouseDown">
             <Grid.RowDefinitions>
                 <!-- Header de page -->
                 <RowDefinition Height="Auto" />
@@ -479,8 +548,8 @@
         <!-- ══════════════════════════════════════════ -->
         <Grid x:Name="OutputPanel"
               Grid.Column="2"
-              Width="520"
-              MinWidth="350"
+              Width="360"
+              MinWidth="280"
               Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <!-- Poignée de redimensionnement (curseur SizeWE) -->

@@ -47,5 +47,5 @@ public partial class FavorisPage : Page, ISectionPage
         }
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

@@ -140,107 +140,179 @@
             <!-- ═══════════════════════════════════════════════════════════════ -->
             <!--     3. À PROPOS ET CONFIGURATION COMPLÈTE DE CET ORDINATEUR     -->
             <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!--     3. À PROPOS ET FICHE DE SPÉCIFICATIONS TECHNIQUES           -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
             <Border Background="{DynamicResource BgCard}"
                     BorderBrush="{DynamicResource Border}"
                     BorderThickness="1"
                     CornerRadius="12"
                     Padding="22,20,22,20">
                 <StackPanel>
-                    <DockPanel LastChildFill="True" Margin="0,0,0,18">
+                    <DockPanel LastChildFill="True" Margin="0,0,0,16">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="BtnCopySpecs"
+                                    Content="📋 Copier la fiche"
+                                    Background="{DynamicResource BgInput}"
+                                    BorderBrush="{DynamicResource Border}"
+                                    BorderThickness="1"
+                                    Foreground="{DynamicResource TextPrimary}"
+                                    Padding="14,7,14,7"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Cursor="Hand"
+                                    ToolTip="Copier la fiche de spécifications complète"
+                                    Click="BtnCopySpecs_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </StackPanel>
+
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="ℹ️ À propos et configuration de cet ordinateur"
+                            <TextBlock Text="ℹ️ À propos &amp; Spécifications du système"
                                        FontSize="16"
                                        FontWeight="Bold"
                                        Foreground="{DynamicResource TextPrimary}" />
-                            <TextBlock Text="Informations matérielles, système et environnement d'exécution de la machine active."
+                            <TextBlock Text="Fiche technique complète : matériel, système d'exploitation et environnement d'exécution."
                                        FontSize="12.5"
                                        Foreground="{DynamicResource TextSecondary}"
                                        Margin="0,3,0,0" />
                         </StackPanel>
                     </DockPanel>
 
-                    <!-- Grille des spécifications du PC (5 cartes) -->
-                    <Grid Margin="0,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                    <!-- Message temporaire de confirmation de copie de la fiche -->
+                    <Border x:Name="CopySpecsFeedbackBorder"
+                            Visibility="Collapsed"
+                            Background="#10B98122"
+                            BorderBrush="#10B981"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,8,12,8"
+                            Margin="0,0,0,14">
+                        <TextBlock Text="✅ Fiche de spécifications copiée dans le presse-papiers !"
+                                   Foreground="#34D399"
+                                   FontWeight="SemiBold"
+                                   FontSize="12.5" />
+                    </Border>
 
-                        <!-- Nom Machine et Session -->
-                        <Border Grid.Row="0" Grid.Column="0"
-                                Background="{DynamicResource BgDeep}"
-                                BorderBrush="{DynamicResource Border}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="14,12,14,12"
-                                Margin="0,0,6,10">
-                            <StackPanel>
-                                <TextBlock Text="💻 Ordinateur et utilisateur" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
-                                <TextBlock x:Name="TxtSpecMachine" Text="Chargement..." FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
-                            </StackPanel>
-                        </Border>
+                    <!-- Fiche de spécification en 1 seul bloc, ligne par ligne -->
+                    <Border Background="{DynamicResource BgInput}"
+                            BorderBrush="{DynamicResource Border}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <StackPanel>
+                            <!-- Ligne 1 : Application -->
+                            <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,0,0,1" Padding="18,11,18,11">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="📦" Margin="0,0,10,0" FontSize="14" FontFamily="{StaticResource FontEmoji}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Application &amp; Version" FontSize="12.5" FontWeight="Medium" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TxtSpecApp" Grid.Column="1" Text="Alex Toolkit v4.1.0 (.NET 8.0 Windows x64)" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
 
-                        <!-- Système d'exploitation -->
-                        <Border Grid.Row="0" Grid.Column="1"
-                                Background="{DynamicResource BgDeep}"
-                                BorderBrush="{DynamicResource Border}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="14,12,14,12"
-                                Margin="6,0,0,10">
-                            <StackPanel>
-                                <TextBlock Text="🪟 Système d'exploitation" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
-                                <TextBlock x:Name="TxtSpecOS" Text="Chargement..." FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
-                            </StackPanel>
-                        </Border>
+                            <!-- Ligne 2 : Privilèges d'exécution -->
+                            <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,0,0,1" Padding="18,11,18,11">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="🛡️" Margin="0,0,10,0" FontSize="14" FontFamily="{StaticResource FontEmoji}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Droits d'accès" FontSize="12.5" FontWeight="Medium" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TxtSpecPrivileges" Grid.Column="1" Text="Chargement..." FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
 
-                        <!-- Processeur (CPU) -->
-                        <Border Grid.Row="1" Grid.Column="0"
-                                Background="{DynamicResource BgDeep}"
-                                BorderBrush="{DynamicResource Border}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="14,12,14,12"
-                                Margin="0,0,6,10">
-                            <StackPanel>
-                                <TextBlock Text="🧠 Processeur (CPU)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
-                                <TextBlock x:Name="TxtSpecCPU" Text="Chargement..." FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Border>
+                            <!-- Ligne 3 : Ordinateur et utilisateur -->
+                            <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,0,0,1" Padding="18,11,18,11">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="💻" Margin="0,0,10,0" FontSize="14" FontFamily="{StaticResource FontEmoji}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Ordinateur &amp; Utilisateur" FontSize="12.5" FontWeight="Medium" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TxtSpecMachine" Grid.Column="1" Text="Chargement..." FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
 
-                        <!-- Mémoire vive (RAM) -->
-                        <Border Grid.Row="1" Grid.Column="1"
-                                Background="{DynamicResource BgDeep}"
-                                BorderBrush="{DynamicResource Border}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="14,12,14,12"
-                                Margin="6,0,0,10">
-                            <StackPanel>
-                                <TextBlock Text="⚡ Mémoire vive (RAM)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
-                                <TextBlock x:Name="TxtSpecRAM" Text="Chargement..." FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
-                            </StackPanel>
-                        </Border>
+                            <!-- Ligne 4 : Système d'exploitation -->
+                            <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,0,0,1" Padding="18,11,18,11">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="🪟" Margin="0,0,10,0" FontSize="14" FontFamily="{StaticResource FontEmoji}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Système d'exploitation" FontSize="12.5" FontWeight="Medium" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TxtSpecOS" Grid.Column="1" Text="Chargement..." FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
 
-                        <!-- Stockage système (C:) -->
-                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                Background="{DynamicResource BgDeep}"
-                                BorderBrush="{DynamicResource Border}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="14,12,14,12"
-                                Margin="0,0,0,0">
-                            <StackPanel>
-                                <TextBlock Text="💽 Disque système (C:)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextMuted}" />
-                                <TextBlock x:Name="TxtSpecDisk" Text="Chargement..." FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,0" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
+                            <!-- Ligne 5 : Processeur (CPU) -->
+                            <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,0,0,1" Padding="18,11,18,11">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="🧠" Margin="0,0,10,0" FontSize="14" FontFamily="{StaticResource FontEmoji}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Processeur (CPU)" FontSize="12.5" FontWeight="Medium" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TxtSpecCPU" Grid.Column="1" Text="Chargement..." FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Ligne 6 : Mémoire vive (RAM) -->
+                            <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,0,0,1" Padding="18,11,18,11">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="⚡" Margin="0,0,10,0" FontSize="14" FontFamily="{StaticResource FontEmoji}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Mémoire vive (RAM)" FontSize="12.5" FontWeight="Medium" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TxtSpecRAM" Grid.Column="1" Text="Chargement..." FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Ligne 7 : Disques & Stockage (Tous les disques répertoriés ligne par ligne) -->
+                            <Border BorderThickness="0" Padding="18,12,18,12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,2,0,0">
+                                        <TextBlock Text="💽" Margin="0,0,10,0" FontSize="14" FontFamily="{StaticResource FontEmoji}" VerticalAlignment="Top"/>
+                                        <TextBlock Text="Disques &amp; Stockage" FontSize="12.5" FontWeight="Medium" Foreground="{DynamicResource TextMuted}" VerticalAlignment="Top"/>
+                                    </StackPanel>
+                                    <!-- Liste des disques : chaque disque sur sa propre ligne -->
+                                    <StackPanel x:Name="PanelDisksSpecs" Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Chargement des disques..." FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
 

@@ -13,5 +13,5 @@ public partial class MaterielPage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("MATERIEL"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

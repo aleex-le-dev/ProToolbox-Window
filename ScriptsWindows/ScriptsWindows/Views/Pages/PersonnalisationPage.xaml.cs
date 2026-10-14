@@ -13,5 +13,5 @@ public partial class PersonnalisationPage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("PERSONNALISATION"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

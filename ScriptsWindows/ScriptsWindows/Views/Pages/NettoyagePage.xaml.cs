@@ -13,5 +13,5 @@ public partial class NettoyagePage : Page, ISectionPage
         _controller = SectionViewBuilder.PopulateDirect(ToolsPanel, ToolRegistry.GetByCategory("NETTOYAGE"));
     }
 
-    public void ResetSections() => _controller?.CollapseAll();
+    public void ResetSections() => _controller?.ExpandAll();
 }

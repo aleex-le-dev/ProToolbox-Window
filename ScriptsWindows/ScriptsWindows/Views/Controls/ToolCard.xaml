@@ -4,8 +4,8 @@
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
               mc:Ignorable="d" 
-              d:DesignHeight="148" d:DesignWidth="320"
-              Width="320" Height="148" Margin="0,0,14,14">
+              d:DesignHeight="215" d:DesignWidth="325"
+              Width="325" Height="215" Margin="0,0,12,12">
     <UserControl.Resources>
         <Style x:Key="ModernCardStyle" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource BgCard}"/>
@@ -38,9 +38,11 @@
             <Grid.RowDefinitions>
                 <!-- 1. En-tête : Icône, Titre, Favori -->
                 <RowDefinition Height="Auto"/>
-                <!-- 2. Description -->
+                <!-- 2. Description principale -->
+                <RowDefinition Height="Auto"/>
+                <!-- 3. Contenu détaillé / Liste à puces -->
                 <RowDefinition Height="*"/>
-                <!-- 3. Pied de carte : Bouton Exécuter -->
+                <!-- 4. Pied de carte : Badges + Bouton Exécuter -->
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
@@ -57,9 +59,9 @@
                         Background="{DynamicResource AccentDim}" 
                         BorderBrush="{DynamicResource BorderAccent}"
                         BorderThickness="0.8"
-                        CornerRadius="8" Width="36" Height="36" Margin="0,0,10,0"
+                        CornerRadius="8" Width="34" Height="34" Margin="0,0,10,0"
                         VerticalAlignment="Center">
-                    <TextBlock x:Name="TxtIcon" Text="⚡" FontSize="17" 
+                    <TextBlock x:Name="TxtIcon" Text="⚡" FontSize="16" 
                                FontFamily="{StaticResource FontEmoji}"
                                Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -68,12 +70,12 @@
                 <!-- Titre de l'outil -->
                 <TextBlock x:Name="TxtTitle" Grid.Column="1"
                            Text="Titre de l'outil" 
-                           FontWeight="SemiBold" FontSize="13.5" 
+                           FontWeight="SemiBold" FontSize="13" 
                            Foreground="{DynamicResource TextPrimary}"
                            TextWrapping="Wrap" VerticalAlignment="Center"
                            TextTrimming="CharacterEllipsis"/>
 
-                <!-- Favori officiel Windows (police native Segoe MDL2 Assets, nette et sans vecteur) -->
+                <!-- Favori officiel Windows (police native Segoe MDL2 Assets) -->
                 <Button x:Name="BtnFavorite" Grid.Column="2"
                         Background="Transparent" BorderThickness="0" 
                         Cursor="Hand" Click="BtnFavorite_Click" 
@@ -86,7 +88,7 @@
                     </Button.Resources>
                     <TextBlock x:Name="TxtFavIcon"
                                FontFamily="Segoe MDL2 Assets"
-                               FontSize="17"
+                               FontSize="16"
                                Text="&#xE734;"
                                Foreground="{DynamicResource TextMuted}"
                                VerticalAlignment="Center"
@@ -94,34 +96,37 @@
                 </Button>
             </Grid>
 
-            <!-- 2. Description -->
+            <!-- 2. Description concise -->
             <TextBlock x:Name="TxtDescription" Grid.Row="1"
                        Text="Description concise de la fonction de l'outil." 
-                       Foreground="{DynamicResource TextSecondary}" FontSize="12"
+                       Foreground="{DynamicResource TextSecondary}" FontSize="11.5"
                        TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
-                       VerticalAlignment="Top" Margin="0,2,0,4"/>
+                       MaxHeight="34" VerticalAlignment="Top" Margin="0,0,0,4"/>
 
-            <!-- 3. Pied : Badge Catégorie à gauche (si activé) + Bouton Exécuter à droite -->
-            <DockPanel Grid.Row="2" LastChildFill="False">
+            <!-- 3. Liste détaillée avec puces (actions et contenu direct) -->
+            <StackPanel x:Name="PanelFeatures" Grid.Row="2" VerticalAlignment="Top" Margin="0,2,0,4"/>
+
+            <!-- 4. Pied : Badge Catégorie à gauche (si activé) + Bouton Exécuter à droite -->
+            <DockPanel Grid.Row="3" LastChildFill="False" Margin="0,2,0,0">
                 <Border x:Name="BadgeCategory"
                         DockPanel.Dock="Left"
                         Background="{DynamicResource BgInput}"
                         BorderBrush="{DynamicResource Border}"
                         BorderThickness="1"
                         CornerRadius="6"
-                        Padding="7,3,7,3"
+                        Padding="7,2,7,2"
                         VerticalAlignment="Center"
                         Visibility="Collapsed">
                     <TextBlock x:Name="TxtCategory"
                                Text="Catégorie"
-                               FontSize="10.5"
+                               FontSize="10"
                                FontFamily="{StaticResource FontEmoji}"
                                FontWeight="Medium"
                                Foreground="{DynamicResource TextMuted}" />
                 </Border>
                 <Button x:Name="BtnRun" DockPanel.Dock="Right" Click="BtnRun_Click"
-                        Content="▶ Exécuter" FontSize="11.5" FontWeight="SemiBold"
-                        Padding="14,6" Cursor="Hand"
+                        Content="▶ Exécuter" FontSize="11" FontWeight="SemiBold"
+                        Padding="13,5" Cursor="Hand"
                         Background="{DynamicResource Accent}" Foreground="#FFFFFF" BorderThickness="0">
                     <Button.Resources>
                         <Style TargetType="Border">

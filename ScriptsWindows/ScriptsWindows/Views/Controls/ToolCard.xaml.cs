@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -45,6 +46,53 @@ public partial class ToolCard : UserControl
         TxtDescription.Text = tool.Description;
 
         UpdateFavoriteState();
+        PopulateFeatures(tool);
+    }
+
+    private void PopulateFeatures(ScriptTool tool)
+    {
+        PanelFeatures.Children.Clear();
+
+        var features = tool.Features;
+        if (features != null && features.Length > 0)
+        {
+            PanelFeatures.Visibility = Visibility.Visible;
+            TxtDescription.MaxHeight = 34;
+
+            foreach (var feat in features.Take(3))
+            {
+                var itemDock = new DockPanel { Margin = new Thickness(0, 1.5, 0, 1.5) };
+
+                var bullet = new TextBlock
+                {
+                    Text = "•",
+                    FontWeight = FontWeights.Bold,
+                    FontSize = 11,
+                    Margin = new Thickness(2, 0, 6, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                bullet.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
+                DockPanel.SetDock(bullet, Dock.Left);
+                itemDock.Children.Add(bullet);
+
+                var txt = new TextBlock
+                {
+                    Text = feat,
+                    FontSize = 11,
+                    TextTrimming = TextTrimming.CharacterEllipsis,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                txt.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+                itemDock.Children.Add(txt);
+
+                PanelFeatures.Children.Add(itemDock);
+            }
+        }
+        else
+        {
+            PanelFeatures.Visibility = Visibility.Collapsed;
+            TxtDescription.MaxHeight = 70; // Permet à la description de s'étaler si pas de liste
+        }
     }
 
     /// <summary>
