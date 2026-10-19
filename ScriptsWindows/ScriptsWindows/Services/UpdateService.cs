@@ -291,45 +291,50 @@ public static class UpdateService
         }
 
         int currentPid = Process.GetCurrentProcess().Id;
-        string escapedCurrentExe = currentExePath.Replace("'", "''");
-        string escapedTempExe = tempDownloadedExePath.Replace("'", "''");
+        string updaterBatPath = Path.Combine(Path.GetTempPath(), $"alextoolkit_updater_{Guid.NewGuid():N}.cmd");
 
-        // Script PowerShell autonome de permutation & redémarrage
-        string script = $@"
-$target = '{escapedCurrentExe}'
-$source = '{escapedTempExe}'
-$pidToWait = {currentPid}
+        // Script batch autonome natif : attend l'arrêt du PID, remplace le binaire, relance et s'auto-supprime
+        string batchScript = $@"@echo off
+setlocal
+set ""TARGET={currentExePath}""
+set ""SOURCE={tempDownloadedExePath}""
+set ""PID={currentPid}""
 
-# 1. Attente de la libération du processus appelant
-try {{
-    Wait-Process -Id $pidToWait -Timeout 15 -ErrorAction SilentlyContinue
-}} catch {{}}
-Start-Sleep -Milliseconds 600
+:: 1. Attente de la libération complète du processus
+:wait_loop
+tasklist /fi ""PID eq %PID%"" 2>nul | find ""%PID%"" >nul
+if not errorlevel 1 (
+    timeout /t 1 /nobreak >nul
+    goto wait_loop
+)
 
-# 2. Remplacement avec gestion des verrous temporaires
-$attempts = 0
-$success = $false
-while ($attempts -lt 12) {{
-    try {{
-        Move-Item -Path $source -Destination $target -Force -ErrorAction Stop
-        $success = $true
-        break
-    }} catch {{
-        Start-Sleep -Milliseconds 500
-        $attempts++
-    }}
-}}
+:: Pause de sécurité pour libérer les handles de fichier
+timeout /t 1 /nobreak >nul
 
-# 3. Relance immédiate de la nouvelle version
-if ($success -and (Test-Path $target)) {{
-    Start-Process -FilePath $target
-}}
+:: 2. Remplacement du binaire (avec stratégie .old en cas de verrou récalcitrant)
+copy /Y ""%SOURCE%"" ""%TARGET%"" >nul 2>&1
+if errorlevel 1 (
+    move /Y ""%TARGET%"" ""%TARGET%.old"" >nul 2>&1
+    copy /Y ""%SOURCE%"" ""%TARGET%"" >nul 2>&1
+)
+
+:: Nettoyage du fichier temporaire source
+del /f /q ""%SOURCE%"" >nul 2>&1
+if exist ""%TARGET%.old"" del /f /q ""%TARGET%.old"" >nul 2>&1
+
+:: 3. Relance de la nouvelle version
+start """" ""%TARGET%""
+
+:: Auto-suppression du script updater
+del ""%~f0"" >nul 2>&1
 ";
+
+        File.WriteAllText(updaterBatPath, batchScript, System.Text.Encoding.ASCII);
 
         var psi = new ProcessStartInfo
         {
-            FileName = "powershell.exe",
-            Arguments = $"-NoProfile -WindowStyle Hidden -Command \"{script}\"",
+            FileName = "cmd.exe",
+            Arguments = $"/c \"{updaterBatPath}\"",
             UseShellExecute = true,
             CreateNoWindow = true,
             WindowStyle = ProcessWindowStyle.Hidden
@@ -337,11 +342,17 @@ if ($success -and (Test-Path $target)) {{
 
         Process.Start(psi);
 
-        // Fermeture propre de l'instance courante
-        Application.Current.Dispatcher.Invoke(() =>
+        // Fermeture immédiate et totale garantie du processus actuel pour libérer le fichier
+        try
         {
-            Application.Current.Shutdown();
-        });
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Application.Current.Shutdown();
+            });
+        }
+        catch { }
+
+        Environment.Exit(0);
     }
 
     /// <summary>
