@@ -90,16 +90,20 @@
        - *Moniteur de fiabilité (Perfmon)* (historique visuel de stabilité au fil du temps en 1 clic direct).
 - **📦 Installation d'applications (`ApplicationsPage.xaml.cs`)** :
   - **Gestionnaire unifié d'installation (`AppInstallerDialog.xaml`)** :
-    - Regroupe strictement vos **6 applications indispensables** :
-      1. 🌐 **Google Chrome** (navigateur web rapide et sécurisé)
-      2. 🎬 **VLC Media Player** (lecteur multimédia universel)
-      3. 📄 **Sumatra PDF** (lecteur PDF léger et rapide)
-      4. 🗜️ **7-Zip** (gestionnaire d'archives haute compression)
-      5. ⚡ **PowerShell 7** (terminal moderne multiplateforme)
-      6. 💼 **Microsoft Office** (installateur complet via lien Google Drive)
+    - Regroupe vos **applications indispensables** :
+      1. 🎨 **ArtCraft Launcher** (suite créative libre tout-en-un de 13 applications en Rust : PhotoCraft, VectorCraft, FilmCraft, CAD, 3D, Audio... — téléchargement direct Google Drive avec secours automatique MSI)
+      2. 🌐 **Google Chrome** (navigateur web rapide et sécurisé)
+      3. 🎬 **VLC Media Player** (lecteur multimédia universel)
+      4. 📄 **Sumatra PDF** (lecteur PDF léger et rapide)
+      5. 🗜️ **7-Zip** (gestionnaire d'archives haute compression)
+      6. ⚡ **PowerShell 7** (terminal moderne multiplateforme)
+      7. 💼 **Microsoft Office** (installateur complet via lien Google Drive)
     - **Options interactives** : cases à cocher pour sélection multiple, bouton *Tout cocher* / *Tout décocher*, déploiement groupé en 1 clic avec barre de progression et boutons d'installation individuels par ligne.
-    - **Affichage direct** : la carte de l'outil est affichée directement sur la page sans sous-catégorie ni bandeau d'accordéon superflu.
-    - Anciens scripts individuels 1-clic supprimés de la page pour une interface 100% épurée et sans doublons.
+  - **Carte dédiée 1-clic ArtCraft Launcher** (`app_install_artcraft`) :
+    - **Source principale** : téléchargement direct Google Drive haute vitesse du binaire `artcraft-launcher.exe` (v0.5.1), installation dans Program Files et création automatique des raccourcis (Bureau & Démarrer).
+    - **Lien de secours automatique** : basculement transparent vers le package MSI officiel GitHub Releases (v0.3.2) déployé via `msiexec /i ... /passive`.
+    - **Dernier recours** : ouverture du lien Web Google Drive dans le navigateur par défaut.
+    - Présentation complète de la suite et lien vers [getartcraft.com/apps](https://getartcraft.com/apps).
 
 - **🖥️ Matériel et périphériques (`MaterielPage.xaml.cs`)** :
   - Gestionnaire de périphériques retiré de cette section (déjà accessible en 1 clic dans le centre de diagnostic unifié, onglet outils/actions).

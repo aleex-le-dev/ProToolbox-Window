@@ -91,8 +91,9 @@ public static class ToolRegistry
         ["disk_defrag_gui"] = "dfrgui.exe",
         ["disk_bitlocker"] = "manage-bde.exe -status",
 
-        // ─── Applications (1) ───
-        ["app_installer_center"] = "AlexToolkit.exe (Installation d'applications unifiée : Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell 7, Office)",
+        // ─── Applications (2) ───
+        ["app_installer_center"] = "AlexToolkit.exe (Installation d'applications unifiée : Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell 7, Office, ArtCraft)",
+        ["app_install_artcraft"] = "AlexToolkit.exe (Téléchargement direct Google Drive avec secours MSI GitHub)",
 
         // ─── Mises à jour (1) ───
         ["upd_winget_manager"] = "winget.exe upgrade (Gestionnaire de paquets interactif Winget)",
@@ -763,18 +764,36 @@ public static class ToolRegistry
         {
             Id = "app_installer_center",
             Name = "Installer vos applications indispensables",
-            Description = "Installez ou mettez à jour facilement vos logiciels du quotidien (Google Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell, Office) en cochant simplement ceux que vous voulez.",
+            Description = "Installez ou mettez à jour facilement vos logiciels du quotidien (Google Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell, Office, ArtCraft Launcher) en cochant simplement ceux que vous voulez.",
             Features = new[]
             {
-                "Navigateurs modernes (Chrome, Firefox, Brave)",
-                "Utilitaires essentiels (VLC, 7-Zip, Sumatra PDF)",
-                "Outils bureautiques et pro (PowerShell 7, VS Code)"
+                "Navigateurs et utilitaires essentiels (Chrome, VLC, 7-Zip, Sumatra PDF)",
+                "Bureautique et console moderne (Office, PowerShell 7)",
+                "Suite créative tout-en-un (ArtCraft Launcher & 13 applications libres)"
             },
             Category = "APPLICATIONS",
             SubHeading = "Installation et déploiement rapide",
             Icon = "📦",
             Action = (log, ct) => AppService.OpenAppInstallerDialog(log, ct),
-            Tags = new[] { "installer", "applications", "logiciels", "programmes", "chrome", "vlc", "7zip", "office", "sumatra", "facile", "1-clic" }
+            Tags = new[] { "installer", "applications", "logiciels", "programmes", "chrome", "vlc", "7zip", "office", "sumatra", "artcraft", "craft", "facile", "1-clic" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_install_artcraft",
+            Name = "Installer ArtCraft Launcher — Suite Créative",
+            Description = "Télécharge et déploie ArtCraft Launcher via le lien direct Google Drive (avec secours automatique sur le package MSI GitHub) pour accéder à toute la suite créative open-source (PhotoCraft, VectorCraft, FilmCraft, CAD...).",
+            Features = new[]
+            {
+                "Source principale : Téléchargement direct Google Drive (v0.5.1)",
+                "Secours automatique : Package officiel .msi GitHub Releases (v0.3.2)",
+                "13 applications créatives libres & gratuites (https://getartcraft.com/apps)"
+            },
+            Category = "APPLICATIONS",
+            SubHeading = "Suite créative & multimédia",
+            Icon = "🎨",
+            Action = async (log, ct) => await AppService.InstallArtCraft(log, null, ct),
+            Tags = new[] { "artcraft", "craft", "launcher", "drive", "msi", "photocraft", "vectorcraft", "filmcraft", "cadcraft", "créatif", "graphisme", "dessin", "vidéo", "open-source", "suite" }
         });
     }
 

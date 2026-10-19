@@ -57,7 +57,7 @@
             </Border>
 
             <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!--   2. STRUCTURE DÉTAILLÉE : SCRIPTS, EXÉCUTABLES ET COMMANDES    -->
+            <!--     2. À PROPOS ET FICHE DE SPÉCIFICATIONS TECHNIQUES           -->
             <!-- ═══════════════════════════════════════════════════════════════ -->
             <Border Background="{DynamicResource BgCard}"
                     BorderBrush="{DynamicResource Border}"
@@ -65,89 +65,6 @@
                     CornerRadius="12"
                     Padding="22,20,22,20"
                     Margin="0,0,0,20">
-                <StackPanel>
-                    <!-- En-tête de la carte -->
-                    <DockPanel LastChildFill="True" Margin="0,0,0,16">
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-
-                            <Button x:Name="BtnCopyHierarchy"
-                                    Content="📋 Copier l'arborescence"
-                                    Background="{DynamicResource Accent}"
-                                    BorderThickness="0"
-                                    Foreground="#FFFFFF"
-                                    Padding="16,8,16,8"
-                                    FontSize="12.5"
-                                    FontWeight="Bold"
-                                    Cursor="Hand"
-                                    ToolTip="Copier toute l'arborescence détaillée"
-                                    Click="BtnCopyHierarchy_Click">
-                                <Button.Resources>
-                                    <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="8"/>
-                                    </Style>
-                                </Button.Resources>
-                            </Button>
-                        </StackPanel>
-
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="📁 Arborescence des scripts et commandes de ce projet"
-                                       FontSize="16"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource TextPrimary}" />
-                            <TextBlock Text="Inventaire complet de chaque catégorie, script et commande / binaire .exe sous-jacent."
-                                       FontSize="12.5"
-                                       Foreground="{DynamicResource TextSecondary}"
-                                       Margin="0,4,0,0" />
-                        </StackPanel>
-                    </DockPanel>
-
-                    <!-- Message temporaire de confirmation de copie -->
-                    <Border x:Name="CopyFeedbackBorder"
-                            Visibility="Collapsed"
-                            Background="#10B98122"
-                            BorderBrush="#10B981"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="12,8,12,8"
-                            Margin="0,0,0,14">
-                        <TextBlock x:Name="TxtCopyFeedback"
-                                   Text="✅ Liste copiée dans le presse-papiers !"
-                                   Foreground="#34D399"
-                                   FontWeight="SemiBold"
-                                   FontSize="12.5" />
-                    </Border>
-
-                    <!-- Zone de prévisualisation arborescente -->
-                    <Border Background="{DynamicResource BgInput}"
-                            BorderBrush="{DynamicResource Border}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="16,14,16,14">
-                        <TextBox x:Name="TxtHierarchyPreview"
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 Foreground="{DynamicResource TextPrimary}"
-                                 FontFamily="{StaticResource FontMono}"
-                                 FontSize="12"
-                                 IsReadOnly="True"
-                                 TextWrapping="Wrap"
-                                 MaxHeight="360"
-                                 VerticalScrollBarVisibility="Auto" />
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!--     3. À PROPOS ET CONFIGURATION COMPLÈTE DE CET ORDINATEUR     -->
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!--     3. À PROPOS ET FICHE DE SPÉCIFICATIONS TECHNIQUES           -->
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <Border Background="{DynamicResource BgCard}"
-                    BorderBrush="{DynamicResource Border}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="22,20,22,20">
                 <StackPanel>
                     <DockPanel LastChildFill="True" Margin="0,0,0,16">
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
@@ -279,6 +196,86 @@
                                 </Grid>
                             </Border>
                         </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!--   3. STRUCTURE DÉTAILLÉE : SCRIPTS, EXÉCUTABLES ET COMMANDES    -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Border Background="{DynamicResource BgCard}"
+                    BorderBrush="{DynamicResource Border}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="22,20,22,20">
+                <StackPanel>
+                    <!-- En-tête de la carte -->
+                    <DockPanel LastChildFill="True" Margin="0,0,0,16">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+
+                            <Button x:Name="BtnCopyHierarchy"
+                                    Content="📋 Copier l'arborescence"
+                                    Background="{DynamicResource Accent}"
+                                    BorderThickness="0"
+                                    Foreground="#FFFFFF"
+                                    Padding="16,8,16,8"
+                                    FontSize="12.5"
+                                    FontWeight="Bold"
+                                    Cursor="Hand"
+                                    ToolTip="Copier toute l'arborescence détaillée"
+                                    Click="BtnCopyHierarchy_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="📁 Arborescence des scripts et commandes de ce projet"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Text="Inventaire complet de chaque catégorie, script et commande / binaire .exe sous-jacent."
+                                       FontSize="12.5"
+                                       Foreground="{DynamicResource TextSecondary}"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <!-- Message temporaire de confirmation de copie -->
+                    <Border x:Name="CopyFeedbackBorder"
+                            Visibility="Collapsed"
+                            Background="#10B98122"
+                            BorderBrush="#10B981"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,8,12,8"
+                            Margin="0,0,0,14">
+                        <TextBlock x:Name="TxtCopyFeedback"
+                                   Text="✅ Liste copiée dans le presse-papiers !"
+                                   Foreground="#34D399"
+                                   FontWeight="SemiBold"
+                                   FontSize="12.5" />
+                    </Border>
+
+                    <!-- Zone de prévisualisation arborescente -->
+                    <Border Background="{DynamicResource BgInput}"
+                            BorderBrush="{DynamicResource Border}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16,14,16,14">
+                        <TextBox x:Name="TxtHierarchyPreview"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Foreground="{DynamicResource TextPrimary}"
+                                 FontFamily="{StaticResource FontMono}"
+                                 FontSize="12"
+                                 IsReadOnly="True"
+                                 TextWrapping="Wrap"
+                                 MaxHeight="360"
+                                 VerticalScrollBarVisibility="Auto" />
                     </Border>
                 </StackPanel>
             </Border>

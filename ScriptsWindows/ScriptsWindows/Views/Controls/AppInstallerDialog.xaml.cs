@@ -35,6 +35,7 @@ public partial class AppInstallerDialog : Window
     private void InitApps()
     {
         Apps.Clear();
+        Apps.Add(new AppItemModel("SPECIAL_ARTCRAFT", "ArtCraft Launcher", "Suite créative open-source tout-en-un (Google Drive direct + secours MSI)", "🎨", isSpecialArtCraft: true, actionButtonText: "Installer"));
         Apps.Add(new AppItemModel("Google.Chrome", "Google Chrome", "Navigateur web rapide et sécurisé par Google", "🌐"));
         Apps.Add(new AppItemModel("VideoLAN.VLC", "VLC Media Player", "Lecteur multimédia universel lisant tous les formats", "🎬"));
         Apps.Add(new AppItemModel("SumatraPDF.SumatraPDF", "Sumatra PDF", "Lecteur PDF et eBooks ultra-léger et instantané", "📄"));
@@ -149,6 +150,18 @@ public partial class AppInstallerDialog : Window
                 return true;
             }
 
+            if (app.IsSpecialArtCraft)
+            {
+                TxtFeedback.Text = "Téléchargement d'ArtCraft Launcher...";
+                return await AppService.InstallArtCraft(_onOutput, progress =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        TxtFeedback.Text = $"ArtCraft : {progress}";
+                    });
+                }, _ct);
+            }
+
             _onOutput($"[i] Installation de {app.Name} (Winget ID: {app.Id})...");
             string cmd = $"winget install --id {app.Id} --accept-package-agreements --accept-source-agreements --silent -e";
             string output = await CommandRunner.RunAsync(cmd, _ct);
@@ -187,6 +200,7 @@ public class AppItemModel : INotifyPropertyChanged
     public string Description { get; set; }
     public string Icon { get; set; }
     public bool IsSpecialOffice { get; set; }
+    public bool IsSpecialArtCraft { get; set; }
     public string ActionButtonText { get; set; }
 
     private bool _isSelected;
@@ -210,13 +224,14 @@ public class AppItemModel : INotifyPropertyChanged
         set { _statusColor = value; OnPropertyChanged(); }
     }
 
-    public AppItemModel(string id, string name, string description, string icon, bool isSpecialOffice = false, string actionButtonText = "Installer")
+    public AppItemModel(string id, string name, string description, string icon, bool isSpecialOffice = false, bool isSpecialArtCraft = false, string actionButtonText = "Installer")
     {
         Id = id;
         Name = name;
         Description = description;
         Icon = icon;
         IsSpecialOffice = isSpecialOffice;
+        IsSpecialArtCraft = isSpecialArtCraft;
         ActionButtonText = actionButtonText;
     }
 
