@@ -144,9 +144,9 @@ public static class UpdateService
                                 {
                                     fileSize = sizeProp.GetInt64();
                                 }
-                                if (assetName.Equals("AlexToolkit.exe", StringComparison.OrdinalIgnoreCase))
+                                if (assetName.StartsWith("AlexToolkit", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    break; // Priorité exacte à AlexToolkit.exe
+                                    break; // Priorité à tout binaire AlexToolkit*.exe (AlexToolkit.exe ou AlexToolkit_v4.2.3.exe)
                                 }
                             }
                         }
@@ -281,8 +281,10 @@ public static class UpdateService
 
     /// <summary>
     /// Remplace le binaire actuel par le nouveau et redémarre instantanément l'application.
+    /// Si l'exécutable actuel contient un numéro de version dans son nom (ex: AlexToolkit_v4.2.3.exe),
+    /// il est automatiquement renommé avec la nouvelle version (ex: AlexToolkit_v4.2.4.exe).
     /// </summary>
-    public static void ApplyUpdateAndRestart(string tempDownloadedExePath)
+    public static void ApplyUpdateAndRestart(string tempDownloadedExePath, string? newVersionTag = null)
     {
         string currentExePath = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName ?? "";
         if (string.IsNullOrEmpty(currentExePath) || !File.Exists(tempDownloadedExePath))
@@ -290,51 +292,110 @@ public static class UpdateService
             throw new InvalidOperationException("Fichiers de mise à jour introuvables ou chemin d'exécution non résolu.");
         }
 
+        string currentDir = Path.GetDirectoryName(currentExePath) ?? "";
+        string currentFileName = Path.GetFileName(currentExePath);
+        string newTargetPath = currentExePath;
+
+        // Si une nouvelle version est fournie, calculer le nouveau nom de fichier si l'ancien était versionné
+        if (!string.IsNullOrWhiteSpace(newVersionTag))
+        {
+            string cleanTag = newVersionTag.Trim();
+            if (!cleanTag.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+            {
+                cleanTag = "v" + cleanTag;
+            }
+
+            // Si le nom contient une version existante (ex: AlexToolkit_v4.2.3.exe ou AlexToolkit-4.2.3.exe)
+            if (System.Text.RegularExpressions.Regex.IsMatch(currentFileName, @"[-_]v?\d+(\.\d+)+", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                string newFileName = System.Text.RegularExpressions.Regex.Replace(
+                    currentFileName,
+                    @"[-_]v?\d+(\.\d+)+",
+                    $"_{cleanTag}",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                newTargetPath = Path.Combine(currentDir, newFileName);
+            }
+        }
+
         int currentPid = Process.GetCurrentProcess().Id;
-        string updaterBatPath = Path.Combine(Path.GetTempPath(), $"alextoolkit_updater_{Guid.NewGuid():N}.cmd");
+        string updaterScriptPath = Path.Combine(Path.GetTempPath(), $"alextoolkit_updater_{Guid.NewGuid():N}.ps1");
+        string logPath = Path.Combine(Path.GetTempPath(), "alextoolkit_update.log");
 
-        // Script batch autonome natif : attend l'arrêt du PID, remplace le binaire, relance et s'auto-supprime
-        string batchScript = $@"@echo off
-setlocal
-set ""TARGET={currentExePath}""
-set ""SOURCE={tempDownloadedExePath}""
-set ""PID={currentPid}""
+        string escapedCurrentExe = currentExePath.Replace("'", "''");
+        string escapedNewTargetExe = newTargetPath.Replace("'", "''");
+        string escapedTempExe = tempDownloadedExePath.Replace("'", "''");
+        string escapedLogPath = logPath.Replace("'", "''");
+        string escapedScriptPath = updaterScriptPath.Replace("'", "''");
 
-:: 1. Attente de la libération complète du processus
-:wait_loop
-tasklist /fi ""PID eq %PID%"" 2>nul | find ""%PID%"" >nul
-if not errorlevel 1 (
-    timeout /t 1 /nobreak >nul
-    goto wait_loop
-)
+        string psScript = $@"
+$target = '{escapedCurrentExe}'
+$newTarget = '{escapedNewTargetExe}'
+$source = '{escapedTempExe}'
+$log = '{escapedLogPath}'
+$scriptSelf = '{escapedScriptPath}'
+$pidToWait = {currentPid}
 
-:: Pause de sécurité pour libérer les handles de fichier
-timeout /t 1 /nobreak >nul
+""=== Mise a jour Alex Toolkit : $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ==="" | Out-File $log
+""Ancien binaire : $target"" | Out-File $log -Append
+""Nouveau binaire : $newTarget"" | Out-File $log -Append
+""Source temp    : $source"" | Out-File $log -Append
+""Attente de l'arret du processus PID $pidToWait..."" | Out-File $log -Append
 
-:: 2. Remplacement du binaire (avec stratégie .old en cas de verrou récalcitrant)
-copy /Y ""%SOURCE%"" ""%TARGET%"" >nul 2>&1
-if errorlevel 1 (
-    move /Y ""%TARGET%"" ""%TARGET%.old"" >nul 2>&1
-    copy /Y ""%SOURCE%"" ""%TARGET%"" >nul 2>&1
-)
+# 1. Attente de la fermeture de l'ancien processus
+try {{
+    Wait-Process -Id $pidToWait -Timeout 15 -ErrorAction SilentlyContinue
+    ""Processus $pidToWait arrete."" | Out-File $log -Append
+}} catch {{
+    ""Erreur attente processus : $_"" | Out-File $log -Append
+}}
 
-:: Nettoyage du fichier temporaire source
-del /f /q ""%SOURCE%"" >nul 2>&1
-if exist ""%TARGET%.old"" del /f /q ""%TARGET%.old"" >nul 2>&1
+Start-Sleep -Milliseconds 800
 
-:: 3. Relance de la nouvelle version
-start """" ""%TARGET%""
+# 2. Boucle de mise en place du nouveau binaire (25 tentatives = 12.5s)
+$attempts = 0
+$success = $false
+while ($attempts -lt 25) {{
+    try {{
+        # Copie vers la cible (nouvelle ou identique)
+        Copy-Item -Path $source -Destination $newTarget -Force -ErrorAction Stop
+        Remove-Item -Path $source -Force -ErrorAction SilentlyContinue
 
-:: Auto-suppression du script updater
-del ""%~f0"" >nul 2>&1
+        # Si le nom a changé, supprimer l'ancien exécutable
+        if ($target -ne $newTarget -and (Test-Path $target)) {{
+            Remove-Item -Path $target -Force -ErrorAction SilentlyContinue
+            ""Ancien binaire supprime : $target"" | Out-File $log -Append
+        }}
+
+        $success = $true
+        ""SUCCES : Binaire installe avec succes a la tentative $attempts !"" | Out-File $log -Append
+        break
+    }} catch {{
+        ""Tentative $attempts : verrou en cours, attente... ($($_.Exception.Message))"" | Out-File $log -Append
+        Start-Sleep -Milliseconds 500
+        $attempts++
+    }}
+}}
+
+# 3. Relance de la nouvelle version
+if ($success -and (Test-Path $newTarget)) {{
+    ""Demarrage de la nouvelle version : $newTarget"" | Out-File $log -Append
+    Start-Process -FilePath $newTarget
+}} else {{
+    ""ECHEC CRITIQUE : Impossible de remplacer le binaire."" | Out-File $log -Append
+}}
+
+# Auto-nettoyage du script
+Start-Sleep -Seconds 1
+Remove-Item -Path $scriptSelf -Force -ErrorAction SilentlyContinue
 ";
 
-        File.WriteAllText(updaterBatPath, batchScript, System.Text.Encoding.ASCII);
+        File.WriteAllText(updaterScriptPath, psScript, System.Text.Encoding.UTF8);
 
         var psi = new ProcessStartInfo
         {
-            FileName = "cmd.exe",
-            Arguments = $"/c \"{updaterBatPath}\"",
+            FileName = "powershell.exe",
+            Arguments = $"-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"{updaterScriptPath}\"",
             UseShellExecute = true,
             CreateNoWindow = true,
             WindowStyle = ProcessWindowStyle.Hidden

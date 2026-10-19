@@ -211,8 +211,8 @@ public partial class UpdateDialog : Window
 
             await Task.Delay(800);
 
-            // Permutation & relance
-            UpdateService.ApplyUpdateAndRestart(tempFile);
+            // Permutation & relance (avec renommage automatique de l'exécutable)
+            UpdateService.ApplyUpdateAndRestart(tempFile, release.TagName);
         }
         catch (OperationCanceledException)
         {

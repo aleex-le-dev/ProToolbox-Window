@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -16,22 +16,22 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
-    <!-- ── Optimisations de performance ────────────────────────── -->
-    <!-- Tiered Compilation : JIT adaptatif (Quick JIT → Full JIT) -->
+    <!-- â”€â”€ Optimisations de performance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <!-- Tiered Compilation : JIT adaptatif (Quick JIT â†’ Full JIT) -->
     <Optimize>true</Optimize>
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
-    <!-- ReadyToRun : pré-compilation AOT des méthodes fréquentes → démarrage plus rapide -->
+    <!-- ReadyToRun : prÃ©-compilation AOT des mÃ©thodes frÃ©quentes â†’ dÃ©marrage plus rapide -->
     <PublishReadyToRun>true</PublishReadyToRun>
     <!-- Pas de symboles de debug en release -->
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
 
-    <!-- ── Métadonnées & Icône ──────────────────────────────────── -->
-    <Version>4.2.0</Version>
+    <!-- â”€â”€ MÃ©tadonnÃ©es & IcÃ´ne â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <Version>4.2.4</Version>
     <Company>AleexLeDev</Company>
     <Product>Alex Toolkit</Product>
-    <Copyright>© 2026 AleexLeDev</Copyright>
+    <Copyright>Â© 2026 AleexLeDev</Copyright>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
 
@@ -43,14 +43,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Date de génération / build automatique injectée à la compilation -->
+    <!-- Date de gÃ©nÃ©ration / build automatique injectÃ©e Ã  la compilation -->
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
       <_Parameter1>BuildTimestamp</_Parameter1>
       <_Parameter2>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm"))</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
 
-  <!-- Copie automatique du binaire autonome vers la racine du dépôt lors de la publication -->
+  <!-- Copie automatique du binaire autonome vers la racine du dÃ©pÃ´t lors de la publication -->
   <Target Name="CopyRootExeOnPublish" AfterTargets="Publish">
     <Copy SourceFiles="$(PublishDir)AlexToolkit.exe" DestinationFolder="$(MSBuildThisFileDirectory)..\..\" SkipUnchangedFiles="false" ContinueOnError="true" />
   </Target>
