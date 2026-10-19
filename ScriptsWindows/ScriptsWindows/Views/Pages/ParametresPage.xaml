@@ -57,7 +57,89 @@
             </Border>
 
             <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!--     2. À PROPOS ET FICHE DE SPÉCIFICATIONS TECHNIQUES           -->
+            <!--             2. MISES À JOUR D'ALEX TOOLKIT                      -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <Border Background="{DynamicResource BgCard}"
+                    BorderBrush="{DynamicResource Border}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="22,18,22,18"
+                    Margin="0,0,0,20">
+                <StackPanel>
+                    <DockPanel LastChildFill="True">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="BtnCheckUpdatesNow"
+                                    Click="BtnCheckUpdatesNow_Click"
+                                    Background="{DynamicResource Accent}"
+                                    BorderThickness="0"
+                                    Foreground="#FFFFFF"
+                                    Padding="16,8,16,8"
+                                    FontSize="12.5"
+                                    FontWeight="Bold"
+                                    Cursor="Hand"
+                                    ToolTip="Rechercher des mises à jour en ligne">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="8"/>
+                                    </Style>
+                                </Button.Resources>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🚀" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Vérifier les mises à jour" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚡ Mises à jour d'Alex Toolkit"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimary}" />
+                                <Border Background="{DynamicResource Accent}"
+                                        CornerRadius="6"
+                                        Padding="8,3"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock x:Name="TxtParamVersionBadge"
+                                               Text="v4.1.0"
+                                               FontSize="11.5"
+                                               FontWeight="Bold"
+                                               Foreground="#FFFFFF"/>
+                                </Border>
+                            </StackPanel>
+                            <TextBlock x:Name="TxtParamUpdateStatus"
+                                       Text="Vérification en direct, notes de version complètes et installation automatique."
+                                       FontSize="12.5"
+                                       Foreground="{DynamicResource TextSecondary}"
+                                       Margin="0,3,0,0" />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <!-- Ligne d'option : Case à cocher pour la recherche auto au démarrage -->
+                    <Border BorderBrush="{DynamicResource Border}" BorderThickness="0,1,0,0" Margin="0,14,0,0" Padding="0,12,0,0">
+                        <DockPanel LastChildFill="True">
+                            <CheckBox x:Name="ChkParamAutoUpdate"
+                                      DockPanel.Dock="Left"
+                                      Content="Vérifier automatiquement les mises à jour au démarrage de l'application"
+                                      FontSize="12.5"
+                                      Foreground="{DynamicResource TextSecondary}"
+                                      VerticalAlignment="Center"
+                                      Checked="ChkParamAutoUpdate_Changed"
+                                      Unchecked="ChkParamAutoUpdate_Changed"/>
+                            <TextBlock x:Name="TxtParamLastCheck"
+                                       Text="Dernière vérification : ..."
+                                       FontSize="11.5"
+                                       Foreground="{DynamicResource TextMuted}"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"/>
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!--     3. À PROPOS ET FICHE DE SPÉCIFICATIONS TECHNIQUES           -->
             <!-- ═══════════════════════════════════════════════════════════════ -->
             <Border Background="{DynamicResource BgCard}"
                     BorderBrush="{DynamicResource Border}"

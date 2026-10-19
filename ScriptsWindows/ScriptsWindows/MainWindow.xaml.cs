@@ -52,6 +52,9 @@ public partial class MainWindow : Window
 
         // Préchauffage asynchrone de toutes les pages (0 ms de délai au clic)
         Dispatcher.InvokeAsync(WarmupPages, DispatcherPriority.Background);
+
+        // Vérification silencieuse et asynchrone des mises à jour en ligne
+        _ = CheckForUpdatesSilentlyAsync();
     }
 
     private void UpdateCategoryCounts()
@@ -597,6 +600,29 @@ public partial class MainWindow : Window
             OutputBox.Document.Blocks.Add(para);
             OutputBox.ScrollToEnd();
         }, DispatcherPriority.Normal);
+    }
+
+    private async System.Threading.Tasks.Task CheckForUpdatesSilentlyAsync()
+    {
+        try
+        {
+            await System.Threading.Tasks.Task.Delay(2500); // Ne pas ralentir le démarrage immédiat
+            var update = await Services.UpdateService.CheckSilentlyOnStartupAsync();
+            if (update != null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    TxtUpdateNotificationLabel.Text = $"Mise à jour {update.TagName} disponible";
+                    BtnUpdateNotification.Visibility = Visibility.Visible;
+                });
+            }
+        }
+        catch { }
+    }
+
+    private async void BtnUpdateNotification_Click(object sender, RoutedEventArgs e)
+    {
+        await Services.UpdateService.OpenUpdateDialog();
     }
 
     public void SetRunning(bool isRunning)

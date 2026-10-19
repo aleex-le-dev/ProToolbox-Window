@@ -109,9 +109,10 @@ public static class ToolRegistry
         ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)",
 
         // ─── Démarrage & Récupération (1) ───
-        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)"
+        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)",
 
-        // ─── Nouveautés & Innovations (0 - Réservé aux futurs ajouts) ───
+        // ─── Nouveautés & Innovations ───
+        ["upd_alextoolkit_updater"] = "AlexToolkit.exe (Système officiel de mise à jour intégrée avec auto-remplacement et historique des versions)"
     };
 
 
@@ -970,12 +971,24 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterInnovationTools()
     {
-        // Les 4 outils initiaux ont été intégrés dans leurs catégories respectives :
-        // - Bouclier de confidentialité -> SECURITE
-        // - Optimiseur Gaming -> MATERIEL
-        // - Audit Win11 24H2 & IA -> DIAGNOSTIC
-        // - Benchmark de vitesse DNS -> RESEAU
-        // Cette catégorie reste active et prête à accueillir vos prochains scripts.
+        _allTools.Add(new ScriptTool
+        {
+            Id = "upd_alextoolkit_updater",
+            Name = "Mise à jour d'Alex Toolkit",
+            Description = "Vérifie les nouvelles versions en ligne, affiche les nouveautés, télécharge le nouvel exécutable et met à jour Alex Toolkit automatiquement en un seul clic.",
+            Features = new[]
+            {
+                "Vérification automatique ou manuelle en direct (GitHub & Miroir)",
+                "Téléchargement direct avec suivi du débit et de la progression",
+                "Mise à niveau et redémarrage automatique fluide en 1 clic",
+                "Historique complet et miroir de téléchargement des versions"
+            },
+            Category = "NOUVEAUTE",
+            SubHeading = "Système de mise à jour & Miroir de distribution",
+            Icon = "⚡",
+            Action = (log, ct) => UpdateService.OpenUpdateDialog(log, ct),
+            Tags = new[] { "mise à jour", "update", "version", "alextoolkit", "nouvelle version", "télécharger", "historique" }
+        });
     }
 
 }

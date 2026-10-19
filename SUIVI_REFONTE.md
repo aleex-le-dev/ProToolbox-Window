@@ -200,11 +200,28 @@ Tous les textes ont été réécrits pour être compris instantanément par des 
   - Retrait de toutes les icônes emoji (dans l'interface et dans le rapport texte) pour une présentation purement technique.
   - Bouton interactif `Copier la fiche` pour exporter l'ensemble de la fiche technique formatée dans le presse-papiers en un clic.
 
+- **Système officiel de mise à jour intégré** :
+  - **Vérification automatique & manuelle en direct** : interroge l'API GitHub Releases (`ProToolbox-Window` / `SCRIPT-WINDOWS-ALEEXLEDEV`) avec suivi automatique des redirections HTTP 301 et fallback intelligent.
+  - **Auto-remplacement et redémarrage en 1 clic** :
+    - Téléchargement du binaire autonome dans un fichier temporaire avec jauge de progression en temps réel (pourcentage, Mo téléchargés / Mo totaux).
+    - Permutation fluide du fichier binaire exécuté via un helper PowerShell d'arrière-plan avec gestion des verrous fichiers Windows, relance automatique de la nouvelle version et fermeture propre de l'ancienne instance.
+    - Option de sauvegarde manuelle (*"Enregistrer sous..."*) pour exporter le `.exe` vers un dossier ou une clé USB.
+  - **Miroir et historique des versions** :
+    - Deuxième onglet listant l'intégralité des releases publiées (tags, titre, date de publication, taille du binaire).
+    - Possibilité de télécharger directement n'importe quelle version spécifique ou d'accéder à sa page de release en ligne.
+  - **Vérification silencieuse au démarrage** :
+    - Tâche d'arrière-plan non bloquante après 2.5 secondes.
+    - Affichage d'un badge néon discret dans l'en-tête de l'application (*"🚀 Mise à jour vX.X disponible"*) ouvrant directement l'assistant d'installation.
+  - **Contrôle et préférences dans les Paramètres** :
+    - Carte dédiée *"Mises à jour d'Alex Toolkit"* avec bouton de vérification immédiate, statut, badge de version et case à cocher pour activer/désactiver la vérification au démarrage (sauvegardée dans `%LOCALAPPDATA%\ScriptsWindows\settings_update.json`).
+  - **Nouvel outil dans la catégorie NOUVEAUTÉ** :
+    - Outil `upd_alextoolkit_updater` : *"Mise à jour d'Alex Toolkit"*.
+
 ---
 
 ## 🚀 Résultat de publication
 
 - **Fichier exécutable unique** : [`AlexToolkit.exe`](file:///c:/Users/Alex/Documents/DEV/PROJETS/GITHUB/SCRIPT-WINDOWS-ALEEXLEDEV/AlexToolkit.exe) (à la racine)
-- **Taille** : **~10.8 Mo** (autonome, single-file Release x64)
+- **Taille** : **~10.9 Mo** (autonome, single-file Release x64)
 - **Architecture** : Windows x64
 - **Manifeste** : élévation automatique UAC administrateur requise

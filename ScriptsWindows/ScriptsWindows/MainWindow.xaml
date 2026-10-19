@@ -524,6 +524,34 @@
                     BorderBrush="{DynamicResource Border}"
                     BorderThickness="0,0,0,1"
                     Padding="24,14,24,14">
+                <DockPanel LastChildFill="True">
+                    <!-- Notification discrète de mise à jour (masquée si pas de maj) -->
+                    <Button x:Name="BtnUpdateNotification"
+                            DockPanel.Dock="Right"
+                            Visibility="Collapsed"
+                            VerticalAlignment="Center"
+                            Background="{DynamicResource Accent}"
+                            BorderThickness="0"
+                            Padding="12,6"
+                            Cursor="Hand"
+                            ToolTip="Une mise à jour est disponible pour Alex Toolkit ! Cliquez pour ouvrir l'installeur."
+                            Click="BtnUpdateNotification_Click">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🚀" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtUpdateNotificationLabel"
+                                       Text="Mise à jour disponible"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFFFF"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock x:Name="PageTitle"
                                    Text="Mes Favoris"
@@ -534,6 +562,7 @@
                                    Style="{StaticResource SubtitleText}"
                                    Margin="0,3,0,0" />
                     </StackPanel>
+                </DockPanel>
             </Border>
 
             <!-- Zone de contenu des pages (transparente pour laisser voir le fond immersif) -->

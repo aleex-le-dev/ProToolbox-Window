@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Win32;
 using ScriptsWindows.Core;
+using ScriptsWindows.Services;
 using ScriptsWindows.Views;
 
 namespace ScriptsWindows.Views.Pages;
@@ -34,7 +35,43 @@ public partial class ParametresPage : Page, ISectionPage
         UpdateThemeState();
         TxtHierarchyPreview.Text = GenerateHierarchyText();
         UpdateBuildInfo();
+        UpdateParamUpdateInfo();
         _ = LoadSystemSpecsAsync();
+    }
+
+    private void UpdateParamUpdateInfo()
+    {
+        try
+        {
+            var curVer = UpdateService.GetCurrentVersion();
+            TxtParamVersionBadge.Text = $"v{curVer.Major}.{curVer.Minor}.{curVer.Build}";
+
+            var settings = UpdateService.LoadSettings();
+            ChkParamAutoUpdate.IsChecked = settings.AutoCheckOnStartup;
+
+            if (settings.LastCheckDate.HasValue)
+            {
+                TxtParamLastCheck.Text = $"Dernière vérification : {settings.LastCheckDate.Value:dd/MM/yyyy à HH:mm}";
+            }
+            else
+            {
+                TxtParamLastCheck.Text = "Dernière vérification : Jamais effectuée";
+            }
+        }
+        catch { }
+    }
+
+    private async void BtnCheckUpdatesNow_Click(object sender, RoutedEventArgs e)
+    {
+        await UpdateService.OpenUpdateDialog();
+        UpdateParamUpdateInfo();
+    }
+
+    private void ChkParamAutoUpdate_Changed(object sender, RoutedEventArgs e)
+    {
+        var settings = UpdateService.LoadSettings();
+        settings.AutoCheckOnStartup = ChkParamAutoUpdate.IsChecked == true;
+        UpdateService.SaveSettings(settings);
     }
 
     private void UpdateBuildInfo()
