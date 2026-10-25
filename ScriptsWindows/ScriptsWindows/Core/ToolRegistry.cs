@@ -103,9 +103,11 @@ public static class ToolRegistry
         ["sec_defender_quickscan"] = "powershell Start-MpScan -ScanType QuickScan",
         ["sec_perfmon_rel"] = "perfmon.exe /rel",
 
-        // ─── Personnalisation (2) ───
+        // ─── Personnalisation (4) ───
         ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
         ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)",
+        ["tweak_power_shortcuts"] = "AlexToolkit.exe (Interface de création des boutons Arrêter et Redémarrer sur le Bureau)",
+        ["tweak_context_menu_items"] = "AlexToolkit.exe (Interface de personnalisation des éléments du menu contextuel : CMD Bureau & Dossiers)",
 
         // ─── Démarrage & Récupération (1) ───
         ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)"
@@ -904,20 +906,39 @@ public static class ToolRegistry
 
         _allTools.Add(new ScriptTool
         {
-            Id = "tweak_classic_context",
-            Name = "Retrouver le clic droit classique (Windows 10 / 11)",
-            Description = "Bascule en 1 clic : réactivez le menu complet d'un clic droit comme sur Windows 10, ou revenez au menu moderne de Windows 11.",
+            Id = "tweak_power_shortcuts",
+            Name = "Boutons Éteindre et Redémarrer sur le Bureau",
+            Description = "Place sur votre Bureau des boutons élégants avec leurs icônes officielles pour éteindre ou redémarrer votre ordinateur en un seul clic.",
             Features = new[]
             {
-                "Bascule en 1 clic sans redémarrer l'ordinateur",
-                "Restaure le menu complet classique Windows 10",
-                "Ou rétablit le menu moderne de Windows 11"
+                "Bouton Arrêter le PC avec l'icône rouge officielle Power (shell32.dll, 27)",
+                "Bouton Redémarrer le PC avec l'icône officielle de redémarrage (shell32.dll, 238)",
+                "Gestionnaire interactif avec vérification en temps réel du Bureau"
             },
             Category = "PERSONNALISATION",
-            SubHeading = "Options et réglages système",
+            SubHeading = "Raccourcis et ergonomie du Bureau",
+            Icon = "⚡",
+            Action = (log, ct) => PersonalizationService.OpenPowerShortcutsDialog(log, ct),
+            Tags = new[] { "éteindre", "arrêter", "redémarrer", "bureau", "bouton", "raccourci", "icône", "power", "shutdown", "reboot", "personnalisation" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "tweak_context_menu_items",
+            Name = "Menu contextuel",
+            Description = "Centre complet de personnalisation du clic droit : basculez entre le menu classique Windows 10 et le menu moderne Windows 11, et ajoutez les options pour ouvrir CMD ou PowerShell en Administrateur dans le dossier actif.",
+            Features = new[]
+            {
+                "Bascule en 1 clic : Grand menu classique Windows 10 ou moderne Windows 11",
+                "Ajout de « Ouvrir CMD (Admin) » et « Ouvrir PowerShell (Admin) » au clic droit",
+                "Positionnement automatique sur le dossier actif (Images, Bureau, Documents...)",
+                "Prise en compte immédiate avec rafraîchissement de l'Explorateur Windows"
+            },
+            Category = "PERSONNALISATION",
+            SubHeading = "Menu contextuel & Clic droit",
             Icon = "🖱️",
-            Action = (log, ct) => PersonalizationService.OpenContextMenuDialog(log, ct),
-            Tags = new[] { "clic droit", "menu contextuel", "windows 10", "windows 11", "classique", "facile", "personnaliser" }
+            Action = (log, ct) => PersonalizationService.OpenContextMenuItemsDialog(log, ct),
+            Tags = new[] { "menu contextuel", "clic droit", "windows 10", "windows 11", "classique", "cmd", "powershell", "admin", "invite de commandes", "dossier", "images", "bureau", "terminal", "personnaliser" }
         });
     }
 

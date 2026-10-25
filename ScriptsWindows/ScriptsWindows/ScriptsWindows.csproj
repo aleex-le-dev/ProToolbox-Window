@@ -16,22 +16,22 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
-    <!-- â”€â”€ Optimisations de performance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-    <!-- Tiered Compilation : JIT adaptatif (Quick JIT â†’ Full JIT) -->
+    <!-- Ã¢â€â‚¬Ã¢â€â‚¬ Optimisations de performance Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ -->
+    <!-- Tiered Compilation : JIT adaptatif (Quick JIT Ã¢â€ â€™ Full JIT) -->
     <Optimize>true</Optimize>
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
-    <!-- ReadyToRun : prÃ©-compilation AOT des mÃ©thodes frÃ©quentes â†’ dÃ©marrage plus rapide -->
+    <!-- ReadyToRun : prÃƒÂ©-compilation AOT des mÃƒÂ©thodes frÃƒÂ©quentes Ã¢â€ â€™ dÃƒÂ©marrage plus rapide -->
     <PublishReadyToRun>true</PublishReadyToRun>
     <!-- Pas de symboles de debug en release -->
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
 
-    <!-- â”€â”€ MÃ©tadonnÃ©es & IcÃ´ne â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-    <Version>4.2.13</Version>
+    <!-- Ã¢â€â‚¬Ã¢â€â‚¬ MÃƒÂ©tadonnÃƒÂ©es & IcÃƒÂ´ne Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ -->
+    <Version>4.2.22</Version>
     <Company>AleexLeDev</Company>
     <Product>Alex Toolkit</Product>
-    <Copyright>Â© 2026 AleexLeDev</Copyright>
+    <Copyright>Ã‚Â© 2026 AleexLeDev</Copyright>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
 
@@ -43,14 +43,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Date de gÃ©nÃ©ration / build automatique injectÃ©e Ã  la compilation -->
+    <!-- Date de gÃƒÂ©nÃƒÂ©ration / build automatique injectÃƒÂ©e ÃƒÂ  la compilation -->
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
       <_Parameter1>BuildTimestamp</_Parameter1>
       <_Parameter2>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm"))</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
 
-  <!-- Copie automatique du binaire autonome vers la racine du dÃ©pÃ´t lors de la publication -->
+  <!-- Copie automatique du binaire autonome vers la racine du dÃƒÂ©pÃƒÂ´t lors de la publication -->
   <Target Name="CopyRootExeOnPublish" AfterTargets="Publish">
     <Copy SourceFiles="$(PublishDir)AlexToolkit.exe" DestinationFolder="$(MSBuildThisFileDirectory)..\..\" SkipUnchangedFiles="false" ContinueOnError="true" />
   </Target>
