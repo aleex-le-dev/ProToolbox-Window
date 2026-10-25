@@ -124,16 +124,31 @@
                                FontWeight="Medium"
                                Foreground="{DynamicResource TextMuted}" />
                 </Border>
-                <Button x:Name="BtnRun" DockPanel.Dock="Right" Click="BtnRun_Click"
-                        Content="▶ Exécuter" FontSize="11" FontWeight="SemiBold"
-                        Padding="13,5" Cursor="Hand"
-                        Background="{DynamicResource Accent}" Foreground="#FFFFFF" BorderThickness="0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="7"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="BtnDesktop" Click="BtnDesktop_Click"
+                            Content="📌 Mettre sur le bureau" FontSize="11" FontWeight="SemiBold"
+                            ToolTip="Créer un script autonome sur le Bureau pour lancer ce nettoyage en un double-clic"
+                            Padding="10,5" Cursor="Hand" Margin="0,0,6,0"
+                            Background="{DynamicResource BgInput}" Foreground="{DynamicResource TextPrimary}"
+                            BorderBrush="{DynamicResource Border}" BorderThickness="1"
+                            Visibility="Collapsed">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button x:Name="BtnRun" Click="BtnRun_Click"
+                            Content="▶ Exécuter" FontSize="11" FontWeight="SemiBold"
+                            Padding="13,5" Cursor="Hand"
+                            Background="{DynamicResource Accent}" Foreground="#FFFFFF" BorderThickness="0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="7"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </StackPanel>
             </DockPanel>
         </Grid>
     </Border>

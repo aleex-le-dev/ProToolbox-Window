@@ -44,6 +44,9 @@ public class ScriptTool
     /// <summary>Action à exécuter quand l'outil est lancé</summary>
     public Func<Action<string>, CancellationToken, Task>? Action { get; set; }
 
+    /// <summary>Action optionnelle pour générer un script autonome sur le Bureau</summary>
+    public Action<Action<string>?>? DesktopAction { get; init; }
+
     /// <summary>Points clés ou actions réalisées affichés sous forme de liste dans la carte</summary>
     public string[] Features { get; init; } = Array.Empty<string>();
 

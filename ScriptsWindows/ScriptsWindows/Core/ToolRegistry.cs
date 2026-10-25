@@ -69,9 +69,8 @@ public static class ToolRegistry
         // ─── Nettoyage (1) ───
         ["clean_system_unified"] = "AlexToolkit.exe (Interface interactive : Cleanmgr, temporaires, corbeille, caches et WinSxS)",
 
-        // ─── Secrets et Clés (5) ───
+        // ─── Secrets et Clés (4) ───
         ["sec_wifi_show"] = "netsh.exe wlan show profiles key=clear",
-        ["sec_pwd_generator"] = "AlexToolkit.exe (Générateur de mots de passe aléatoires et robustes)",
         ["sec_audit_sensitive"] = "AlexToolkit.exe (Audit C# approfondi .ssh, .aws, .env, documents secrets)",
         ["sec_win_key"] = "wmic.exe path softwarelicensingservice get OA3xOriginalProductKey",
         ["sec_browser_profiles"] = "AlexToolkit.exe (Lecteur SQLite natif Chrome, Edge, Brave, Firefox)",
@@ -109,10 +108,7 @@ public static class ToolRegistry
         ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)",
 
         // ─── Démarrage & Récupération (1) ───
-        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)",
-
-        // ─── Nouveautés & Innovations ───
-        ["upd_alextoolkit_updater"] = "AlexToolkit.exe (Système officiel de mise à jour intégrée avec auto-remplacement et historique des versions)"
+        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)"
     };
 
 
@@ -444,6 +440,7 @@ public static class ToolRegistry
             SubHeading = "Nettoyage système et disque",
             Icon = "🧹",
             Action = (log, ct) => CleaningService.OpenSystemCleanupDialog(log, ct),
+            DesktopAction = log => CleaningService.CreateDesktopCleanupScript(log),
             Tags = new[] { "nettoyer", "libérer", "espace", "disque", "temporaires", "corbeille", "cache", "navigateurs", "cleanmgr", "accélérer" }
         });
     }
@@ -469,24 +466,6 @@ public static class ToolRegistry
             Icon = "📶",
             Action = (log, ct) => SecurityService.DumpWifiPasswords(log, ct),
             Tags = new[] { "wifi", "mot de passe", "box", "clé", "clair", "retrouver", "code", "sans fil" }
-        });
-
-        _allTools.Add(new ScriptTool
-        {
-            Id = "sec_pwd_generator",
-            Name = "Générateur de mots de passe ultra-sécurisés",
-            Description = "Crée en 1 clic des mots de passe incassables et aléatoires pour vos comptes en ligne et vous permet de les enregistrer en toute sécurité.",
-            Features = new[]
-            {
-                "Création de clés cryptographiques à haute entropie",
-                "Choix des longueurs et types de caractères",
-                "Test visuel de robustesse et copie sécurisée"
-            },
-            Category = "SECRETS",
-            SubHeading = "Mots de passe et Wi-Fi",
-            Icon = "🔐",
-            Action = (log, ct) => SecurityService.GenerateSecurePasswords(log, ct),
-            Tags = new[] { "mot de passe", "générer", "créer", "sécurisé", "fort", "aléatoire", "comptes", "mdp" }
         });
 
         _allTools.Add(new ScriptTool
@@ -971,24 +950,7 @@ public static class ToolRegistry
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterInnovationTools()
     {
-        _allTools.Add(new ScriptTool
-        {
-            Id = "upd_alextoolkit_updater",
-            Name = "Mise à jour d'Alex Toolkit",
-            Description = "Vérifie les nouvelles versions en ligne, affiche les nouveautés, télécharge le nouvel exécutable et met à jour Alex Toolkit automatiquement en un seul clic.",
-            Features = new[]
-            {
-                "Vérification automatique ou manuelle en direct (GitHub & Miroir)",
-                "Téléchargement direct avec suivi du débit et de la progression",
-                "Mise à niveau et redémarrage automatique fluide en 1 clic",
-                "Historique complet et miroir de téléchargement des versions"
-            },
-            Category = "NOUVEAUTE",
-            SubHeading = "Système de mise à jour & Miroir de distribution",
-            Icon = "⚡",
-            Action = (log, ct) => UpdateService.OpenUpdateDialog(log, ct),
-            Tags = new[] { "mise à jour", "update", "version", "alextoolkit", "nouvelle version", "télécharger", "historique" }
-        });
+        // Catégorie réservée pour l'accueil de futurs scripts et outils
     }
 
 }

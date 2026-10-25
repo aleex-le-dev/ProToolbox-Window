@@ -135,7 +135,7 @@
 
 - **🔑 Récupération d'identifiants et secrets (`SecretsPage.xaml.cs`)** :
   - Suppression des 4 accordéons isolés d'un seul outil.
-  - Bascule en **affichage direct** (`PopulateDirect`) en grille moderne regroupant les 5 outils de secrets.
+  - Bascule en **affichage direct** (`PopulateDirect`) en grille moderne regroupant les 4 outils de secrets.
 
 - **🔍 Diagnostic matériel et intégrité (`DiagnosticPage.xaml.cs`)** :
   - Doublon `diag_battery` retiré (déjà disponible dans l'onglet 4 du centre de diagnostic avec génération HTML).
@@ -214,8 +214,8 @@ Tous les textes ont été réécrits pour être compris instantanément par des 
     - Affichage d'un badge néon discret dans l'en-tête de l'application (*"🚀 Mise à jour vX.X disponible"*) ouvrant directement l'assistant d'installation.
   - **Contrôle et préférences dans les Paramètres** :
     - Carte dédiée *"Mises à jour d'Alex Toolkit"* avec bouton de vérification immédiate, statut, badge de version et case à cocher pour activer/désactiver la vérification au démarrage (sauvegardée dans `%LOCALAPPDATA%\ScriptsWindows\settings_update.json`).
-  - **Nouvel outil dans la catégorie NOUVEAUTÉ** :
-    - Outil `upd_alextoolkit_updater` : *"Mise à jour d'Alex Toolkit"*.
+  - **Catégorie NOUVEAUTÉ épurée** :
+    - La mise à jour reste accessible exclusivement via les **Paramètres** et la notification d'en-tête ; la catégorie Nouveautés affiche son écran d'attente stylisé pour les futurs ajouts.
 
 ---
 
