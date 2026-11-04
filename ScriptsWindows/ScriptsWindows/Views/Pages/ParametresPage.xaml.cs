@@ -440,39 +440,66 @@ Get-Volume | Where-Object { $_.DriveLetter } | ForEach-Object {
     }
 
     /// <summary>
-    /// Génère la structure textuelle détaillée de toutes les catégories, sous-catégories et outils avec leurs commandes associées.
+    /// Liste exhaustive et canonique des 13 catégories de l'application.
+    /// </summary>
+    public static readonly string[] AllCategoryIds =
+    {
+        "APPLICATIONS", "DEMARRAGE", "DIAGNOSTIC", "DISQUE", "MATERIEL", "MISES_A_JOUR",
+        "NETTOYAGE", "NOUVEAUTE", "PERSONNALISATION", "REPARATION", "RESEAU", "SECRETS", "SECURITE"
+    };
+
+    /// <summary>
+    /// Génère la structure textuelle détaillée de toutes les catégories, sous-catégories et outils avec leurs commandes associées,
+    /// reflétant fidèlement l'inventaire complet des scripts présents et des catégories réservées.
     /// </summary>
     public static string GenerateHierarchyText()
     {
         var sb = new StringBuilder();
+        int totalToolsCount = ToolRegistry.AllTools.Count;
+        int activeCategoriesCount = AllCategoryIds.Count(cat => ToolRegistry.GetByCategory(cat).Any());
+        int reservedCategoriesCount = AllCategoryIds.Length - activeCategoriesCount;
+        string catSummary = reservedCategoriesCount > 0
+            ? $"{activeCategoriesCount} catégories actives (+ {reservedCategoriesCount} catégorie réservée)"
+            : $"{activeCategoriesCount} catégories actives";
+
         sb.AppendLine("=== ALEX TOOLKIT — STRUCTURE DES MODULES, SCRIPTS ET COMMANDES ===");
+        sb.AppendLine($"Inventaire global : {totalToolsCount} outils répertoriés dans {catSummary}");
         sb.AppendLine();
 
-        var categories = ToolRegistry.AllTools
-            .GroupBy(t => t.Category)
-            .OrderBy(cg => SectionViewBuilder.GetCategoryMeta(cg.Key).Name)
+        var orderedCategories = AllCategoryIds
+            .OrderBy(id => SectionViewBuilder.GetCategoryMeta(id).Name)
             .ToList();
 
-        foreach (var catGroup in categories)
+        foreach (var catId in orderedCategories)
         {
-            var (icon, name) = SectionViewBuilder.GetCategoryMeta(catGroup.Key);
-            int totalTools = catGroup.Count();
+            var (icon, name) = SectionViewBuilder.GetCategoryMeta(catId);
+            var tools = ToolRegistry.GetByCategory(catId).ToList();
+            int totalTools = tools.Count;
 
-            sb.AppendLine($"{icon} {name.ToUpperInvariant()} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
-
-            var subGroups = catGroup
-                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et outils rapides" : t.SubHeading.Trim())
-                .OrderBy(sg => sg.Key);
-
-            foreach (var sub in subGroups)
+            if (totalTools > 0)
             {
-                int count = sub.Count();
-                sb.AppendLine($"   📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
-                foreach (var tool in sub.OrderBy(t => t.Title))
+                sb.AppendLine($"{icon} {name.ToUpperInvariant()} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
+
+                var subGroups = tools
+                    .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et outils rapides" : t.SubHeading.Trim())
+                    .OrderBy(sg => sg.Key);
+
+                foreach (var sub in subGroups)
                 {
-                    string cmd = tool.ExecutableOrCommand;
-                    sb.AppendLine($"      • {tool.Title}  →  [{cmd}]");
+                    int count = sub.Count();
+                    sb.AppendLine($"   📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
+                    foreach (var tool in sub.OrderBy(t => t.Title))
+                    {
+                        string cmd = tool.ExecutableOrCommand;
+                        sb.AppendLine($"      • {tool.Title}  →  [{cmd}]");
+                    }
                 }
+            }
+            else
+            {
+                sb.AppendLine($"{icon} {name.ToUpperInvariant()} (0 outil — Réservée aux futurs ajouts)");
+                sb.AppendLine("   📂 Module d'attente (0 outil)");
+                sb.AppendLine("      • Catégorie réservée pour l'accueil de futurs scripts et innovations");
             }
 
             sb.AppendLine();
@@ -487,35 +514,53 @@ Get-Volume | Where-Object { $_.DriveLetter } | ForEach-Object {
     public static string GenerateMarkdownText()
     {
         var sb = new StringBuilder();
+        int totalToolsCount = ToolRegistry.AllTools.Count;
+        int activeCategoriesCount = AllCategoryIds.Count(cat => ToolRegistry.GetByCategory(cat).Any());
+        int reservedCategoriesCount = AllCategoryIds.Length - activeCategoriesCount;
+        string catSummary = reservedCategoriesCount > 0
+            ? $"{activeCategoriesCount} catégories actives (+ {reservedCategoriesCount} catégorie réservée)"
+            : $"{activeCategoriesCount} catégories actives";
+
         sb.AppendLine("# Alex Toolkit — Structure des modules, scripts et commandes");
+        sb.AppendLine($"*Inventaire global : {totalToolsCount} outils répertoriés dans {catSummary}.*");
         sb.AppendLine();
 
-        var categories = ToolRegistry.AllTools
-            .GroupBy(t => t.Category)
-            .OrderBy(cg => SectionViewBuilder.GetCategoryMeta(cg.Key).Name)
+        var orderedCategories = AllCategoryIds
+            .OrderBy(id => SectionViewBuilder.GetCategoryMeta(id).Name)
             .ToList();
 
-        foreach (var catGroup in categories)
+        foreach (var catId in orderedCategories)
         {
-            var (icon, name) = SectionViewBuilder.GetCategoryMeta(catGroup.Key);
-            int totalTools = catGroup.Count();
+            var (icon, name) = SectionViewBuilder.GetCategoryMeta(catId);
+            var tools = ToolRegistry.GetByCategory(catId).ToList();
+            int totalTools = tools.Count;
 
-            sb.AppendLine($"## {icon} {name} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
-            sb.AppendLine();
-
-            var subGroups = catGroup
-                .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et outils rapides" : t.SubHeading.Trim())
-                .OrderBy(sg => sg.Key);
-
-            foreach (var sub in subGroups)
+            if (totalTools > 0)
             {
-                int count = sub.Count();
-                sb.AppendLine($"### 📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
-                foreach (var tool in sub.OrderBy(t => t.Title))
+                sb.AppendLine($"## {icon} {name} ({totalTools} outil{(totalTools > 1 ? "s" : "")})");
+                sb.AppendLine();
+
+                var subGroups = tools
+                    .GroupBy(t => string.IsNullOrWhiteSpace(t.SubHeading) ? "Actions et outils rapides" : t.SubHeading.Trim())
+                    .OrderBy(sg => sg.Key);
+
+                foreach (var sub in subGroups)
                 {
-                    string cmd = tool.ExecutableOrCommand;
-                    sb.AppendLine($"- **{tool.Title}** : `{cmd}`");
+                    int count = sub.Count();
+                    sb.AppendLine($"### 📂 {sub.Key} ({count} outil{(count > 1 ? "s" : "")})");
+                    foreach (var tool in sub.OrderBy(t => t.Title))
+                    {
+                        string cmd = tool.ExecutableOrCommand;
+                        sb.AppendLine($"- **{tool.Title}** : `{cmd}`");
+                    }
+                    sb.AppendLine();
                 }
+            }
+            else
+            {
+                sb.AppendLine($"## {icon} {name} (0 outil)");
+                sb.AppendLine();
+                sb.AppendLine("*(Catégorie réservée pour l'accueil de futurs scripts et innovations)*");
                 sb.AppendLine();
             }
         }

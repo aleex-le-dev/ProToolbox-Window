@@ -64,7 +64,7 @@
     2. 🚀 **Performances et alimentation** : benchmark global WinSAT (`winsat formal`), rapport d'efficacité énergétique 60s (`powercfg /energy`) et activation immédiate du mode performances élevées.
 - **📦 Gestionnaire de paquets Winget (`WingetUpdatesDialog.xaml`)** : sélection interactive des logiciels à mettre à jour, sélection globale, détection et repli `--force` en cas de conflit de portée.
 - **🧹 Nettoyage système & disque (`SystemCleanupDialog.xaml`)** : assistant Cleanmgr, purge des fichiers temporaires (%TEMP%), corbeille, cache Windows Update, navigateurs et sélection personnalisée.
-- **🎨 Personnalisation (`ContextMenuDialog.xaml`)** : bascule interactive entre le clic droit classique Windows 10 et moderne Windows 11 avec redémarrage d'Explorer.
+- **🎨 Personnalisation (`ContextMenuItemsDialog.xaml` & `PowerShortcutsDialog.xaml`)** : centre de personnalisation du clic droit (menu classique Windows 10 / moderne Windows 11, CMD & PowerShell Admin sur le Bureau et les dossiers) et boutons Arrêter/Redémarrer sur le Bureau.
 - **🔧 Réparation intégrale (`ReparationPage.xaml.cs`)** :
   - Restructurée en **4 sous-catégories accordéons** élégantes via `PopulateSections` :
     1. 🩺 **Intégrité système et disque** : centre d'intégrité DISM/SFC (`SystemIntegrityDialog.xaml`) & analyse CHKDSK (`ChkdskDialog.xaml`).

@@ -8,7 +8,7 @@ namespace ScriptsWindows.Core;
 
 /// <summary>
 /// Répertoire central de tous les outils disponibles dans l'application.
-/// Structuré en 11 catégories principales avec sous-titres internes (subheadings).
+/// Structuré en 13 catégories actives (totalisant 43 outils).
 /// Conforme à la directive UI/UX Alex Toolkit.
 /// </summary>
 public static class ToolRegistry
@@ -103,14 +103,16 @@ public static class ToolRegistry
         ["sec_defender_quickscan"] = "powershell Start-MpScan -ScanType QuickScan",
         ["sec_perfmon_rel"] = "perfmon.exe /rel",
 
-        // ─── Personnalisation (4) ───
+        // ─── Personnalisation (3) ───
         ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
-        ["tweak_classic_context"] = "AlexToolkit.exe (Bascule interactive : Menu classique Windows 10 / Moderne Windows 11)",
         ["tweak_power_shortcuts"] = "AlexToolkit.exe (Interface de création des boutons Arrêter et Redémarrer sur le Bureau)",
         ["tweak_context_menu_items"] = "AlexToolkit.exe (Interface de personnalisation des éléments du menu contextuel : CMD Bureau & Dossiers)",
 
         // ─── Démarrage & Récupération (1) ───
-        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)"
+        ["boot_center"] = "AlexToolkit.exe (Console unifiée de démarrage et récupération : sans échec, WinRE, BIOS/UEFI, BCD)",
+
+        // ─── Nouveautés & Innovations (1) ───
+        ["nov_website_analyzer"] = "AlexToolkit.exe (Centre d'Audit & Analyseur de Site Web : Vue d'ensemble, 21 Contrôles, Speedtest, SEO, Mots-Clés, SSL & Réseau)",
     };
 
 
@@ -967,11 +969,27 @@ public static class ToolRegistry
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // CATÉGORIE 13 : ✨ NOUVEAUTÉS & INNOVATIONS (RÉSERVÉE AUX PROCHAINS SCRIPTS)
+    // CATÉGORIE 13 : ✨ NOUVEAUTÉS & INNOVATIONS
     // ─────────────────────────────────────────────────────────────────────────
     private static void RegisterInnovationTools()
     {
-        // Catégorie réservée pour l'accueil de futurs scripts et outils
+        _allTools.Add(new ScriptTool
+        {
+            Id = "nov_website_analyzer",
+            Name = "Centre d'Audit & Analyseur de Site Web",
+            Description = "Interface unifiée tout-en-un : entrez un domaine pour obtenir une synthèse globale (note A+ à D), la checklist des 21 contrôles pré-lancement, un Speedtest complet (DNS, TLS, TTFB, salves HTTP), l'analyse SEO (aperçu Google SERP, structure H1-H6), l'extracteur de mots-clés (1/2/3 mots + score SEO) et l'inspecteur SSL/Headers.",
+            Features = new[]
+            {
+                "Tableau de bord global (Note A+ à D, 4 piliers, plan d'action prioritaire) & Checklist 21 points",
+                "Speedtest Web (Waterfall DNS/TLS/TTFB, débit, 5 salves HTTP, simulation Fibre/4G/3G)",
+                "Studio SEO & Mots-Clés (Aperçu Google SERP, Open Graph, H1-H6, densité lexicale, SSL & Headers)"
+            },
+            Category = "NOUVEAUTE",
+            SubHeading = "Audit Web, Speedtest & SEO",
+            Icon = "🌐",
+            Action = (log, ct) => InnovationService.OpenWebsiteAnalyzerDialog(log, ct, initialTab: 0),
+            Tags = new[] { "site", "web", "url", "analyseur", "audit", "speedtest", "vitesse", "seo", "serp", "mots-clés", "keywords", "densité", "h1", "rgpd", "cgu", "https", "ssl", "dns", "ttfb", "cookies", "open graph", "favicon", "sitemap", "robots.txt", "alt", "responsive", "404", "liens" }
+        });
     }
 
 }

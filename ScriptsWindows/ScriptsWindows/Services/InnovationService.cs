@@ -75,4 +75,19 @@ public static class InnovationService
             dialog.ShowDialog();
         });
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 5. SUITE D'ANALYSE DE SITE WEB (CHECKLIST 21 POINTS, SPEEDTEST, SEO, MOTS-CLÉS, RÉSEAU)
+    // ─────────────────────────────────────────────────────────────────────────
+    public static async Task OpenWebsiteAnalyzerDialog(Action<string> onOutput, CancellationToken ct = default, int initialTab = 0)
+    {
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var dialog = new WebsiteAnalyzerDialog(onOutput, ct, initialTab)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        });
+    }
 }
