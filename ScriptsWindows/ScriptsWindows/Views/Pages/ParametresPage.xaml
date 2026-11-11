@@ -38,17 +38,17 @@
                             </Style>
                         </Button.Resources>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock x:Name="TxtThemeIcon" Text="🌙" FontSize="15" FontFamily="{StaticResource FontEmoji}" Margin="0,0,8,0" VerticalAlignment="Center" />
-                            <TextBlock x:Name="TxtThemeName" Text="Noir pur oled" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
+                            <TextBlock x:Name="TxtThemeIcon" Text="&#xE708;" FontSize="14" FontFamily="{StaticResource FontIcon}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock x:Name="TxtThemeName" Text="Sombre" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="🎨 Apparence et thème"
+                        <TextBlock Text="Apparence"
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="{DynamicResource TextPrimary}" />
-                        <TextBlock Text="Basculez entre le thème sombre noir pur oled et le thème clair épuré."
+                        <TextBlock Text="Choisissez le thème sombre ou clair. Votre choix est mémorisé."
                                    FontSize="12.5"
                                    Foreground="{DynamicResource TextSecondary}"
                                    Margin="0,3,0,0" />
@@ -72,7 +72,7 @@
                                     Click="BtnCheckUpdatesNow_Click"
                                     Background="{DynamicResource Accent}"
                                     BorderThickness="0"
-                                    Foreground="#FFFFFF"
+                                    Foreground="{DynamicResource OnAccent}"
                                     Padding="16,8,16,8"
                                     FontSize="12.5"
                                     FontWeight="Bold"
@@ -84,7 +84,7 @@
                                     </Style>
                                 </Button.Resources>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="🚀" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="&#xE895;" FontFamily="{StaticResource FontIcon}" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                     <TextBlock Text="Vérifier les mises à jour" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
@@ -92,7 +92,7 @@
 
                         <StackPanel VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⚡ Mises à jour d'Alex Toolkit"
+                                <TextBlock Text="Mises à jour d'Alex Toolkit"
                                            FontSize="16"
                                            FontWeight="Bold"
                                            Foreground="{DynamicResource TextPrimary}" />
@@ -105,7 +105,7 @@
                                                Text="v4.1.0"
                                                FontSize="11.5"
                                                FontWeight="Bold"
-                                               Foreground="#FFFFFF"/>
+                                               Foreground="{DynamicResource OnAccent}"/>
                                 </Border>
                             </StackPanel>
                             <TextBlock x:Name="TxtParamUpdateStatus"
@@ -185,14 +185,14 @@
                     <!-- Message temporaire de confirmation de copie de la fiche -->
                     <Border x:Name="CopySpecsFeedbackBorder"
                             Visibility="Collapsed"
-                            Background="#10B98122"
-                            BorderBrush="#10B981"
+                            Background="{DynamicResource SuccessBg}"
+                            BorderBrush="{DynamicResource Success}"
                             BorderThickness="1"
                             CornerRadius="8"
                             Padding="12,8,12,8"
                             Margin="0,0,0,14">
                         <TextBlock Text="Fiche de spécifications copiée dans le presse-papiers !"
-                                   Foreground="#34D399"
+                                   Foreground="{DynamicResource SuccessText}"
                                    FontWeight="SemiBold"
                                    FontSize="12.5" />
                     </Border>
@@ -296,10 +296,10 @@
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
 
                             <Button x:Name="BtnCopyHierarchy"
-                                    Content="📋 Copier l'arborescence"
+                                    Content="Copier l'arborescence"
                                     Background="{DynamicResource Accent}"
                                     BorderThickness="0"
-                                    Foreground="#FFFFFF"
+                                    Foreground="{DynamicResource OnAccent}"
                                     Padding="16,8,16,8"
                                     FontSize="12.5"
                                     FontWeight="Bold"
@@ -315,7 +315,7 @@
                         </StackPanel>
 
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="📁 Arborescence des scripts et commandes de ce projet"
+                            <TextBlock Text="Arborescence des outils et commandes"
                                        FontSize="16"
                                        FontWeight="Bold"
                                        Foreground="{DynamicResource TextPrimary}" />
@@ -329,15 +329,15 @@
                     <!-- Message temporaire de confirmation de copie -->
                     <Border x:Name="CopyFeedbackBorder"
                             Visibility="Collapsed"
-                            Background="#10B98122"
-                            BorderBrush="#10B981"
+                            Background="{DynamicResource SuccessBg}"
+                            BorderBrush="{DynamicResource Success}"
                             BorderThickness="1"
                             CornerRadius="8"
                             Padding="12,8,12,8"
                             Margin="0,0,0,14">
                         <TextBlock x:Name="TxtCopyFeedback"
-                                   Text="✅ Liste copiée dans le presse-papiers !"
-                                   Foreground="#34D399"
+                                   Text="Liste copiée dans le presse-papiers."
+                                   Foreground="{DynamicResource SuccessText}"
                                    FontWeight="SemiBold"
                                    FontSize="12.5" />
                     </Border>

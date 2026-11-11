@@ -31,20 +31,14 @@ public class WingetUpdateItem : INotifyPropertyChanged
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
 
-public class WingetInstalledItem
-{
-    public string Name { get; set; } = "";
-    public string Id { get; set; } = "";
-    public string Version { get; set; } = "";
-}
-
 public partial class WingetUpdatesDialog : Window
 {
     private readonly Action<string> _onOutput;
     private readonly CancellationToken _ct;
 
     public ObservableCollection<WingetUpdateItem> Updates { get; } = new();
-    private readonly List<WingetInstalledItem> _allInstalled = new();
+    private List<ScriptsWindows.Services.InstalledApp> _allInstalled = new();
+    private bool _inventoryLoaded;
 
     public WingetUpdatesDialog(Action<string> onOutput, CancellationToken ct = default)
     {
@@ -271,77 +265,115 @@ public partial class WingetUpdatesDialog : Window
     }
 
 
-    private async void BtnLoadInstalledApps_Click(object sender, RoutedEventArgs e)
-    {
-        TxtFeedback.Text = "Inventaire complet des logiciels installés via winget list...";
-        TxtNoInstalled.Text = "Chargement en cours...";
-        TxtNoInstalled.Visibility = Visibility.Visible;
-        _allInstalled.Clear();
-        LstInstalledApps.Items.Clear();
+    // ─── Inventaire des logiciels installés ──────────────────────────────
 
+    private async void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.OriginalSource is TabControl && TabInstalled.IsSelected && !_inventoryLoaded)
+            await LoadInventoryAsync();
+    }
+
+    private async Task LoadInventoryAsync()
+    {
+        _inventoryLoaded = true;
+        TxtNoInstalled.Text = "Chargement de l'inventaire…";
+        TxtNoInstalled.Visibility = Visibility.Visible;
+        TxtFeedback.Text = "Inventaire des logiciels installés…";
         try
         {
-            string output = await CommandRunner.RunAsync("winget list", _ct);
-            var lines = output.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            int headerIdx = -1;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("Nom", StringComparison.OrdinalIgnoreCase) || lines[i].StartsWith("Name", StringComparison.OrdinalIgnoreCase))
-                {
-                    headerIdx = i;
-                    break;
-                }
-            }
-
-            if (headerIdx >= 0 && headerIdx + 2 < lines.Length)
-            {
-                string header = lines[headerIdx];
-                int idPos  = header.IndexOf("ID", StringComparison.OrdinalIgnoreCase);
-                int verPos = header.IndexOf("Version", StringComparison.OrdinalIgnoreCase);
-
-                for (int i = headerIdx + 2; i < lines.Length; i++)
-                {
-                    string line = lines[i].TrimEnd();
-                    if (string.IsNullOrWhiteSpace(line) || idPos < 0) continue;
-
-                    string name = line.Length > idPos ? line.Substring(0, idPos).Trim() : line.Trim();
-                    string id   = verPos > 0 && line.Length > verPos ? line.Substring(idPos, verPos - idPos).Trim() : "";
-                    string ver  = verPos > 0 && line.Length > verPos ? line.Substring(verPos).Trim() : "";
-
-                    if (!string.IsNullOrWhiteSpace(name))
-                    {
-                        var item = new WingetInstalledItem { Name = name, Id = id, Version = ver };
-                        _allInstalled.Add(item);
-                        LstInstalledApps.Items.Add(item);
-                    }
-                }
-            }
-
-            TxtNoInstalled.Visibility = Visibility.Collapsed;
-            TxtFeedback.Text = $"{_allInstalled.Count} logiciel(s) installé(s) répertorié(s).";
+            _allInstalled = await ScriptsWindows.Services.InstalledAppsService.GetAppsAsync(_ct);
+            ApplyInventoryFilter();
+            TxtFeedback.Text = $"{_allInstalled.Count} logiciel(s) installé(s).";
         }
         catch (Exception ex)
         {
-            TxtNoInstalled.Text = $"Erreur inventaire : {ex.Message}";
+            _inventoryLoaded = false;
+            TxtNoInstalled.Text = $"Erreur d'inventaire : {ex.Message}";
             TxtFeedback.Text = $"Erreur : {ex.Message}";
         }
     }
 
-    private void TxtSearchApp_TextChanged(object sender, TextChangedEventArgs e)
+    private List<ScriptsWindows.Services.InstalledApp> FilteredApps()
     {
-        string filter = TxtSearchApp.Text.Trim().ToLowerInvariant();
-        LstInstalledApps.Items.Clear();
+        IEnumerable<ScriptsWindows.Services.InstalledApp> q = _allInstalled;
+        string search = TxtSearchApp.Text.Trim();
+        if (search.Length > 0)
+            q = q.Where(a => a.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase)
+                          || a.Publisher.Contains(search, StringComparison.CurrentCultureIgnoreCase));
 
-        var matches = string.IsNullOrWhiteSpace(filter)
-            ? _allInstalled
-            : _allInstalled.Where(a => a.Name.ToLowerInvariant().Contains(filter) || a.Id.ToLowerInvariant().Contains(filter));
-
-        foreach (var m in matches)
+        q = CmbAppFilter.SelectedIndex switch
         {
-            LstInstalledApps.Items.Add(m);
-        }
+            1 => q.Where(a => !a.IsStore),
+            2 => q.Where(a => a.IsStore),
+            3 => q.Where(a => a.InstallDate >= DateTime.Today.AddDays(-30)),
+            4 => q.Where(a => a.SizeMB >= 1024),
+            _ => q
+        };
+
+        q = CmbAppSort.SelectedIndex switch
+        {
+            1 => q.OrderByDescending(a => a.SizeMB),
+            2 => q.OrderByDescending(a => a.InstallDate ?? DateTime.MinValue),
+            3 => q.OrderBy(a => a.Publisher, StringComparer.CurrentCultureIgnoreCase).ThenBy(a => a.Name, StringComparer.CurrentCultureIgnoreCase),
+            _ => q.OrderBy(a => a.Name, StringComparer.CurrentCultureIgnoreCase)
+        };
+        return q.ToList();
     }
 
+    private void ApplyInventoryFilter()
+    {
+        if (!IsLoaded || LstInstalledApps == null) return;
+        var shown = FilteredApps();
+        LstInstalledApps.ItemsSource = shown;
+
+        double totalGb = _allInstalled.Sum(a => a.SizeMB) / 1024;
+        int recent = _allInstalled.Count(a => a.InstallDate >= DateTime.Today.AddDays(-30));
+        int store = _allInstalled.Count(a => a.IsStore);
+        TxtInventorySummary.Text = $"{_allInstalled.Count} logiciels ({_allInstalled.Count - store} de bureau, {store} du Store) • {totalGb:0.0} Go déclarés • {recent} installé(s) ces 30 derniers jours"
+                                 + (shown.Count != _allInstalled.Count ? $" • {shown.Count} affiché(s)" : "");
+
+        TxtNoInstalled.Text = _allInstalled.Count == 0 ? "Aucun logiciel trouvé." : "Aucun logiciel ne correspond aux critères.";
+        TxtNoInstalled.Visibility = shown.Count == 0 && _inventoryLoaded ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void TxtSearchApp_TextChanged(object sender, TextChangedEventArgs e) => ApplyInventoryFilter();
+    private void AppFilter_Changed(object sender, SelectionChangedEventArgs e) => ApplyInventoryFilter();
+
+    private void BtnOpenAppFolder_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: ScriptsWindows.Services.InstalledApp app } && app.HasLocation)
+            CommandRunner.StartProcess("explorer.exe", $"\"{app.Location}\"");
+    }
+
+    private async void BtnUninstallApp_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: ScriptsWindows.Services.InstalledApp app }) return;
+        if (MessageBox.Show(this, $"Désinstaller « {app.Name} » ?\n\n{app.Details}\n\nLe programme de désinstallation du logiciel va s'ouvrir.",
+                            "Désinstaller", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+
+        TxtFeedback.Text = $"Désinstallation de {app.Name}…";
+        _onOutput($"\n🚀 [LANCEMENT] Désinstallation : {app.Name}");
+        try { await ScriptsWindows.Services.InstalledAppsService.UninstallAsync(app, _onOutput, _ct); }
+        catch (Exception ex) { _onOutput($"[ERR] {ex.Message}"); }
+        await LoadInventoryAsync(); // la liste reflète le résultat réel
+    }
+
+    private void BtnExportCsv_Click(object sender, RoutedEventArgs e) => Export(csv: true);
+    private void BtnExportHtml_Click(object sender, RoutedEventArgs e) => Export(csv: false);
+
+    private void Export(bool csv)
+    {
+        var apps = FilteredApps();
+        if (apps.Count == 0) { TxtFeedback.Text = "Rien à exporter."; return; }
+        try
+        {
+            string path = csv ? ScriptsWindows.Services.InstalledAppsService.ExportCsv(apps)
+                              : ScriptsWindows.Services.InstalledAppsService.ExportHtml(apps);
+            TxtFeedback.Text = $"Exporté : {System.IO.Path.GetFileName(path)}";
+            _onOutput($"[OK] Inventaire des logiciels exporté : {path}");
+            CommandRunner.OpenUrl(path);
+        }
+        catch (Exception ex) { TxtFeedback.Text = $"Erreur d'export : {ex.Message}"; }
+    }
     private void BtnClose_Click(object sender, RoutedEventArgs e) => Close();
 }

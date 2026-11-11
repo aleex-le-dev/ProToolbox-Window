@@ -22,7 +22,7 @@ public partial class SearchResultsPage : Page
         if (query == _lastQuery) return;
         _lastQuery = query;
 
-        TxtHeader.Text = $"🔍 Recherche : \"{query}\"";
+        TxtHeader.Text = $"Résultats pour « {query} »";
         ResultsPanel.Children.Clear();
 
         var matches = ToolRegistry.Search(query).ToList();

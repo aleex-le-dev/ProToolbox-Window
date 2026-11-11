@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using ScriptsWindows.Core;
 using ScriptsWindows.Models;
 using ScriptsWindows.Views.Controls;
 
@@ -317,12 +318,12 @@ public static class SectionViewBuilder
             // En-tête de sous-catégorie (carte interactive)
             var headerBorder = new Border
             {
-                CornerRadius = new CornerRadius(10),
-                Padding = new Thickness(14, 10, 14, 10),
+                CornerRadius = new CornerRadius(6),
+                Padding = new Thickness(6, 6, 8, 6),
                 Cursor = Cursors.Hand,
-                BorderThickness = new Thickness(1)
+                BorderThickness = new Thickness(0)
             };
-            headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
+            headerBorder.Background = Brushes.Transparent;
             headerBorder.SetResourceReference(Border.BorderBrushProperty, "Border");
 
             var dock = new DockPanel();
@@ -335,8 +336,8 @@ public static class SectionViewBuilder
                 BorderThickness = new Thickness(1),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            countBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
-            countBadge.SetResourceReference(Border.BorderBrushProperty, "Border");
+            countBadge.Background = Brushes.Transparent;
+            countBadge.BorderThickness = new Thickness(0);
             DockPanel.SetDock(countBadge, Dock.Right);
 
             var countText = new TextBlock
@@ -345,7 +346,7 @@ public static class SectionViewBuilder
                 FontSize = 11,
                 FontWeight = FontWeights.SemiBold
             };
-            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
             countBadge.Child = countText;
 
             dock.Children.Add(countBadge);
@@ -359,13 +360,13 @@ public static class SectionViewBuilder
 
             var chevron = new TextBlock
             {
-                Text = "▼",
-                FontSize = 11,
-                FontWeight = FontWeights.Bold,
+                Text = IconGlyphs.ChevronDown,
+                FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"),
+                FontSize = 9,
                 Margin = new Thickness(0, 0, 10, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            chevron.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
+            chevron.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
 
             var accentBar = new Border
             {
@@ -386,7 +387,7 @@ public static class SectionViewBuilder
             titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
 
             leftPanel.Children.Add(chevron);
-            leftPanel.Children.Add(accentBar);
+            
             leftPanel.Children.Add(titleBlock);
             dock.Children.Add(leftPanel);
 
@@ -411,7 +412,7 @@ public static class SectionViewBuilder
             void SetExpanded(bool expand)
             {
                 wrapPanel.Visibility = expand ? Visibility.Visible : Visibility.Collapsed;
-                chevron.Text = expand ? "▼" : "▶";
+                chevron.Text = expand ? IconGlyphs.ChevronDown : IconGlyphs.ChevronRight;
 
                 if (expand)
                 {
@@ -434,7 +435,7 @@ public static class SectionViewBuilder
 
             headerBorder.MouseLeave += (s, e) =>
             {
-                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
+                headerBorder.Background = Brushes.Transparent;
             };
 
             // Clic sur l'en-tête pour basculer (mode accordéon exclusif : ouvre la section et ferme les autres)
@@ -525,12 +526,12 @@ public static class SectionViewBuilder
             // En-tête de catégorie (carte interactive d'accordéon)
             var headerBorder = new Border
             {
-                CornerRadius = new CornerRadius(10),
-                Padding = new Thickness(14, 11, 14, 11),
+                CornerRadius = new CornerRadius(6),
+                Padding = new Thickness(6, 6, 8, 6),
                 Cursor = Cursors.Hand,
-                BorderThickness = new Thickness(1)
+                BorderThickness = new Thickness(0)
             };
-            headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
+            headerBorder.Background = Brushes.Transparent;
             headerBorder.SetResourceReference(Border.BorderBrushProperty, "Border");
 
             var dock = new DockPanel();
@@ -543,8 +544,8 @@ public static class SectionViewBuilder
                 BorderThickness = new Thickness(1),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            countBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
-            countBadge.SetResourceReference(Border.BorderBrushProperty, "Border");
+            countBadge.Background = Brushes.Transparent;
+            countBadge.BorderThickness = new Thickness(0);
             DockPanel.SetDock(countBadge, Dock.Right);
 
             var countText = new TextBlock
@@ -553,7 +554,7 @@ public static class SectionViewBuilder
                 FontSize = 11.5,
                 FontWeight = FontWeights.SemiBold
             };
-            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+            countText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
             countBadge.Child = countText;
             dock.Children.Add(countBadge);
 
@@ -566,13 +567,13 @@ public static class SectionViewBuilder
 
             var chevron = new TextBlock
             {
-                Text = "▼",
-                FontSize = 11,
-                FontWeight = FontWeights.Bold,
+                Text = IconGlyphs.ChevronDown,
+                FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"),
+                FontSize = 9,
                 Margin = new Thickness(0, 0, 10, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            chevron.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
+            chevron.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
 
             var accentBar = new Border
             {
@@ -585,13 +586,13 @@ public static class SectionViewBuilder
 
             var iconBlock = new TextBlock
             {
-                Text = catGroup.CategoryIcon,
-                FontSize = 15,
-                Margin = new Thickness(0, 0, 8, 0),
-                FontFamily = new FontFamily("Segoe UI Emoji, Segoe MDL2 Assets, Segoe UI Symbol, Segoe UI"),
+                Text = IconGlyphs.ForCategory(catGroup.CategoryKey),
+                FontSize = 14,
+                Margin = new Thickness(0, 0, 10, 0),
+                FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            iconBlock.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+            iconBlock.SetResourceReference(TextBlock.ForegroundProperty, "AccentText");
 
             var titleBlock = new TextBlock
             {
@@ -603,7 +604,7 @@ public static class SectionViewBuilder
             titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
 
             leftPanel.Children.Add(chevron);
-            leftPanel.Children.Add(accentBar);
+            
             leftPanel.Children.Add(iconBlock);
             leftPanel.Children.Add(titleBlock);
             dock.Children.Add(leftPanel);
@@ -641,7 +642,7 @@ public static class SectionViewBuilder
                     Margin = new Thickness(0, 0, 8, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                subBullet.SetResourceReference(Border.BackgroundProperty, "Accent");
+                subBullet.SetResourceReference(Border.BackgroundProperty, "TextMuted");
 
                 var subTitle = new TextBlock
                 {
@@ -660,8 +661,8 @@ public static class SectionViewBuilder
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                subBadge.SetResourceReference(Border.BackgroundProperty, "BgInput");
-                subBadge.SetResourceReference(Border.BorderBrushProperty, "Border");
+                subBadge.Background = Brushes.Transparent;
+                subBadge.BorderThickness = new Thickness(0);
 
                 var subBadgeText = new TextBlock
                 {
@@ -669,7 +670,7 @@ public static class SectionViewBuilder
                     FontSize = 10.5,
                     FontWeight = FontWeights.SemiBold
                 };
-                subBadgeText.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+                subBadgeText.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
                 subBadge.Child = subBadgeText;
 
                 subHeader.Children.Add(subBullet);
@@ -698,7 +699,7 @@ public static class SectionViewBuilder
             void SetExpanded(bool expand)
             {
                 contentPanel.Visibility = expand ? Visibility.Visible : Visibility.Collapsed;
-                chevron.Text = expand ? "▼" : "▶";
+                chevron.Text = expand ? IconGlyphs.ChevronDown : IconGlyphs.ChevronRight;
 
                 if (expand)
                 {
@@ -721,7 +722,7 @@ public static class SectionViewBuilder
 
             headerBorder.MouseLeave += (s, e) =>
             {
-                headerBorder.SetResourceReference(Border.BackgroundProperty, "BgCard");
+                headerBorder.Background = Brushes.Transparent;
             };
 
             // Clic sur l'en-tête pour basculer (mode accordéon exclusif : ouvre la catégorie et ferme les autres)

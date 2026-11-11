@@ -4,6 +4,6 @@
       Background="{DynamicResource BgDeep}"
       Title="Nouveautés &amp; Outils Innovants">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24,16,24,24" x:Name="ToolsPanel" />
+        <StackPanel Margin="28,20,28,28" x:Name="ToolsPanel" />
     </ScrollViewer>
 </Page>

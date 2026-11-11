@@ -3,28 +3,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Height="780" Width="1320"
+        Title="Alex Toolkit"
+        Height="800" Width="1320"
         MinHeight="600" MinWidth="960"
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Display"
         RenderOptions.ClearTypeHint="Enabled"
-        Background="{DynamicResource WindowGradientBrush}"
+        FontFamily="{StaticResource FontMain}"
+        Background="{DynamicResource BgDeep}"
+        Foreground="{DynamicResource TextPrimary}"
         Focusable="True"
         PreviewMouseDown="Window_PreviewMouseDown">
 
+    <Window.Resources>
+        <!-- Compteur d'outils aligné à droite d'un élément de navigation -->
+        <Style x:Key="NavCount" TargetType="TextBlock" BasedOn="{StaticResource SidebarBadgeText}" />
+    </Window.Resources>
+
     <Grid x:Name="MainRootGrid" Focusable="True" FocusVisualStyle="{x:Null}">
         <Grid.ColumnDefinitions>
-            <!-- 1. Sidebar gauche -->
             <ColumnDefinition x:Name="SidebarColumn" Width="Auto" />
-            <!-- 2. Contenu central -->
             <ColumnDefinition Width="*" />
-            <!-- 3. Terminal latéral à droite -->
             <ColumnDefinition x:Name="TerminalColumn" Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!-- ══════════════════════════════════════════ -->
-        <!--             1. SIDEBAR GAUCHE              -->
+        <!--             1. BARRE LATÉRALE              -->
         <!-- ══════════════════════════════════════════ -->
         <Border Grid.Column="0"
                 x:Name="SidebarBorder"
@@ -37,122 +42,113 @@
                 MouseLeave="Sidebar_MouseLeave">
             <DockPanel>
 
-                <!-- Logo / Header -->
+                <!-- Identité de l'application -->
                 <Border DockPanel.Dock="Top"
                         x:Name="SidebarHeaderBorder"
-                        Padding="16,20,16,16"
-                        BorderBrush="{DynamicResource Border}"
-                        BorderThickness="0,0,0,1">
+                        Padding="16,18,16,14">
                     <Grid>
-                        <!-- Mode étendu -->
-                        <StackPanel x:Name="HeaderExpanded">
-                            <TextBlock Text="⚡ ALEEXLEDEV"
-                                       FontFamily="{StaticResource FontMain}"
-                                       FontSize="11"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource Accent}" />
-                            <TextBlock Text="Alex Toolkit"
-                                       FontFamily="{StaticResource FontMain}"
-                                       FontSize="15"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimary}"
-                                       Margin="0,4,0,0" />
+                        <StackPanel x:Name="HeaderExpanded" Orientation="Horizontal">
+                            <Border Width="30" Height="30" CornerRadius="7" Background="{DynamicResource Accent}" VerticalAlignment="Center">
+                                <TextBlock Text="A" FontFamily="{StaticResource FontDisplay}" FontSize="16" FontWeight="Bold"
+                                           Foreground="{DynamicResource OnAccent}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Alex Toolkit" FontFamily="{StaticResource FontDisplay}" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimary}" />
+                                <TextBlock Text="Maintenance Windows" FontSize="11" Foreground="{DynamicResource TextMuted}" Margin="0,1,0,0" />
+                            </StackPanel>
                         </StackPanel>
-                        <!-- Mode réduit : seulement le logo ⚡ -->
-                        <TextBlock x:Name="HeaderCollapsed"
-                                   Text="⚡"
-                                   Visibility="Collapsed"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   FontFamily="{StaticResource FontEmoji}"
-                                   FontSize="20"
-                                   Foreground="{DynamicResource Accent}"
-                                   ToolTip="⚡ ALEEXLEDEV - Alex Toolkit" />
+                        <Border x:Name="HeaderCollapsed" Visibility="Collapsed"
+                                Width="30" Height="30" CornerRadius="7" Background="{DynamicResource Accent}"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Alex Toolkit">
+                            <TextBlock Text="A" FontFamily="{StaticResource FontDisplay}" FontSize="16" FontWeight="Bold"
+                                       Foreground="{DynamicResource OnAccent}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Grid>
                 </Border>
 
-                <!-- Barre de recherche moderne avec watermark -->
-                <Border DockPanel.Dock="Top" x:Name="SidebarSearchBorder" Padding="12,10,12,10">
+                <!-- Recherche -->
+                <Border DockPanel.Dock="Top" x:Name="SidebarSearchBorder" Padding="12,0,12,10">
                     <Border x:Name="SearchBoxBorder"
-                            Background="{DynamicResource BgCard}"
+                            Background="{DynamicResource BgInput}"
                             BorderBrush="{DynamicResource Border}"
                             BorderThickness="1"
-                            CornerRadius="8"
-                            Cursor="Hand"
-                            ToolTip="Rechercher un outil..."
+                            CornerRadius="6"
+                            Height="34"
+                            Cursor="IBeam"
+                            ToolTip="Rechercher un outil (Échap pour effacer)"
                             MouseLeftButtonUp="SearchBorder_MouseLeftButtonUp">
                         <Grid>
-                            <!-- Mode réduit : icône loupe 100% centrée dans tout le rectangle (48x36 px) -->
                             <TextBlock x:Name="SearchIconCollapsed"
-                                       Text="🔍"
+                                       Text="&#xE721;"
                                        Visibility="Collapsed"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
-                                       TextAlignment="Center"
-                                       FontFamily="{StaticResource FontEmoji}"
-                                       Foreground="{DynamicResource TextPrimary}"
-                                       FontSize="14" />
+                                       FontFamily="{StaticResource FontIcon}"
+                                       Foreground="{DynamicResource TextSecondary}"
+                                       FontSize="13" />
 
-                            <!-- Mode étendu : icône + champ de saisie -->
                             <Grid x:Name="SearchExpandedGrid">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="🔍" Grid.Column="0"
-                                           Padding="8,6,4,6"
+                                <TextBlock Text="&#xE721;" Grid.Column="0"
+                                           Margin="10,0,6,0"
                                            VerticalAlignment="Center"
-                                           FontFamily="{StaticResource FontEmoji}"
-                                           Foreground="{DynamicResource TextPrimary}"
-                                           FontSize="13" />
-                                <Grid x:Name="SearchInputGrid" Grid.Column="1">
-                                <!-- Watermark Text -->
-                                <TextBlock Text="Rechercher un outil..."
-                                           VerticalAlignment="Center"
-                                           Margin="4,0,0,0"
-                                           FontSize="12"
+                                           FontFamily="{StaticResource FontIcon}"
                                            Foreground="{DynamicResource TextMuted}"
-                                           IsHitTestVisible="False">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <TextBox x:Name="SearchBox"
-                                         Background="Transparent"
-                                         BorderThickness="0"
-                                         Foreground="{DynamicResource TextPrimary}"
-                                         CaretBrush="{DynamicResource Accent}"
-                                         Padding="4,7,8,7"
-                                         FontFamily="{StaticResource FontMain}"
-                                         FontSize="12.5"
-                                         VerticalContentAlignment="Center"
-                                         TextChanged="SearchBox_TextChanged"
-                                         KeyDown="SearchBox_KeyDown">
-                                    <TextBox.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="0" />
-                                        </Style>
-                                    </TextBox.Resources>
-                                </TextBox>
+                                           FontSize="12" />
+                                <Grid x:Name="SearchInputGrid" Grid.Column="1">
+                                    <TextBlock Text="Rechercher un outil"
+                                               VerticalAlignment="Center"
+                                               Margin="2,0,0,0"
+                                               FontSize="12.5"
+                                               Foreground="{DynamicResource TextMuted}"
+                                               IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <!-- TextBox minimal : aucun gabarit ModernWpf (pas de bordure ni de bouton « effacer » parasites) -->
+                                    <TextBox x:Name="SearchBox"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Foreground="{DynamicResource TextPrimary}"
+                                             CaretBrush="{DynamicResource Accent}"
+                                             SelectionBrush="{DynamicResource Accent}"
+                                             FontSize="12.5"
+                                             VerticalAlignment="Center"
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="SearchBox_TextChanged"
+                                             KeyDown="SearchBox_KeyDown">
+                                        <TextBox.Template>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <ScrollViewer x:Name="PART_ContentHost" Margin="0" Padding="0"
+                                                              VerticalAlignment="Center" Focusable="False"
+                                                              HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" />
+                                            </ControlTemplate>
+                                        </TextBox.Template>
+                                    </TextBox>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Border>
                 </Border>
 
-                <!-- Section basse ancrée en bas de la barre latérale : Paramètres -->
+                <!-- Paramètres, ancré en bas -->
                 <Border DockPanel.Dock="Bottom"
                         x:Name="SidebarSettingsBorder"
                         BorderBrush="{DynamicResource Border}"
                         BorderThickness="0,1,0,0"
-                        Padding="8,8,8,8">
+                        Padding="8">
                     <Button x:Name="NavParametres"
                             ToolTip="Paramètres"
                             Style="{StaticResource SidebarItem}"
@@ -160,342 +156,165 @@
                             MouseEnter="NavCategory_MouseEnter">
                         <DockPanel LastChildFill="True">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="⚙️" Style="{StaticResource SidebarIcon}" />
-                                <TextBlock Text="Paramètres" VerticalAlignment="Center" FontWeight="Medium" />
+                                <TextBlock Text="&#xE713;" Style="{StaticResource SidebarIcon}" />
+                                <TextBlock Text="Paramètres" VerticalAlignment="Center" />
                             </StackPanel>
                         </DockPanel>
                     </Button>
                 </Border>
 
-                <!-- Navigation principale défilable (ascenseur masqué, molette active) -->
+                <!-- Navigation -->
                 <ScrollViewer x:Name="SidebarScrollViewer"
                               VerticalScrollBarVisibility="Hidden"
                               HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel x:Name="CategoryStackPanel" Margin="8,0,8,0">
+                    <StackPanel x:Name="CategoryStackPanel" Margin="8,0,8,8">
 
-                        <!-- Favoris -->
-                        <Button x:Name="NavFavoris"
-                                ToolTip="Favoris"
-                                Style="{StaticResource SidebarItem}"
-                                Click="NavFavoris_Click"
-                                MouseEnter="NavCategory_MouseEnter">
+                        <Button x:Name="NavFavoris" ToolTip="Favoris" Style="{StaticResource SidebarItem}"
+                                Click="NavFavoris_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_FAVORIS"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}">
+                                    <TextBlock x:Name="Badge_FAVORIS" Text="0" Style="{StaticResource NavCount}" />
                                 </Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock FontFamily="Segoe MDL2 Assets"
-                                               FontSize="15"
-                                               Text="&#xE735;"
-                                               Foreground="#FBBF24"
-                                               Margin="0,0,10,0"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Text="Favoris" VerticalAlignment="Center" FontWeight="Medium" />
+                                    <TextBlock Text="&#xE734;" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Favoris" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <!-- Séparateur & En-tête Catégories -->
-                        <Border x:Name="CategoriesSeparator" Height="1" Background="{DynamicResource Border}" Margin="4,8,4,8" />
+                        <Border x:Name="CategoriesSeparator" Height="0" Margin="4,8,4,4" />
                         <TextBlock x:Name="CategoriesHeader"
-                                   Text="CATÉGORIES"
-                                   FontSize="10"
-                                   FontWeight="Bold"
+                                   Text="OUTILS"
+                                   FontSize="10.5"
+                                   FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextMuted}"
-                                   Margin="10,2,0,6" />
+                                   Margin="10,4,0,6" />
 
-                        <!-- 13 Catégories Principales (Triées par ordre alphabétique) -->
                         <Button Tag="APPLICATIONS" ToolTip="Applications" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_APPLICATIONS"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_APPLICATIONS" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="📦" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xE71D;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Applications" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="DEMARRAGE" ToolTip="Démarrage &amp; Récupération" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="DEMARRAGE" ToolTip="Démarrage &amp; récupération" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_DEMARRAGE"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_DEMARRAGE" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="⚡" Style="{StaticResource SidebarIcon}" />
-                                    <TextBlock Text="Démarrage &amp; Récupération" VerticalAlignment="Center" />
+                                    <TextBlock Text="&#xE7E8;" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Démarrage" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
                         <Button Tag="DIAGNOSTIC" ToolTip="Diagnostic" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_DIAGNOSTIC"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                 </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_DIAGNOSTIC" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🔍" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xE9D9;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Diagnostic" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="DISQUE" ToolTip="Disque" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="DISQUE" ToolTip="Disques et stockage" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_DISQUE"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_DISQUE" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="💽" Style="{StaticResource SidebarIcon}" />
-                                    <TextBlock Text="Disque" VerticalAlignment="Center" />
+                                    <TextBlock Text="&#xEDA2;" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Disques" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="MATERIEL" ToolTip="Matériel" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="MATERIEL" ToolTip="Performances &amp; énergie" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_MATERIEL"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_MATERIEL" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🖥️" Style="{StaticResource SidebarIcon}" />
-                                    <TextBlock Text="Matériel" VerticalAlignment="Center" />
+                                    <TextBlock Text="&#xE7F4;" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Performances" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="MISES_A_JOUR" ToolTip="Mises à jour" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="MISES_A_JOUR" ToolTip="Mises à jour des programmes" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_MISES_A_JOUR"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_MISES_A_JOUR" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🔄" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xE895;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Mises à jour" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="NETTOYAGE" ToolTip="Nettoyage" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="NETTOYAGE" ToolTip="Nettoyage &amp; espace disque" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_NETTOYAGE"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_NETTOYAGE" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🧹" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xE74D;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Nettoyage" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="NOUVEAUTE" ToolTip="Nouveauté" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="NOUVEAUTE" ToolTip="Nouveautés" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_NOUVEAUTE"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_NOUVEAUTE" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="✨" Style="{StaticResource SidebarIcon}" />
-                                    <TextBlock Text="Nouveauté" VerticalAlignment="Center" />
+                                    <TextBlock Text="&#xEA80;" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Nouveautés" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="PERSONNALISATION" ToolTip="Personnalisation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="PERSONNALISATION" ToolTip="Personnalisation de Windows" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_PERSONNALISATION"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_PERSONNALISATION" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🎨" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xE790;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Personnalisation" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="REPARATION" ToolTip="Réparation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="REPARATION" ToolTip="Dépannage &amp; réparation" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_REPARATION"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_REPARATION" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🔧" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xE90F;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Réparation" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="RESEAU" ToolTip="Réseau" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="RESEAU" ToolTip="Internet &amp; réseau" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_RESEAU"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_RESEAU" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🌐" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xE774;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Réseau" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="SECRETS" ToolTip="Secrets et clés" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="SECRETS" ToolTip="Mots de passe &amp; licences" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_SECRETS"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_SECRETS" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🔑" Style="{StaticResource SidebarIcon}" />
-                                    <TextBlock Text="Secrets et clés" VerticalAlignment="Center" />
+                                    <TextBlock Text="&#xE8D7;" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="Mots de passe &amp; clés" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
                         </Button>
 
-                        <Button Tag="SECURITE" ToolTip="Sécurité" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
+                        <Button Tag="SECURITE" ToolTip="Sécurité &amp; antivirus" Style="{StaticResource SidebarItem}" Click="NavCategory_Click" MouseEnter="NavCategory_MouseEnter">
                             <DockPanel LastChildFill="True">
-                                <Border DockPanel.Dock="Right"
-                                        Background="{DynamicResource BgInput}"
-                                        BorderBrush="{DynamicResource Border}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="7,2"
-                                        VerticalAlignment="Center">
-                                    <TextBlock x:Name="Badge_SECURITE"
-                                               Text="0"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimary}" />
-                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SidebarBadge}"><TextBlock x:Name="Badge_SECURITE" Text="0" Style="{StaticResource NavCount}" /></Border>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="🛡️" Style="{StaticResource SidebarIcon}" />
+                                    <TextBlock Text="&#xEA18;" Style="{StaticResource SidebarIcon}" />
                                     <TextBlock Text="Sécurité" VerticalAlignment="Center" />
                                 </StackPanel>
                             </DockPanel>
@@ -503,7 +322,6 @@
 
                     </StackPanel>
                 </ScrollViewer>
-
             </DockPanel>
         </Border>
 
@@ -512,60 +330,44 @@
         <!-- ══════════════════════════════════════════ -->
         <Grid Grid.Column="1" MouseEnter="MainContent_MouseEnter" PreviewMouseDown="MainContent_PreviewMouseDown">
             <Grid.RowDefinitions>
-                <!-- Header de page -->
                 <RowDefinition Height="Auto" />
-                <!-- Zone de contenu des pages -->
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!-- Header de page -->
+            <!-- En-tête de page -->
             <Border Grid.Row="0"
-                    Background="{DynamicResource HeaderGradient}"
+                    Background="{DynamicResource BgDeep}"
                     BorderBrush="{DynamicResource Border}"
                     BorderThickness="0,0,0,1"
-                    Padding="24,14,24,14">
+                    Padding="28,20,28,18">
                 <DockPanel LastChildFill="True">
-                    <!-- Notification discrète de mise à jour (masquée si pas de maj) -->
                     <Button x:Name="BtnUpdateNotification"
                             DockPanel.Dock="Right"
                             Visibility="Collapsed"
                             VerticalAlignment="Center"
-                            Background="{DynamicResource Accent}"
-                            BorderThickness="0"
-                            Padding="12,6"
-                            Cursor="Hand"
-                            ToolTip="Une mise à jour est disponible pour Alex Toolkit ! Cliquez pour ouvrir l'installeur."
+                            Style="{StaticResource PrimaryActionButton}"
+                            ToolTip="Une nouvelle version d'Alex Toolkit est disponible. Cliquez pour l'installer."
                             Click="BtnUpdateNotification_Click">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="8"/>
-                            </Style>
-                        </Button.Resources>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="🚀" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="TxtUpdateNotificationLabel"
-                                       Text="Mise à jour disponible"
-                                       FontSize="12"
-                                       FontWeight="Bold"
-                                       Foreground="#FFFFFF"
-                                       VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE896;" FontFamily="{StaticResource FontIcon}" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock x:Name="TxtUpdateNotificationLabel" Text="Mise à jour disponible" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock x:Name="PageTitle"
-                                   Text="Mes Favoris"
+                                   Text="Favoris"
                                    Style="{StaticResource TitleText}"
-                                   FontSize="20" />
+                                   FontSize="22" />
                         <TextBlock x:Name="PageSubtitle"
                                    Text="Vos outils préférés accessibles rapidement"
                                    Style="{StaticResource SubtitleText}"
-                                   Margin="0,3,0,0" />
+                                   FontSize="12.5"
+                                   Margin="0,4,0,0" />
                     </StackPanel>
                 </DockPanel>
             </Border>
 
-            <!-- Zone de contenu des pages (transparente pour laisser voir le fond immersif) -->
             <Frame x:Name="MainFrame"
                    Grid.Row="1"
                    NavigationUIVisibility="Hidden"
@@ -573,7 +375,7 @@
         </Grid>
 
         <!-- ══════════════════════════════════════════ -->
-        <!--       3. TERMINAL LATÉRAL À DROITE         -->
+        <!--             3. CONSOLE DE SORTIE           -->
         <!-- ══════════════════════════════════════════ -->
         <Grid x:Name="OutputPanel"
               Grid.Column="2"
@@ -581,125 +383,71 @@
               MinWidth="280"
               Visibility="Collapsed">
             <Grid.ColumnDefinitions>
-                <!-- Poignée de redimensionnement (curseur SizeWE) -->
-                <ColumnDefinition Width="6" />
-                <!-- Contenu de la console -->
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Poignée Splitter pour élargir ou réduire la console -->
+            <!-- Poignée de redimensionnement -->
             <Border Grid.Column="0"
                     x:Name="TerminalResizeGrip"
-                    Background="Transparent"
                     BorderBrush="{DynamicResource Border}"
                     BorderThickness="1,0,0,0"
                     Cursor="SizeWE"
-                    ToolTip="Glisser vers la gauche pour élargir la console"
+                    ToolTip="Glisser pour redimensionner la console"
                     MouseLeftButtonDown="TerminalResizeGrip_MouseLeftButtonDown"
                     MouseMove="TerminalResizeGrip_MouseMove"
                     MouseLeftButtonUp="TerminalResizeGrip_MouseLeftButtonUp">
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Background" Value="{DynamicResource BgSidebar}" />
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource AccentDim}" />
-                                <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+                                <Setter Property="Background" Value="{DynamicResource Accent}" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
             </Border>
 
-            <!-- Contenu du terminal -->
-            <Border Grid.Column="1"
-                    Background="{DynamicResource TerminalBg}">
+            <Border Grid.Column="1" Background="{DynamicResource TerminalBg}">
                 <DockPanel>
-                    <!-- Toolbar du terminal -->
+                    <!-- Barre d'outils -->
                     <Border DockPanel.Dock="Top"
                             Background="{DynamicResource BgSidebar}"
                             BorderBrush="{DynamicResource Border}"
                             BorderThickness="0,0,0,1"
-                            Padding="12,10,12,10">
+                            Padding="14,8,8,8">
                         <DockPanel>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text=">_ Console"
-                                           FontFamily="{StaticResource FontMono}"
-                                           FontSize="11.5"
-                                           FontWeight="Bold"
-                                           Foreground="{DynamicResource Accent}" />
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button x:Name="BtnClearOutput" Content="&#xE74D;" Style="{StaticResource IconButton}"
+                                        ToolTip="Effacer la console" Click="BtnClearOutput_Click" />
+                                <Button x:Name="BtnZoomOut" Content="&#xE71F;" Style="{StaticResource IconButton}"
+                                        ToolTip="Réduire le texte (Ctrl + molette)" Click="BtnZoomOut_Click" />
+                                <Button x:Name="BtnZoomIn" Content="&#xE8A3;" Style="{StaticResource IconButton}"
+                                        ToolTip="Agrandir le texte (Ctrl + molette)" Click="BtnZoomIn_Click" />
+                                <Button x:Name="BtnCloseOutput" Content="&#xE711;" Style="{StaticResource IconButton}"
+                                        ToolTip="Fermer la console (interrompt le script en cours)" Click="BtnCloseOutput_Click" />
                             </StackPanel>
-                            
-                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button x:Name="BtnZoomOut"
-                                        Content="A-"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Foreground="{DynamicResource TextSecondary}"
-                                        Padding="5,2,5,2"
-                                        FontSize="11"
-                                        FontWeight="SemiBold"
-                                        Margin="0,0,2,0"
-                                        Cursor="Hand"
-                                        ToolTip="Réduire la taille du texte (Ctrl + Molette bas)"
-                                        Click="BtnZoomOut_Click">
-                                    <Button.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="4"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
-                                <Button x:Name="BtnZoomIn"
-                                        Content="A+"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Foreground="{DynamicResource TextSecondary}"
-                                        Padding="5,2,5,2"
-                                        FontSize="11"
-                                        FontWeight="SemiBold"
-                                        Margin="0,0,6,0"
-                                        Cursor="Hand"
-                                        ToolTip="Agrandir la taille du texte (Ctrl + Molette haut)"
-                                        Click="BtnZoomIn_Click">
-                                    <Button.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="4"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
-
-                                <Button x:Name="BtnCloseOutput"
-                                        Content="✕"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Foreground="{DynamicResource TextSecondary}"
-                                        Padding="6,3,6,3"
-                                        FontSize="11"
-                                        Cursor="Hand"
-                                        ToolTip="Fermer la console"
-                                        Click="BtnCloseOutput_Click">
-                                    <Button.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="5"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="&#xE756;" FontFamily="{StaticResource FontIcon}" FontSize="13"
+                                           Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBlock Text="Console" FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                             </StackPanel>
                         </DockPanel>
                     </Border>
 
-                    <!-- Sortie texte en colonne droite (pleine hauteur) -->
                     <RichTextBox x:Name="OutputBox"
                                  Background="{DynamicResource TerminalBg}"
                                  BorderThickness="0"
                                  Padding="14,12,14,12"
                                  FontFamily="{StaticResource FontMono}"
-                                 FontSize="13.5"
+                                 FontSize="12.5"
                                  Foreground="{DynamicResource TerminalText}"
                                  IsReadOnly="True"
                                  VerticalScrollBarVisibility="Auto"
                                  HorizontalScrollBarVisibility="Disabled">
-                        <FlowDocument PagePadding="0" FontSize="13.5" />
+                        <FlowDocument PagePadding="0" FontSize="12.5" LineHeight="18" />
                     </RichTextBox>
                 </DockPanel>
             </Border>

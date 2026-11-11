@@ -50,9 +50,11 @@ public static class ToolRegistry
         ["diag_dxdiag"] = "dxdiag.exe",
         ["diag_startup_manager"] = "AlexToolkit.exe (Gestionnaire des programmes au démarrage de Windows)",
         ["nov_win11_ai_audit"] = "AlexToolkit.exe (Audit d'éligibilité Windows 11 24H2, TPM 2.0 et NPU)",
+        ["diag_intervention"] = "AlexToolkit.exe (Checkup : Checkpoint-Computer, nettoyage, Update-MpSignature + Start-MpScan, DISM/SFC, winget upgrade --all → rapport HTML)",
+        ["diag_crash_drivers"] = "Get-WinEvent (BugCheck 1001, Kernel-Power 41) + Win32_PnPEntity + pnputil.exe /scan-devices",
 
         // ─── Matériel (4) ───
-        ["hw_winsat"] = "winsat.exe formal",
+        ["hw_winsat"] = "winsat.exe formal -restart clean + lecture du DataStore WinSAT (XML) → jauge, graphiques, comparatifs, historique",
         ["hw_powercfg_energy"] = "powercfg.exe /energy /output energy-report.html",
         ["hw_power_perf"] = "AlexToolkit.exe (Interface de gestion des modes d'alimentation : Normal, Performances élevées, Performances ultimes)",
         ["nov_gaming_optimizer"] = "AlexToolkit.exe (Optimisation de latence, HAGS et Game Mode)",
@@ -89,9 +91,11 @@ public static class ToolRegistry
         ["disk_diskpart"] = "diskpart.exe",
         ["disk_defrag_gui"] = "dfrgui.exe",
         ["disk_bitlocker"] = "manage-bde.exe -status",
+        ["disk_profile_migration"] = "robocopy.exe /E /XJ /MT:8 + netsh wlan export/add profile + winget export/import",
 
         // ─── Applications (2) ───
         ["app_installer_center"] = "AlexToolkit.exe (Installation d'applications unifiée : Chrome, VLC, 7-Zip, Sumatra PDF, PowerShell 7, Office, ArtCraft)",
+        ["app_debloat"] = "Get-AppxPackage + Remove-AppxPackage [-AllUsers] + Remove-AppxProvisionedPackage -Online",
         ["app_install_artcraft"] = "AlexToolkit.exe (Téléchargement direct Google Drive avec secours MSI GitHub)",
 
         // ─── Mises à jour (1) ───
@@ -102,6 +106,8 @@ public static class ToolRegistry
         ["nov_privacy_shield"] = "AlexToolkit.exe (Bouclier de confidentialité et blocage télémétrie Windows)",
         ["sec_defender_quickscan"] = "powershell Start-MpScan -ScanType QuickScan",
         ["sec_perfmon_rel"] = "perfmon.exe /rel",
+        ["sec_malware_cleanup"] = "AlexToolkit.exe (hosts, proxy, Get-ScheduledTask, clés Run + Start-MpScan / Start-MpWDOScan, winget AdwCleaner / Malwarebytes)",
+        ["sec_user_accounts"] = "AlexToolkit.exe (Comptes locaux : Get/New/Set/Remove-LocalUser, groupes par SID)",
 
         // ─── Personnalisation (3) ───
         ["tweak_godmode"] = "explorer.exe \"shell:::{ED7BA470-8E54-465E-825C-99712043E01C}\"",
@@ -122,6 +128,12 @@ public static class ToolRegistry
             return cmd;
         return "powershell.exe";
     }
+
+    /// <summary>Indique si l'outil possède une commande déclarée dans <see cref="CommandMap"/>.</summary>
+    public static bool HasCommand(string toolId) => CommandMap.ContainsKey(toolId ?? "");
+
+    /// <summary>Outils visibles dans l'interface (hors outils masqués).</summary>
+    public static IEnumerable<ScriptTool> VisibleTools => _allTools.Where(t => !t.IsHidden);
 
     public static IEnumerable<ScriptTool> Search(string query)
     {
@@ -212,6 +224,42 @@ public static class ToolRegistry
             Action = (log, ct) => DiagnosticService.OpenStartupManagerDialog(log, ct),
             Tags = new[] { "accélérer", "démarrage", "ralentissement", "programmes", "lancement", "vitesse", "boot", "optimiser" }
         });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "diag_intervention",
+            Name = "Intervention technicien et rapport client",
+            Description = "Checkup complet en un clic (restauration, nettoyage, antivirus, DISM/SFC, mises à jour) puis rapport client avec l'état du PC avant / après.",
+            Features = new[]
+            {
+                "Opérations de maintenance au choix, enchaînées",
+                "Comparatif avant / après et durée de chaque étape",
+                "Rapport HTML imprimable avec signatures"
+            },
+            Category = "DIAGNOSTIC",
+            SubHeading = "Intervention technicien",
+            Icon = "🧰",
+            Action = (log, ct) => DialogHelper.ShowDialogAsync(() => new Views.Controls.InterventionDialog(log, ct)),
+            Tags = new[] { "intervention", "rapport", "client", "checkup", "maintenance", "facture", "technicien", "bilan", "pdf", "révision" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "diag_crash_drivers",
+            Name = "Écrans bleus et périphériques en erreur",
+            Description = "Analyse les écrans bleus et arrêts brutaux des 90 derniers jours, liste les périphériques en erreur et explique la cause probable de chaque panne.",
+            Features = new[]
+            {
+                "Code d'arrêt traduit avec la cause probable",
+                "Périphériques en erreur (codes 10, 28, 43…)",
+                "Réinstallation d'un pilote en 1 clic"
+            },
+            Category = "DIAGNOSTIC",
+            SubHeading = "Pannes et pilotes",
+            Icon = "💥",
+            Action = (log, ct) => DialogHelper.ShowDialogAsync(() => new Views.Controls.CrashDriverDialog(log, ct)),
+            Tags = new[] { "écran bleu", "bsod", "plantage", "crash", "minidump", "pilote", "driver", "périphérique", "erreur", "code 43", "redémarre seul" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -259,17 +307,17 @@ public static class ToolRegistry
         {
             Id = "hw_winsat",
             Name = "Tester la puissance globale de mon PC",
-            Description = "Calcule une note de performance pour mesurer la rapidité réelle de votre processeur, mémoire, carte graphique et disque dur.",
+            Description = "Note officielle Windows avec jauge et graphiques : processeur, mémoire, graphismes et disque, comparés à des PC types ou à une évaluation précédente.",
             Features = new[]
             {
-                "Indice de performance officiel Windows (WinSAT)",
-                "Scores détaillés : Processeur, RAM, 3D et Disque",
-                "Rapport chiffré complet sur la vélocité matérielle"
+                "Note globale, point faible et conseil d'amélioration",
+                "Mesures réelles : Mo/s, Go/s, images/s",
+                "Comparatif avant / après et historique"
             },
             Category = "MATERIEL",
             SubHeading = "Banc d'essai et performances",
             Icon = "⚙️",
-            Action = (log, ct) => HardwareService.RunWinSat(log, ct),
+            Action = (log, ct) => DialogHelper.ShowDialogAsync(() => new Views.Controls.BenchmarkDialog(log, ct)),
             Tags = new[] { "tester", "note", "puissance", "vitesse", "benchmark", "score", "processeur", "graphique" }
         });
 
@@ -737,6 +785,24 @@ public static class ToolRegistry
             Action = (log, ct) => DiskService.ManageBitLocker(log, ct),
             Tags = new[] { "verrouiller", "protéger", "bitlocker", "mot de passe", "chiffrement", "sécurité", "dossiers", "intrus" }
         });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "disk_profile_migration",
+            Name = "Sauvegarder et transférer un profil utilisateur",
+            Description = "Copie les fichiers personnels, favoris, réseaux Wi-Fi et la liste des logiciels vers une clé USB ou un disque, puis restaure le tout sur un nouveau PC.",
+            Features = new[]
+            {
+                "Bureau, Documents, Images, Vidéos, Musique…",
+                "Favoris Chrome / Edge / Firefox et profils Wi-Fi",
+                "Réinstallation des logiciels via Winget"
+            },
+            Category = "DISQUE",
+            SubHeading = "Sauvegarde et migration",
+            Icon = "📦",
+            Action = (log, ct) => DialogHelper.ShowDialogAsync(() => new Views.Controls.ProfileMigrationDialog(log, ct)),
+            Tags = new[] { "sauvegarde", "backup", "migration", "transfert", "nouveau pc", "clé usb", "profil", "documents", "favoris", "wifi", "restaurer" }
+        });
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -778,6 +844,24 @@ public static class ToolRegistry
             Icon = "🎨",
             Action = async (log, ct) => await AppService.InstallArtCraft(log, null, ct),
             Tags = new[] { "artcraft", "craft", "launcher", "drive", "msi", "photocraft", "vectorcraft", "filmcraft", "cadcraft", "créatif", "graphisme", "dessin", "vidéo", "open-source", "suite" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "app_debloat",
+            Name = "Supprimer les applications préinstallées",
+            Description = "Retire les jeux, publicités et applications promotionnelles livrés avec Windows ou le fabricant (Candy Crush, TikTok, essais…). Les composants essentiels ne sont jamais proposés.",
+            Features = new[]
+            {
+                "Bloatware connu pré-sélectionné",
+                "Option : tous les comptes, sans retour",
+                "Réinstallable depuis le Microsoft Store"
+            },
+            Category = "APPLICATIONS",
+            SubHeading = "Nettoyage des applications",
+            Icon = "🧽",
+            Action = (log, ct) => DialogHelper.ShowDialogAsync(() => new Views.Controls.DebloatDialog(log, ct)),
+            Tags = new[] { "bloatware", "debloat", "désinstaller", "préinstallé", "candy crush", "publicité", "applications inutiles", "appx", "nettoyer", "fabricant" }
         });
     }
 
@@ -880,6 +964,42 @@ public static class ToolRegistry
             Icon = "📉",
             Action = (log, ct) => DiagnosticService.LaunchReliabilityMonitor(log, ct),
             Tags = new[] { "plantages", "bugs", "historique", "stabilité", "fiabilité", "crashs", "problèmes", "perfmon" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_user_accounts",
+            Name = "Gérer les comptes utilisateurs",
+            Description = "Liste les comptes locaux du PC et permet de changer un mot de passe, donner ou retirer les droits administrateur, activer, créer ou supprimer un compte.",
+            Features = new[]
+            {
+                "Réinitialisation ou suppression de mot de passe",
+                "Droits administrateur, activation / désactivation",
+                "Création et suppression de comptes locaux"
+            },
+            Category = "SECURITE",
+            SubHeading = "Comptes et accès",
+            Icon = "👤",
+            Action = (log, ct) => DialogHelper.ShowDialogAsync(() => new Views.Controls.UserAccountsDialog(log, ct)),
+            Tags = new[] { "compte", "utilisateur", "mot de passe", "oublié", "administrateur", "admin", "session", "créer", "supprimer", "user" }
+        });
+
+        _allTools.Add(new ScriptTool
+        {
+            Id = "sec_malware_cleanup",
+            Name = "Désinfection et détournements",
+            Description = "Détecte et corrige les détournements typiques des virus et adwares : fichier hosts, proxy, tâches planifiées et démarrages suspects. Analyses Defender et outils spécialisés.",
+            Features = new[]
+            {
+                "Fichier hosts, proxy WinINET / WinHTTP",
+                "Tâches et démarrages masqués ou encodés",
+                "Analyse hors ligne, AdwCleaner, Malwarebytes"
+            },
+            Category = "SECURITE",
+            SubHeading = "Désinfection",
+            Icon = "🦠",
+            Action = (log, ct) => DialogHelper.ShowDialogAsync(() => new Views.Controls.MalwareCleanupDialog(log, ct)),
+            Tags = new[] { "virus", "malware", "adware", "désinfection", "hosts", "proxy", "pirate", "publicité", "pop-up", "adwcleaner", "malwarebytes", "rootkit" }
         });
     }
 

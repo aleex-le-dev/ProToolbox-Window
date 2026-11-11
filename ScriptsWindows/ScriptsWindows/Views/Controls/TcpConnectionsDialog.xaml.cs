@@ -19,11 +19,11 @@ public class TcpConnectionItem
 
     public SolidColorBrush StateColor => State.ToUpperInvariant() switch
     {
-        "ESTABLISHED" => new SolidColorBrush(Color.FromRgb(16, 185, 129)), // Vert #10B981
-        "LISTEN"      => new SolidColorBrush(Color.FromRgb(59, 130, 246)), // Bleu #3B82F6
-        "TIMEWAIT"    => new SolidColorBrush(Color.FromRgb(107, 114, 128)),// Gris #6B7280
-        "CLOSEWAIT"   => new SolidColorBrush(Color.FromRgb(245, 158, 11)), // Orange #F59E0B
-        _             => new SolidColorBrush(Color.FromRgb(75, 85, 99))
+        "ESTABLISHED" => (SolidColorBrush)ThemeManager.GetBrush("Success"), // Vert #10B981
+        "LISTEN"      => (SolidColorBrush)ThemeManager.GetBrush("Accent"), // Bleu #3B82F6
+        "TIMEWAIT"    => (SolidColorBrush)ThemeManager.GetBrush("TextMuted"),// Gris #6B7280
+        "CLOSEWAIT"   => (SolidColorBrush)ThemeManager.GetBrush("Warning"), // Orange #F59E0B
+        _             => (SolidColorBrush)ThemeManager.GetBrush("TextMuted")
     };
 }
 

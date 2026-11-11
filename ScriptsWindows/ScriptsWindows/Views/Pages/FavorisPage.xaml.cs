@@ -9,6 +9,7 @@ namespace ScriptsWindows.Views.Pages;
 public partial class FavorisPage : Page, ISectionPage
 {
     private SectionController? _controller;
+    private bool _isDirty = true; // la liste doit être (re)construite au prochain affichage
 
     public FavorisPage()
     {
@@ -19,17 +20,24 @@ public partial class FavorisPage : Page, ISectionPage
 
     private void FavorisPage_Loaded(object sender, RoutedEventArgs e)
     {
-        RefreshFavoris();
+        // Reconstruit uniquement si les favoris ont changé depuis le dernier affichage
+        if (_isDirty) RefreshFavoris();
     }
 
     private void OnFavoriteChanged(string toolId, bool isFav)
     {
-        // Rafraîchir dynamiquement quand un favori est ajouté ou retiré
-        Dispatcher.InvokeAsync(RefreshFavoris);
+        _isDirty = true;
+
+        // Page visible → rafraîchissement immédiat ; sinon il sera fait au prochain Loaded
+        Dispatcher.InvokeAsync(() =>
+        {
+            if (IsLoaded && _isDirty) RefreshFavoris();
+        });
     }
 
     public void RefreshFavoris()
     {
+        _isDirty = false;
         ToolsPanel.Children.Clear();
         var favTools = ToolRegistry.GetFavorites().ToList();
 

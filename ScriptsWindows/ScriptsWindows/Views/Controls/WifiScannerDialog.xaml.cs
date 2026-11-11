@@ -26,9 +26,9 @@ public class WifiNetworkItem
 
     public SolidColorBrush SignalColor => SignalPercent switch
     {
-        >= 70 => new SolidColorBrush(Color.FromRgb(16, 185, 129)),  // #10B981 (Vert)
-        >= 40 => new SolidColorBrush(Color.FromRgb(245, 158, 11)),  // #F59E0B (Jaune/Orange)
-        _     => new SolidColorBrush(Color.FromRgb(239, 68, 68))   // #EF4444 (Rouge)
+        >= 70 => (SolidColorBrush)ThemeManager.GetBrush("SuccessText"),  // #10B981 (Vert)
+        >= 40 => (SolidColorBrush)ThemeManager.GetBrush("WarningText"),  // #F59E0B (Jaune/Orange)
+        _     => (SolidColorBrush)ThemeManager.GetBrush("DangerText")   // #EF4444 (Rouge)
     };
 
     public Visibility TagVisibility => string.IsNullOrWhiteSpace(AuthShort) ? Visibility.Collapsed : Visibility.Visible;

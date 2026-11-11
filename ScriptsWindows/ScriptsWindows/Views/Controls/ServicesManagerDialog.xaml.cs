@@ -101,7 +101,7 @@ if ($s) {{
             bool isRunning = item.Status.Equals("Running", StringComparison.OrdinalIgnoreCase);
 
             TxtServiceStatus.Text = isRunning ? "En cours d'exécution (Running)" : "Arrêté (Stopped)";
-            BadgeStatus.Background = isRunning ? new SolidColorBrush(Color.FromRgb(16, 185, 129)) : new SolidColorBrush(Color.FromRgb(239, 68, 68));
+            BadgeStatus.Background = isRunning ? (SolidColorBrush)ThemeManager.GetBrush("Success") : (SolidColorBrush)ThemeManager.GetBrush("Danger");
             TxtStartupType.Text = item.StartType;
 
             BtnStart.IsEnabled   = !isRunning;

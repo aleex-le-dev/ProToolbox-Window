@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,10 +20,10 @@ public partial class DnsBenchmarkDialog : Window
     private readonly Action<string> _onOutput;
     private readonly CancellationToken _ct;
 
-    private static readonly SolidColorBrush NormalBorder = new(Color.FromRgb(55, 65, 81));
-    private static readonly SolidColorBrush ActiveBorder = new(Color.FromRgb(16, 185, 129));
-    private static readonly SolidColorBrush NormalBg = new(Color.FromRgb(17, 24, 39));
-    private static readonly SolidColorBrush ActiveBg = new(Color.FromRgb(15, 33, 30));
+    private static readonly SolidColorBrush NormalBorder = (SolidColorBrush)ThemeManager.GetBrush("Border");
+    private static readonly SolidColorBrush ActiveBorder = (SolidColorBrush)ThemeManager.GetBrush("Success");
+    private static readonly SolidColorBrush NormalBg = (SolidColorBrush)ThemeManager.GetBrush("BgInput");
+    private static readonly SolidColorBrush ActiveBg = (SolidColorBrush)ThemeManager.GetBrush("SuccessBg");
 
     public class DnsBenchItem
     {
@@ -170,45 +171,13 @@ public partial class DnsBenchmarkDialog : Window
 
         _onOutput("🌐 [DNS BENCHMARK] Mesure en direct du ping et des temps de réponse...");
 
-        await Task.Run(() =>
-        {
-            var ping = new Ping();
+        // Tous les fournisseurs sont mesurés en parallèle (réseau uniquement, aucun thread bloqué)
+        await Task.WhenAll(Providers.Select(item => MeasureProviderAsync(item, _ct)));
 
-            foreach (var item in Providers)
-            {
-                // Ping ICMP
-                try
-                {
-                    var reply = ping.Send(item.PrimaryIp, 1500);
-                    item.PingMs = (reply.Status == IPStatus.Success) ? reply.RoundtripTime : 999;
-                }
-                catch
-                {
-                    item.PingMs = 999;
-                }
-
-                // Temps de résolution
-                try
-                {
-                    var sw = Stopwatch.StartNew();
-                    Dns.GetHostAddresses("google.com");
-                    sw.Stop();
-                    item.ResolveMs = Math.Max(10, Math.Round(item.PingMs * 1.2, 1));
-                }
-                catch
-                {
-                    item.ResolveMs = item.PingMs + 10;
-                }
-            }
-
-            // Vainqueur
-            var fastest = Providers.OrderBy(p => p.PingMs + p.ResolveMs).FirstOrDefault();
-            if (fastest != null)
-            {
-                foreach (var p in Providers) p.IsFastest = false;
-                fastest.IsFastest = true;
-            }
-        });
+        // Vainqueur : la résolution DNS réelle prime, le ping départage
+        var fastest = Providers.OrderBy(p => p.ResolveMs).ThenBy(p => p.PingMs).FirstOrDefault();
+        foreach (var p in Providers) p.IsFastest = false;
+        if (fastest != null && fastest.ResolveMs < FailedMs) fastest.IsFastest = true;
 
         // Mettre à jour l'UI
         DnsItemsControl.ItemsSource = null;
@@ -219,8 +188,116 @@ public partial class DnsBenchmarkDialog : Window
         var winner = Providers.FirstOrDefault(p => p.IsFastest);
         if (winner != null)
         {
-            _onOutput($"[OK] Benchmark terminé. Le plus rapide est {winner.Name} ({winner.PingText}).");
+            _onOutput($"[OK] Benchmark terminé. Le plus rapide est {winner.Name} (résolution {winner.ResolveText}, ping {winner.PingText}).");
         }
+        else
+        {
+            _onOutput("[!] Benchmark terminé : aucun serveur DNS n'a répondu (port 53 UDP bloqué ?).");
+        }
+    }
+
+    // ── Mesures ──────────────────────────────────────────────────────────────
+
+    private const double FailedMs       = 999;
+    private const int    PingTimeoutMs  = 1500;
+    private const int    QueryTimeoutMs = 2000;
+
+    // Domaines populaires (déjà en cache chez le résolveur → mesure la latence de réponse du service)
+    private static readonly string[] BenchmarkDomains = { "google.com", "wikipedia.org", "microsoft.com" };
+
+    private static async Task MeasureProviderAsync(DnsBenchItem item, CancellationToken ct)
+    {
+        // Ping ICMP (indicatif)
+        try
+        {
+            using var ping = new Ping();
+            var reply = await ping.SendPingAsync(item.PrimaryIp, PingTimeoutMs);
+            item.PingMs = reply.Status == IPStatus.Success ? reply.RoundtripTime : FailedMs;
+        }
+        catch
+        {
+            item.PingMs = FailedMs;
+        }
+
+        // Résolution DNS réelle : requête UDP envoyée directement à CE serveur, médiane de 3 domaines
+        var samples = new List<double>();
+        foreach (var domain in BenchmarkDomains)
+        {
+            if (ct.IsCancellationRequested) break;
+            double ms = await QueryDnsAsync(item.PrimaryIp, domain, ct);
+            if (ms < FailedMs) samples.Add(ms);
+        }
+
+        if (samples.Count == 0)
+        {
+            item.ResolveMs = FailedMs;
+        }
+        else
+        {
+            samples.Sort();
+            item.ResolveMs = Math.Round(samples[samples.Count / 2], 1);
+        }
+    }
+
+    /// <summary>
+    /// Envoie une requête DNS (type A, récursion demandée) en UDP/53 au serveur donné
+    /// et retourne le temps de réponse en ms, ou <see cref="FailedMs"/> en cas d'échec / timeout.
+    /// </summary>
+    private static async Task<double> QueryDnsAsync(string serverIp, string domain, CancellationToken ct)
+    {
+        try
+        {
+            ushort id = (ushort)Random.Shared.Next(ushort.MaxValue);
+            byte[] query = BuildDnsQuery(id, domain);
+
+            using var udp = new UdpClient(AddressFamily.InterNetwork);
+            udp.Connect(IPAddress.Parse(serverIp), 53);
+
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeout.CancelAfter(QueryTimeoutMs);
+
+            var sw = Stopwatch.StartNew();
+            // ConfigureAwait(false) : le chrono ne doit pas inclure l'attente du thread UI
+            await udp.SendAsync(query, timeout.Token).ConfigureAwait(false);
+
+            while (true)
+            {
+                var result = await udp.ReceiveAsync(timeout.Token).ConfigureAwait(false);
+                var buf = result.Buffer;
+                // Réponse valide = même ID + bit QR (réponse) positionné
+                if (buf.Length >= 12 && buf[0] == (byte)(id >> 8) && buf[1] == (byte)id && (buf[2] & 0x80) != 0)
+                {
+                    sw.Stop();
+                    return Math.Max(0.1, sw.Elapsed.TotalMilliseconds);
+                }
+            }
+        }
+        catch
+        {
+            return FailedMs;
+        }
+    }
+
+    private static byte[] BuildDnsQuery(ushort id, string domain)
+    {
+        var packet = new List<byte>(32 + domain.Length)
+        {
+            (byte)(id >> 8), (byte)id, // ID
+            0x01, 0x00,                // Flags : requête standard, récursion demandée
+            0x00, 0x01,                // QDCOUNT = 1
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00 // ANCOUNT, NSCOUNT, ARCOUNT
+        };
+
+        foreach (var label in domain.Split('.'))
+        {
+            var bytes = System.Text.Encoding.ASCII.GetBytes(label);
+            packet.Add((byte)bytes.Length);
+            packet.AddRange(bytes);
+        }
+
+        packet.Add(0x00);             // fin du QNAME
+        packet.AddRange(new byte[] { 0x00, 0x01, 0x00, 0x01 }); // QTYPE = A, QCLASS = IN
+        return packet.ToArray();
     }
 
     private async void BtnRunBenchmark_Click(object sender, RoutedEventArgs e)

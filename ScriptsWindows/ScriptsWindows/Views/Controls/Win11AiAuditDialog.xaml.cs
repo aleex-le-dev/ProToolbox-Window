@@ -17,10 +17,10 @@ public partial class Win11AiAuditDialog : Window
     private readonly Action<string> _onOutput;
     private readonly CancellationToken _ct;
 
-    private static readonly SolidColorBrush GreenBrush = new(Color.FromRgb(16, 185, 129));
-    private static readonly SolidColorBrush OrangeBrush = new(Color.FromRgb(245, 158, 11));
-    private static readonly SolidColorBrush RedBrush = new(Color.FromRgb(239, 68, 68));
-    private static readonly SolidColorBrush BlueBrush = new(Color.FromRgb(59, 130, 246));
+    private static readonly SolidColorBrush GreenBrush = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
+    private static readonly SolidColorBrush OrangeBrush = (SolidColorBrush)ThemeManager.GetBrush("WarningText");
+    private static readonly SolidColorBrush RedBrush = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
+    private static readonly SolidColorBrush BlueBrush = (SolidColorBrush)ThemeManager.GetBrush("AccentText");
 
     public Win11AiAuditDialog(Action<string> onOutput, CancellationToken ct = default)
     {

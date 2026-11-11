@@ -6,6 +6,8 @@ using System.Windows.Media;
 using Microsoft.Win32;
 using ScriptsWindows.Services;
 
+using ScriptsWindows.Core;
+
 namespace ScriptsWindows.Views.Controls;
 
 public partial class ContextMenuDialog : Window
@@ -28,7 +30,7 @@ public partial class ContextMenuDialog : Window
         if (isClassic)
         {
             TxtCurrentState.Text = "Menu Classique Windows 10 (Actif)";
-            TxtCurrentState.Foreground = new SolidColorBrush(Color.FromRgb(0x63, 0x66, 0xF1)); // Indigo
+            TxtCurrentState.Foreground = (SolidColorBrush)ThemeManager.GetBrush("AccentText"); // Indigo
             BtnApplyClassic.IsEnabled = false;
             BtnApplyModern.IsEnabled = true;
             TxtStatus.Text = "Le menu classique Windows 10 est actuellement activé.";
@@ -36,7 +38,7 @@ public partial class ContextMenuDialog : Window
         else
         {
             TxtCurrentState.Text = "Menu Moderne Windows 11 (Par défaut)";
-            TxtCurrentState.Foreground = new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81)); // Vert
+            TxtCurrentState.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText"); // Vert
             BtnApplyClassic.IsEnabled = true;
             BtnApplyModern.IsEnabled = false;
             TxtStatus.Text = "Le menu moderne d'origine Windows 11 est actuellement activé.";

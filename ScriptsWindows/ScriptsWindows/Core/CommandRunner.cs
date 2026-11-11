@@ -29,17 +29,43 @@ public class CommandRunner
         catch { }
     }
 
+    /// <summary>
+    /// Nom de l'exécutable appelé (premier mot de la commande, sans chemin, guillemets ni ".exe").
+    /// Évite les faux positifs d'un simple Contains (ex : un nom d'interface contenant « sfc »).
+    /// </summary>
+    private static string GetExecutableName(string command)
+    {
+        var span = command.AsSpan().TrimStart();
+        if (span.Length > 0 && span[0] == '"')
+        {
+            span = span[1..];
+            int endQuote = span.IndexOf('"');
+            if (endQuote >= 0) span = span[..endQuote];
+        }
+        else
+        {
+            int space = span.IndexOfAny(' ', '\t');
+            if (space >= 0) span = span[..space];
+        }
+
+        var name = Path.GetFileName(span.ToString());
+        return name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? name[..^4] : name;
+    }
+
     private static Encoding GetSafeEncoding(string command)
     {
+        string exe = GetExecutableName(command);
+
         // SFC émet obligatoirement en Unicode (UTF-16 LE) sous Windows
-        if (command.Contains("sfc", StringComparison.OrdinalIgnoreCase))
+        if (exe.Equals("sfc", StringComparison.OrdinalIgnoreCase))
         {
             return Encoding.Unicode;
         }
 
         // Winget et PowerShell émettent généralement en UTF-8
-        if (command.Contains("winget", StringComparison.OrdinalIgnoreCase) ||
-            command.Contains("powershell", StringComparison.OrdinalIgnoreCase))
+        if (exe.Equals("winget", StringComparison.OrdinalIgnoreCase) ||
+            exe.Equals("powershell", StringComparison.OrdinalIgnoreCase) ||
+            exe.Equals("pwsh", StringComparison.OrdinalIgnoreCase))
         {
             return Encoding.UTF8;
         }
@@ -209,7 +235,8 @@ public class CommandRunner
     /// </summary>
     public static void OpenUrl(string url)
     {
-        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        // using : libère le handle du processus (on ne le suit pas)
+        using var _ = Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
 
     /// <summary>
@@ -217,6 +244,6 @@ public class CommandRunner
     /// </summary>
     public static void StartProcess(string exeName, string args = "")
     {
-        Process.Start(new ProcessStartInfo(exeName, args) { UseShellExecute = true });
+        using var _ = Process.Start(new ProcessStartInfo(exeName, args) { UseShellExecute = true });
     }
 }

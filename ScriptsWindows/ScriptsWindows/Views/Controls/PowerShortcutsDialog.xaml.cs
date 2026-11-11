@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Media;
 using ScriptsWindows.Services;
 
+using ScriptsWindows.Core;
+
 namespace ScriptsWindows.Views.Controls;
 
 public partial class PowerShortcutsDialog : Window
@@ -41,17 +43,17 @@ public partial class PowerShortcutsDialog : Window
     {
         if (exists)
         {
-            badge.Background = new SolidColorBrush(Color.FromRgb(0x06, 0x5F, 0x46)); // Vert foncé
-            badge.BorderBrush = new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81)); // Vert
+            badge.Background = (SolidColorBrush)ThemeManager.GetBrush("SuccessBg"); // Vert foncé
+            badge.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Success"); // Vert
             textBlock.Text = "● Sur le Bureau";
-            textBlock.Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+            textBlock.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
         }
         else
         {
-            badge.Background = new SolidColorBrush(Color.FromRgb(0x11, 0x18, 0x27)); // Gris foncé
-            badge.BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51));
+            badge.Background = (SolidColorBrush)ThemeManager.GetBrush("BgInput"); // Gris foncé
+            badge.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Border");
             textBlock.Text = "○ Non installé";
-            textBlock.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+            textBlock.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
         }
     }
 
@@ -63,13 +65,13 @@ public partial class PowerShortcutsDialog : Window
             if (ok)
             {
                 TxtStatus.Text = "✓ Raccourci 'Arrêter le PC' créé avec succès sur votre Bureau !";
-                TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+                TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
                 _onOutput("[OK] Raccourci 'Arrêter le PC' créé sur le Bureau avec son icône officielle.");
             }
             else
             {
                 TxtStatus.Text = "⚠️ Impossible de créer le raccourci sur le Bureau.";
-                TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+                TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
             }
             RefreshStatus();
         }
@@ -88,13 +90,13 @@ public partial class PowerShortcutsDialog : Window
             if (ok)
             {
                 TxtStatus.Text = "✓ Raccourci 'Redémarrer le PC' créé avec succès sur votre Bureau !";
-                TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+                TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
                 _onOutput("[OK] Raccourci 'Redémarrer le PC' créé sur le Bureau avec son icône officielle.");
             }
             else
             {
                 TxtStatus.Text = "⚠️ Impossible de créer le raccourci sur le Bureau.";
-                TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+                TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
             }
             RefreshStatus();
         }
@@ -109,7 +111,7 @@ public partial class PowerShortcutsDialog : Window
     {
         PersonalizationService.RemoveShortcut(PersonalizationService.ShutdownShortcutName);
         TxtStatus.Text = "Raccourci 'Arrêter le PC' retiré du Bureau.";
-        TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+        TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
         _onOutput("[INFO] Raccourci 'Arrêter le PC' supprimé du Bureau.");
         RefreshStatus();
     }
@@ -118,7 +120,7 @@ public partial class PowerShortcutsDialog : Window
     {
         PersonalizationService.RemoveShortcut(PersonalizationService.RestartShortcutName);
         TxtStatus.Text = "Raccourci 'Redémarrer le PC' retiré du Bureau.";
-        TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+        TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
         _onOutput("[INFO] Raccourci 'Redémarrer le PC' supprimé du Bureau.");
         RefreshStatus();
     }
@@ -133,7 +135,7 @@ public partial class PowerShortcutsDialog : Window
             if (ok1 && ok2)
             {
                 TxtStatus.Text = "🎉 Boutons 'Arrêter' et 'Redémarrer' créés avec succès sur votre Bureau !";
-                TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+                TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
                 _onOutput("[SUCCÈS] Boutons Arrêter et Redémarrer installés sur le Bureau avec leurs icônes.");
             }
             else

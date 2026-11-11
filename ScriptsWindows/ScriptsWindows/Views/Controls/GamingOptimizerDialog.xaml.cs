@@ -13,8 +13,8 @@ public partial class GamingOptimizerDialog : Window
     private readonly Action<string> _onOutput;
     private readonly CancellationToken _ct;
 
-    private static readonly SolidColorBrush GreenBrush = new(Color.FromRgb(16, 185, 129));
-    private static readonly SolidColorBrush OrangeBrush = new(Color.FromRgb(245, 158, 11));
+    private static readonly SolidColorBrush GreenBrush = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
+    private static readonly SolidColorBrush OrangeBrush = (SolidColorBrush)ThemeManager.GetBrush("WarningText");
 
     public GamingOptimizerDialog(Action<string> onOutput, CancellationToken ct = default)
     {

@@ -7,6 +7,10 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Délai max par défaut de toutes les Regex de l'application : l'analyseur de sites web
+        // applique des motifs à du HTML/JS externe arbitraire (protection contre le backtracking catastrophique).
+        AppDomain.CurrentDomain.SetData("REGEX_DEFAULT_MATCH_TIMEOUT", TimeSpan.FromSeconds(2));
+
         // ── Élévation admin avant tout affichage de fenêtre ──────────
         // (évite le "flash" de la fenêtre principale avant le redémarrage)
         if (!AdminElevation.IsAdmin())

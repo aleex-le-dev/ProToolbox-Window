@@ -1,3 +1,4 @@
+using System.Windows.Media;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -79,7 +80,7 @@ public partial class ChkdskDialog : Window
         catch
         {
             TxtDriveDirtyStatus.Text = $"État du volume {item.Letter}: prêt pour analyse.";
-            TxtDriveDirtyStatus.Foreground = System.Windows.Media.Brushes.LightGray;
+            TxtDriveDirtyStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
         }
     }
 

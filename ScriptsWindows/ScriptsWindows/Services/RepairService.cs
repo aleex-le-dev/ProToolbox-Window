@@ -111,28 +111,90 @@ Write-Output '[OK] Réenregistrement des applications UWP et Store terminé'
     }
 
     // Reset Windows Update  (res_wu_reset)
+    /// <summary>
+    /// Réinitialise les composants Windows Update : arrêt des services, mise de côté des caches
+    /// (suffixe horodaté → fonctionne même si un ancien « .old » existe), relance garantie des services.
+    /// </summary>
     public static async Task ResetWindowsUpdate(Action<string> onOutput, CancellationToken ct = default)
     {
-        var commands = new[]
-        {
-            "net stop wuauserv",
-            "net stop cryptSvc",
-            "net stop bits",
-            "net stop msiserver",
-            "ren C:\\Windows\\SoftwareDistribution SoftwareDistribution.old",
-            "ren C:\\Windows\\System32\\catroot2 catroot2.old",
-            "net start wuauserv",
-            "net start cryptSvc",
-            "net start bits",
-            "net start msiserver"
-        };
+        await PowerShellRunner.RunAsync(@"
+$services = 'wuauserv','cryptSvc','bits','msiserver','usosvc'
+$stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
+$folders = @(""$env:SystemRoot\SoftwareDistribution"", ""$env:SystemRoot\System32\catroot2"")
 
-        foreach (var cmd in commands)
-        {
-            onOutput($"[CMD] {cmd}");
-            await CommandRunner.RunAsync(cmd, onOutput, ct);
-        }
-        onOutput("[OK] Windows Update réinitialisé avec succès");
+Write-Output '[i] 1/4 Arrêt des services Windows Update...'
+foreach ($s in $services) {
+    $svc = Get-Service -Name $s -ErrorAction SilentlyContinue
+    if ($svc -and $svc.Status -ne 'Stopped') {
+        try { Stop-Service -Name $s -Force -ErrorAction Stop; Write-Output ""    $s arrêté"" }
+        catch { Write-Output ""[!] $s : $($_.Exception.Message)"" }
+    }
+}
+
+Write-Output '[i] 2/4 Mise de côté des caches (sauvegarde horodatée)...'
+$ok = $true
+foreach ($f in $folders) {
+    if (Test-Path $f) {
+        $dest = ""$f.old_$stamp""
+        try { Rename-Item -Path $f -NewName (Split-Path $dest -Leaf) -Force -ErrorAction Stop; Write-Output ""    $(Split-Path $f -Leaf) -> $(Split-Path $dest -Leaf)"" }
+        catch { $ok = $false; Write-Output ""[ERR] Impossible de renommer $f : $($_.Exception.Message)"" }
+    }
+}
+
+Write-Output '[i] 3/4 Purge de la file BITS (téléchargements bloqués)...'
+Get-ChildItem ""$env:ALLUSERSPROFILE\Microsoft\Network\Downloader"" -Filter 'qmgr*.dat' -ErrorAction SilentlyContinue |
+    ForEach-Object { Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue }
+
+Write-Output '[i] 4/4 Redémarrage des services...'
+foreach ($s in $services) {
+    try { Start-Service -Name $s -ErrorAction Stop; Write-Output ""    $s démarré"" }
+    catch { Write-Output ""    $s : démarrage à la demande"" }
+}
+
+# Anciennes sauvegardes de plus de 30 jours : supprimées pour ne pas encombrer le disque
+Get-ChildItem ""$env:SystemRoot"", ""$env:SystemRoot\System32"" -Directory -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -match '^(SoftwareDistribution|catroot2)\.old_' -and $_.CreationTime -lt (Get-Date).AddDays(-30) } |
+    ForEach-Object { Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue }
+
+if ($ok) { Write-Output '[OK] Windows Update réinitialisé. Relancez la recherche de mises à jour dans Paramètres > Windows Update.' }
+else     { Write-Output '[!] Réinitialisation partielle : redémarrez le PC puis relancez l''opération.' }
+", onOutput, ct);
+    }
+
+    /// <summary>État de Windows Update : services, dernières installations, échecs récents, redémarrage en attente.</summary>
+    public static async Task GetWindowsUpdateStatus(Action<string> onOutput, CancellationToken ct = default)
+    {
+        await PowerShellRunner.RunAsync(@"
+Write-Output '── Services ──'
+foreach ($s in 'wuauserv','bits','cryptSvc','usosvc') {
+    $svc = Get-Service -Name $s -ErrorAction SilentlyContinue
+    if ($svc) { Write-Output (""    {0,-10} {1,-8} (démarrage : {2})"" -f $svc.Name, $svc.Status, $svc.StartType) }
+}
+
+$pending = (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired') -or
+           (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending')
+if ($pending) { Write-Output '[!] Un redémarrage est en attente pour terminer des mises à jour.' }
+else { Write-Output '[OK] Aucun redémarrage en attente.' }
+
+Write-Output ''
+Write-Output '── 5 dernières mises à jour installées ──'
+Get-HotFix -ErrorAction SilentlyContinue | Where-Object InstalledOn | Sort-Object InstalledOn -Descending | Select-Object -First 5 |
+    ForEach-Object { Write-Output (""    {0:dd/MM/yyyy}  {1,-10} {2}"" -f $_.InstalledOn, $_.HotFixID, $_.Description) }
+
+Write-Output ''
+Write-Output '── Échecs d''installation (30 derniers jours) ──'
+$fails = Get-WinEvent -FilterHashtable @{ LogName='System'; ProviderName='Microsoft-Windows-WindowsUpdateClient'; Id=20; StartTime=(Get-Date).AddDays(-30) } -MaxEvents 10 -ErrorAction SilentlyContinue
+if ($fails) {
+    foreach ($e in $fails) {
+        $msg = ($e.Message -replace '\s+', ' ')
+        if ($msg.Length -gt 160) { $msg = $msg.Substring(0,157) + '...' }
+        Write-Output (""[ERR] {0:dd/MM HH:mm} {1}"" -f $e.TimeCreated, $msg)
+    }
+    Write-Output '[i] Des échecs répétés se corrigent généralement avec « Réinitialiser ».'
+} else {
+    Write-Output '[OK] Aucun échec de mise à jour enregistré.'
+}
+", onOutput, ct);
     }
 
     // Redémarrer l'Explorateur  (res_explorer_restart)
@@ -174,9 +236,14 @@ Write-Output '[OK] Cache icônes supprimé — Explorateur redémarré'
     {
         onOutput("[i] Création d'un point de restauration...");
         await PowerShellRunner.RunAsync(@"
-Enable-ComputerRestore -Drive '$env:SystemDrive' -ErrorAction SilentlyContinue
-Checkpoint-Computer -Description 'AleexLeDev - Point Auto' -RestorePointType MODIFY_SETTINGS
-Write-Output '[OK] Point de restauration créé avec succès'
+Enable-ComputerRestore -Drive ""$env:SystemDrive\"" -ErrorAction SilentlyContinue
+$before = @(Get-ComputerRestorePoint -ErrorAction SilentlyContinue).Count
+try {
+    Checkpoint-Computer -Description 'Alex Toolkit - Point automatique' -RestorePointType MODIFY_SETTINGS -ErrorAction Stop -WarningAction SilentlyContinue
+} catch { Write-Output ""[ERR] $($_.Exception.Message)"" }
+$after = @(Get-ComputerRestorePoint -ErrorAction SilentlyContinue).Count
+if ($after -gt $before) { Write-Output '[OK] Point de restauration créé avec succès' }
+else { Write-Output '[!] Aucun nouveau point créé : Windows limite à un point par 24 h (un point récent existe déjà) ou la protection système est désactivée.' }
 ", onOutput, ct);
     }
 

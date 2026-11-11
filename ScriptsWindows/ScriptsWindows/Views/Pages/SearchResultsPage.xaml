@@ -4,10 +4,10 @@
       Background="{DynamicResource BgDeep}"
       Title="Résultats de Recherche">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24,20,24,24">
-            <TextBlock x:Name="TxtHeader" Text="🔍 Résultats de Recherche"
-                       FontFamily="{StaticResource FontMain}"
-                       FontSize="22" FontWeight="Bold"
+        <StackPanel Margin="28,20,28,28">
+            <TextBlock x:Name="TxtHeader" Text="Résultats"
+                       FontFamily="{StaticResource FontDisplay}"
+                       FontSize="15" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextPrimary}"
                        Margin="0,0,0,4" />
             <TextBlock x:Name="TxtCount" Text="0 résultat trouvé"
@@ -23,13 +23,13 @@
                     HorizontalAlignment="Center"
                     Margin="0,40,0,0">
                 <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="🔎" FontSize="44" FontFamily="{StaticResource FontEmoji}" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="&#xE721;" FontSize="30" FontFamily="{StaticResource FontIcon}" Foreground="{DynamicResource TextMuted}" HorizontalAlignment="Center"/>
                     <TextBlock Text="Aucun outil ne correspond à votre recherche"
                                FontFamily="{StaticResource FontMain}"
                                FontSize="16" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                    <TextBlock Text="Essayez un autre mot-clé (ex: wifi, ram, dns, sfc...)"
+                    <TextBlock Text="Essayez un autre mot-clé : wifi, ram, dns, sfc…"
                                FontFamily="{StaticResource FontMain}"
                                FontSize="13" Foreground="{DynamicResource TextSecondary}"
                                HorizontalAlignment="Center" Margin="0,4,0,0"/>

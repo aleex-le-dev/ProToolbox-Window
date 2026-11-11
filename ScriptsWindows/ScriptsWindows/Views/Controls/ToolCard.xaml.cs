@@ -12,24 +12,42 @@ namespace ScriptsWindows.Views.Controls;
 
 public partial class ToolCard : UserControl
 {
-    // ── Brushes précalculés pour l'étoile des favoris ──────────
-    private static readonly SolidColorBrush BrushFavGold  = new(Color.FromRgb(251, 191, 36)); // Or éclatant #FBBF24
-    private static readonly SolidColorBrush BrushFavMuted = new(Color.FromRgb(148, 163, 184)); // Gris ardoise épuré
-
-    static ToolCard()
-    {
-        BrushFavGold.Freeze();
-        BrushFavMuted.Freeze();
-    }
 
     // ── Champs ───────────────────────────────────────────────────────
     private ScriptTool? _tool;
     private Func<ScriptTool, Action<string>, Task>? _executeAction;
     private Action<string>? _outputCallback;
+    private bool _isExecuting; // cette carte est celle qui exécute le script en cours
 
     public ToolCard()
     {
         InitializeComponent();
+
+        // Verrouillage global : abonnement uniquement quand la carte est affichée
+        // (évite qu'un événement statique garde en vie les cartes des pages reconstruites)
+        Loaded   += OnCardLoaded;
+        Unloaded += OnCardUnloaded;
+        ToolTipService.SetShowOnDisabled(BtnRun, true); // explique pourquoi le bouton est grisé
+    }
+
+    private void OnCardLoaded(object sender, RoutedEventArgs e)
+    {
+        ScriptExecutionCoordinator.StateChanged -= OnExecutionStateChanged; // Loaded peut se répéter
+        ScriptExecutionCoordinator.StateChanged += OnExecutionStateChanged;
+        OnExecutionStateChanged(ScriptExecutionCoordinator.IsRunning);
+    }
+
+    private void OnCardUnloaded(object sender, RoutedEventArgs e)
+        => ScriptExecutionCoordinator.StateChanged -= OnExecutionStateChanged;
+
+    /// <summary>Désactive le bouton « Exécuter » des autres cartes pendant qu'un script tourne.</summary>
+    private void OnExecutionStateChanged(bool isRunning)
+    {
+        if (_isExecuting) return; // la carte active gère elle-même son bouton
+        BtnRun.IsEnabled = !isRunning;
+        BtnRun.ToolTip   = isRunning
+            ? $"Un script est en cours : {ScriptExecutionCoordinator.ActiveToolTitle}"
+            : null;
     }
 
     public void BindTool(
@@ -41,7 +59,7 @@ public partial class ToolCard : UserControl
         _executeAction  = executeAction;
         _outputCallback = outputCallback;
 
-        TxtIcon.Text        = string.IsNullOrEmpty(tool.Icon) ? "⚡" : tool.Icon;
+        TxtIcon.Text        = IconGlyphs.ForCategory(tool.Category);
         TxtTitle.Text       = tool.Title;
         TxtDescription.Text = tool.Description;
 
@@ -59,32 +77,32 @@ public partial class ToolCard : UserControl
         if (features != null && features.Length > 0)
         {
             PanelFeatures.Visibility = Visibility.Visible;
-            TxtDescription.MaxHeight = 34;
+            TxtDescription.MaxHeight = 34; // 2 lignes
 
             foreach (var feat in features.Take(3))
             {
-                var itemDock = new DockPanel { Margin = new Thickness(0, 1.5, 0, 1.5) };
+                var itemDock = new DockPanel { Margin = new Thickness(0, 1, 0, 1) };
 
                 var bullet = new TextBlock
                 {
-                    Text = "•",
-                    FontWeight = FontWeights.Bold,
-                    FontSize = 11,
-                    Margin = new Thickness(2, 0, 6, 0),
+                    Text = "\uE73E", // CheckMark
+                    FontFamily = (FontFamily)FindResource("FontIcon"),
+                    FontSize = 9,
+                    Margin = new Thickness(0, 0, 8, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                bullet.SetResourceReference(TextBlock.ForegroundProperty, "Accent");
+                bullet.SetResourceReference(TextBlock.ForegroundProperty, "SuccessText");
                 DockPanel.SetDock(bullet, Dock.Left);
                 itemDock.Children.Add(bullet);
 
                 var txt = new TextBlock
                 {
                     Text = feat,
-                    FontSize = 11,
+                    FontSize = 11.5,
                     TextTrimming = TextTrimming.CharacterEllipsis,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                txt.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimary");
+                txt.SetResourceReference(TextBlock.ForegroundProperty, "TextSecondary");
                 itemDock.Children.Add(txt);
 
                 PanelFeatures.Children.Add(itemDock);
@@ -108,8 +126,8 @@ public partial class ToolCard : UserControl
             return;
         }
 
-        var (icon, name) = SectionViewBuilder.GetCategoryMeta(_tool.Category);
-        TxtCategory.Text = $"{icon} {name}";
+        var (_, name) = SectionViewBuilder.GetCategoryMeta(_tool.Category);
+        TxtCategory.Text = name;
         BadgeCategory.Visibility = Visibility.Visible;
     }
 
@@ -120,17 +138,15 @@ public partial class ToolCard : UserControl
 
         if (isFav)
         {
-            // Étoile pleine officielle Windows (Segoe MDL2 Assets \uE735 = FavoriteStar)
-            TxtFavIcon.Text       = "\uE735";
-            TxtFavIcon.Foreground = BrushFavGold;
-            BtnFavorite.ToolTip   = "⭐ Retirer des favoris";
+            TxtFavIcon.Text = IconGlyphs.FavoriteFilled;
+            TxtFavIcon.SetResourceReference(TextBlock.ForegroundProperty, "WarningText");
+            BtnFavorite.ToolTip = "Retirer des favoris";
         }
         else
         {
-            // Étoile contour officielle Windows (Segoe MDL2 Assets \uE734 = FavoriteStarOutline)
-            TxtFavIcon.Text       = "\uE734";
-            TxtFavIcon.Foreground = BrushFavMuted;
-            BtnFavorite.ToolTip   = "☆ Ajouter aux favoris";
+            TxtFavIcon.Text = IconGlyphs.Favorite;
+            TxtFavIcon.SetResourceReference(TextBlock.ForegroundProperty, "TextMuted");
+            BtnFavorite.ToolTip = "Ajouter aux favoris";
         }
     }
 
@@ -156,12 +172,13 @@ public partial class ToolCard : UserControl
             return;
         }
 
+        _isExecuting = true;
+
         var mainWin = Application.Current.MainWindow as MainWindow;
         Action<string> log = _outputCallback ?? (msg => mainWin?.AppendOutput(msg));
 
         BtnRun.IsEnabled = false;
-        BtnRun.Content   = "⏳ ...";
-        mainWin?.SetRunning(true);
+        BtnRun.Content   = "En cours…";
 
         try
         {
@@ -186,10 +203,10 @@ public partial class ToolCard : UserControl
         }
         finally
         {
+            _isExecuting = false;
             ScriptExecutionCoordinator.EndExecution(_tool.Id);
-            mainWin?.SetRunning(false);
             BtnRun.IsEnabled = true;
-            BtnRun.Content   = "▶ Exécuter";
+            BtnRun.Content   = "Exécuter";
         }
     }
 

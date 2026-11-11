@@ -13,14 +13,14 @@ public partial class NetworkCenterDialog : Window
     private readonly Action<string> _onOutput;
     private readonly CancellationToken _ct;
 
-    private readonly SolidColorBrush _brushTabActive = new(Color.FromRgb(79, 70, 229));    // #4F46E5
+    private readonly SolidColorBrush _brushTabActive = (SolidColorBrush)ThemeManager.GetBrush("Accent");    // #4F46E5
     private readonly SolidColorBrush _brushTabInactive = new(Colors.Transparent);
-    private readonly SolidColorBrush _brushTextActive = new(Color.FromRgb(249, 250, 251));  // #F9FAFB
-    private readonly SolidColorBrush _brushTextInactive = new(Color.FromRgb(156, 163, 175)); // #9CA3AF
+    private readonly SolidColorBrush _brushTextActive = (SolidColorBrush)ThemeManager.GetBrush("OnAccent");  // #F9FAFB
+    private readonly SolidColorBrush _brushTextInactive = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary"); // #9CA3AF
 
-    private readonly SolidColorBrush _brushSuccess = new(Color.FromRgb(16, 185, 129));      // #10B981
-    private readonly SolidColorBrush _brushError = new(Color.FromRgb(239, 68, 68));          // #EF4444
-    private readonly SolidColorBrush _brushNeutral = new(Color.FromRgb(55, 65, 81));        // #374151
+    private readonly SolidColorBrush _brushSuccess = (SolidColorBrush)ThemeManager.GetBrush("Success");      // #10B981
+    private readonly SolidColorBrush _brushError = (SolidColorBrush)ThemeManager.GetBrush("Danger");          // #EF4444
+    private readonly SolidColorBrush _brushNeutral = (SolidColorBrush)ThemeManager.GetBrush("TextMuted");        // #374151
 
     public NetworkCenterDialog(Action<string> onOutput, CancellationToken ct = default)
     {
@@ -30,8 +30,8 @@ public partial class NetworkCenterDialog : Window
 
         Loaded += async (_, _) =>
         {
-            await LoadDiagnosticsAsync();
-            await LoadDnsAdaptersAsync();
+            // Indépendants : lancés en parallèle (2 processus PowerShell simultanés au lieu de successifs)
+            await Task.WhenAll(LoadDiagnosticsAsync(), LoadDnsAdaptersAsync());
         };
     }
 

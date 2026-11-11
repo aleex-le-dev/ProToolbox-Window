@@ -4,14 +4,14 @@
       Background="{DynamicResource BgDeep}"
       Title="Mes favoris">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24,16,24,24">
+        <StackPanel Margin="28,20,28,28">
 
             <!-- Info si pas de favoris -->
             <Border x:Name="EmptyState"
                     Background="{DynamicResource BgCard}"
                     BorderBrush="{DynamicResource Border}"
                     BorderThickness="1"
-                    CornerRadius="14"
+                    CornerRadius="8"
                     Padding="48,40"
                     HorizontalAlignment="Center"
                     Margin="0,40,0,0">
@@ -21,20 +21,20 @@
                             Background="{DynamicResource AccentDim}"
                             HorizontalAlignment="Center"
                             Margin="0,0,0,16">
-                        <TextBlock FontFamily="Segoe MDL2 Assets"
-                                   FontSize="28"
+                        <TextBlock FontFamily="{StaticResource FontIcon}"
+                                   FontSize="26"
                                    Text="&#xE735;"
-                                   Foreground="#FBBF24"
+                                   Foreground="{DynamicResource WarningText}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                     </Border>
-                    <TextBlock Text="Aucun favori enregistré"
-                               FontFamily="{StaticResource FontMain}"
-                               FontSize="18"
+                    <TextBlock Text="Aucun favori pour le moment"
+                               FontFamily="{StaticResource FontDisplay}"
+                               FontSize="17"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center" />
-                    <TextBlock Text="Vous n'avez pas encore d'outils favoris. Cliquez sur l'étoile en haut à droite de n'importe quelle carte pour l'ajouter ici et y accéder instantanément."
+                    <TextBlock Text="Cliquez sur l'étoile d'une carte d'outil pour l'épingler ici et la retrouver en un clic."
                                FontFamily="{StaticResource FontMain}"
                                FontSize="12.5"
                                TextWrapping="Wrap"

@@ -1,154 +1,178 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    BOUTON PRIMAIRE                              -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <Style x:Key="BtnPrimary" TargetType="Button">
-        <Setter Property="Background"  Value="{DynamicResource AccentGradient}" />
-        <Setter Property="Foreground"  Value="{DynamicResource TextPrimary}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding"     Value="16,9,16,9" />
-        <Setter Property="FontFamily"  Value="{StaticResource FontMain}" />
-        <Setter Property="FontSize"    Value="{StaticResource FontSizeMD}" />
-        <Setter Property="FontWeight"  Value="SemiBold" />
-        <Setter Property="Cursor"      Value="Hand" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="{StaticResource RadiusSM}"
-                            Padding="{TemplateBinding Padding}">
-                        <Border.Effect>
-                            <DropShadowEffect Color="#6366F1" BlurRadius="12" ShadowDepth="0" Opacity="0.4" />
-                        </Border.Effect>
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Opacity" Value="0.9" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Root" Property="Opacity" Value="0.7" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    BOUTON SECONDAIRE                            -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <Style x:Key="BtnSecondary" TargetType="Button">
-        <Setter Property="Background"  Value="{DynamicResource BgCard}" />
-        <Setter Property="Foreground"  Value="{DynamicResource TextPrimary}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
+    <!-- ═══════════════════════════════════════════════════════════════════
+         BOUTONS — base commune
+         Toute la famille partage le même gabarit : rayon 6 px, hauteur ~32 px,
+         états survol / pressé / désactivé, focus clavier visible.
+         ═══════════════════════════════════════════════════════════════════ -->
+    <Style x:Key="ButtonBase" TargetType="Button">
+        <Setter Property="Background"      Value="{DynamicResource BgInput}" />
+        <Setter Property="Foreground"      Value="{DynamicResource TextPrimary}" />
+        <Setter Property="BorderBrush"     Value="{DynamicResource Border}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding"     Value="14,8,14,8" />
-        <Setter Property="FontFamily"  Value="{StaticResource FontMain}" />
-        <Setter Property="FontSize"    Value="{StaticResource FontSizeMD}" />
-        <Setter Property="Cursor"      Value="Hand" />
+        <Setter Property="Padding"         Value="14,7" />
+        <Setter Property="MinHeight"       Value="32" />
+        <Setter Property="FontFamily"      Value="{StaticResource FontMain}" />
+        <Setter Property="FontSize"        Value="{StaticResource FontSizeMD}" />
+        <Setter Property="FontWeight"      Value="SemiBold" />
+        <Setter Property="Cursor"          Value="Hand" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Root"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource RadiusSM}"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
+                    <Grid>
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{StaticResource RadiusMD}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <!-- Voile d'état (survol / pressé) : fonctionne quelle que soit la couleur du bouton -->
+                        <Border x:Name="StateOverlay"
+                                CornerRadius="{StaticResource RadiusMD}"
+                                Background="{DynamicResource TextPrimary}"
+                                Opacity="0"
+                                IsHitTestVisible="False" />
+                        <Border x:Name="FocusRing"
+                                CornerRadius="8"
+                                Margin="-3"
+                                BorderBrush="{DynamicResource Accent}"
+                                BorderThickness="2"
+                                Visibility="Collapsed"
+                                IsHitTestVisible="False" />
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource BgCardHover}" />
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                            <Setter TargetName="StateOverlay" Property="Opacity" Value="0.06" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Root" Property="Opacity" Value="0.8" />
+                            <Setter TargetName="StateOverlay" Property="Opacity" Value="0.12" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.45" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
     </Style>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    BOUTON DANGER                               -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <Style x:Key="BtnDanger" TargetType="Button" BasedOn="{StaticResource BtnPrimary}">
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#EF4444" Offset="0"/>
-                    <GradientStop Color="#DC2626" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
+    <!-- Bouton standard (secondaire) -->
+    <Style x:Key="ActionButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}" />
+    <Style x:Key="BtnSecondary" TargetType="Button" BasedOn="{StaticResource ButtonBase}" />
+
+    <!-- Bouton principal : couleur d'accent -->
+    <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}">
+        <Setter Property="Background"  Value="{DynamicResource Accent}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+        <Setter Property="Foreground"  Value="{DynamicResource OnAccent}" />
+    </Style>
+    <Style x:Key="BtnPrimary"         TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}" />
+    <Style x:Key="IndigoActionButton" TargetType="Button" BasedOn="{StaticResource PrimaryActionButton}" />
+
+    <!-- Bouton discret (sans fond) -->
+    <Style x:Key="SecondaryActionButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}">
+        <Setter Property="Background"  Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
+        <Setter Property="Foreground"  Value="{DynamicResource TextSecondary}" />
     </Style>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                      TOOL CARD                                  -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- Variantes sémantiques -->
+    <Style x:Key="SuccessActionButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}">
+        <Setter Property="Background"  Value="{DynamicResource Success}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Success}" />
+        <Setter Property="Foreground"  Value="{DynamicResource OnAccent}" />
+    </Style>
+    <Style x:Key="DangerActionButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}">
+        <Setter Property="Background"  Value="{DynamicResource Danger}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Danger}" />
+        <Setter Property="Foreground"  Value="{DynamicResource OnAccent}" />
+    </Style>
+    <Style x:Key="BtnDanger" TargetType="Button" BasedOn="{StaticResource DangerActionButton}" />
+    <Style x:Key="WarningActionButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}">
+        <Setter Property="Background"  Value="{DynamicResource Warning}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Warning}" />
+        <Setter Property="Foreground"  Value="{DynamicResource OnAccent}" />
+    </Style>
+    <Style x:Key="OrangeActionButton" TargetType="Button" BasedOn="{StaticResource WarningActionButton}" />
+
+    <!-- Bouton icône (barres d'outils : console, favoris…) -->
+    <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}">
+        <Setter Property="Background"  Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground"  Value="{DynamicResource TextSecondary}" />
+        <Setter Property="Padding"     Value="6" />
+        <Setter Property="MinHeight"   Value="28" />
+        <Setter Property="MinWidth"    Value="28" />
+        <Setter Property="FontFamily"  Value="{StaticResource FontIcon}" />
+        <Setter Property="FontSize"    Value="12" />
+        <Setter Property="FontWeight"  Value="Normal" />
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         CARTES & TEXTES
+         ═══════════════════════════════════════════════════════════════════ -->
     <Style x:Key="ToolCard" TargetType="Border">
-        <Setter Property="Background"       Value="{DynamicResource BgCard}" />
-        <Setter Property="BorderBrush"      Value="{DynamicResource Border}" />
-        <Setter Property="BorderThickness"  Value="1" />
-        <Setter Property="CornerRadius"     Value="{StaticResource RadiusMD}" />
-        <Setter Property="Padding"          Value="{StaticResource CardPadding}" />
-        <Setter Property="Cursor"           Value="Hand" />
+        <Setter Property="Background"      Value="{DynamicResource BgCard}" />
+        <Setter Property="BorderBrush"     Value="{DynamicResource Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius"    Value="{StaticResource RadiusLG}" />
+        <Setter Property="Padding"         Value="{StaticResource CardPadding}" />
     </Style>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    SECTION HEADER                              -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <Style x:Key="SectionHeader" TargetType="TextBlock">
-        <Setter Property="FontFamily"  Value="{StaticResource FontMain}" />
-        <Setter Property="FontSize"    Value="{StaticResource FontSizeXS}" />
-        <Setter Property="FontWeight"  Value="SemiBold" />
-        <Setter Property="Foreground"  Value="{DynamicResource TextMuted}" />
-        <Setter Property="Margin"      Value="0,16,0,6" />
+        <Setter Property="FontFamily" Value="{StaticResource FontMain}" />
+        <Setter Property="FontSize"   Value="{StaticResource FontSizeXS}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="Margin"     Value="0,16,0,6" />
     </Style>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    TEXTE TITRE                                  -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <Style x:Key="TitleText" TargetType="TextBlock">
-        <Setter Property="FontFamily"  Value="{StaticResource FontMain}" />
-        <Setter Property="FontSize"    Value="{StaticResource FontSizeLG}" />
-        <Setter Property="FontWeight"  Value="SemiBold" />
-        <Setter Property="Foreground"  Value="{DynamicResource TextPrimary}" />
+        <Setter Property="FontFamily" Value="{StaticResource FontDisplay}" />
+        <Setter Property="FontSize"   Value="{StaticResource FontSizeLG}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
     </Style>
 
     <Style x:Key="SubtitleText" TargetType="TextBlock">
-        <Setter Property="FontFamily"  Value="{StaticResource FontMain}" />
-        <Setter Property="FontSize"    Value="{StaticResource FontSizeSM}" />
-        <Setter Property="Foreground"  Value="{DynamicResource TextSecondary}" />
+        <Setter Property="FontFamily"   Value="{StaticResource FontMain}" />
+        <Setter Property="FontSize"     Value="{StaticResource FontSizeSM}" />
+        <Setter Property="Foreground"   Value="{DynamicResource TextSecondary}" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    SIDEBAR ITEM                                 -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════════
+         BARRE LATÉRALE
+         ═══════════════════════════════════════════════════════════════════ -->
     <Style x:Key="SidebarItem" TargetType="Button">
         <Setter Property="Background"      Value="Transparent" />
         <Setter Property="Foreground"      Value="{DynamicResource TextSecondary}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment"        Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="Padding"         Value="10,8,10,8" />
+        <Setter Property="Padding"         Value="10,7,10,7" />
         <Setter Property="Margin"          Value="0,1,0,1" />
         <Setter Property="FontFamily"      Value="{StaticResource FontMain}" />
         <Setter Property="FontSize"        Value="{StaticResource FontSizeMD}" />
         <Setter Property="Cursor"          Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Root"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="8"
+                            CornerRadius="{StaticResource RadiusMD}"
                             Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                     </Border>
@@ -163,36 +187,119 @@
         </Setter>
     </Style>
 
-    <!-- Sidebar item actif -->
+    <!-- Élément actif : fond légèrement accentué + barre d'indicateur -->
     <Style x:Key="SidebarItemActive" TargetType="Button" BasedOn="{StaticResource SidebarItem}">
-        <Setter Property="Background" Value="{DynamicResource AccentDim}" />
-        <Setter Property="Foreground" Value="{DynamicResource Accent}" />
+        <Setter Property="Background" Value="{DynamicResource BgCardHover}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
         <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="{StaticResource RadiusMD}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                        </Border>
+                        <Border Width="3" Height="16" CornerRadius="2"
+                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                Background="{DynamicResource Accent}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <!-- Icône de la barre latérale (support emojis et symboles contrastés) -->
+    <!-- Icône de navigation : police d'icônes Windows, couleur héritée du bouton -->
     <Style x:Key="SidebarIcon" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource FontEmoji}" />
-        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="Margin" Value="0,0,10,0" />
+        <Setter Property="FontFamily" Value="{StaticResource FontIcon}" />
+        <Setter Property="FontSize"   Value="15" />
+        <Setter Property="Width"      Value="18" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="Margin"     Value="0,0,12,0" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--               SCROLLBAR PERSONNALISÉE                          -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <Style TargetType="ScrollBar">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Width" Value="6" />
+    <!-- Compteur d'outils dans la barre latérale -->
+    <Style x:Key="SidebarBadge" TargetType="Border">
+        <Setter Property="Background"   Value="Transparent" />
+        <Setter Property="Padding"      Value="6,1" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="SidebarBadgeText" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="11" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
     </Style>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--              BADGE CATÉGORIE (chip coloré)                     -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════════
+         DIVERS
+         ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Barre de défilement fine (remplace le gabarit ModernWpf : sans flèches, pouce arrondi) -->
+    <Style x:Key="ScrollThumb" TargetType="Thumb">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border x:Name="ThumbBorder" CornerRadius="3" Background="{DynamicResource BorderStrong}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource TextMuted}" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource TextSecondary}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ScrollBar">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Width" Value="10" />
+        <Setter Property="MinWidth" Value="10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Border Background="{TemplateBinding Background}" Padding="2">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource ScrollThumb}" MinHeight="24" />
+                            </Track.Thumb>
+                        </Track>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Width" Value="Auto" />
+                <Setter Property="MinWidth" Value="0" />
+                <Setter Property="Height" Value="10" />
+                <Setter Property="MinHeight" Value="10" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Border Background="{TemplateBinding Background}" Padding="2">
+                                <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource ScrollThumb}" MinWidth="24" />
+                                    </Track.Thumb>
+                                </Track>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="CategoryBadge" TargetType="Border">
-        <Setter Property="CornerRadius" Value="{StaticResource RadiusFull}" />
-        <Setter Property="Padding" Value="8,3,8,3" />
+        <Setter Property="CornerRadius" Value="{StaticResource RadiusSM}" />
+        <Setter Property="Padding"      Value="6,2" />
+        <Setter Property="Background"   Value="{DynamicResource BgInput}" />
     </Style>
 
 </ResourceDictionary>

@@ -2,135 +2,129 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    PALETTE DE COULEURS                          -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SYSTÈME DE DESIGN — ALEX TOOLKIT
+         Valeurs par défaut = thème sombre. ThemeManager.ApplyTheme() remplace
+         chaque clé à l'exécution : toujours utiliser {DynamicResource ...}
+         pour les couleurs, jamais de code hexadécimal dans les vues.
+         ═══════════════════════════════════════════════════════════════════ -->
 
-    <!-- Arrière-plans -->
-    <Color x:Key="BgDeepColor">#0D0D0D</Color>
-    <Color x:Key="BgSidebarColor">#111827</Color>
-    <Color x:Key="BgCardColor">#1F2937</Color>
-    <Color x:Key="BgCardHoverColor">#374151</Color>
-    <Color x:Key="BgSurfaceColor">#1A1A2E</Color>
+    <!-- ─── Surfaces ─── -->
+    <Color x:Key="BgDeepColor">#0F1115</Color>          <!-- Fond de fenêtre -->
+    <Color x:Key="BgSidebarColor">#14161B</Color>       <!-- Barre latérale / en-têtes -->
+    <Color x:Key="BgCardColor">#1A1D23</Color>          <!-- Cartes, panneaux -->
+    <Color x:Key="BgCardHoverColor">#20242B</Color>     <!-- Survol de carte / ligne -->
+    <Color x:Key="BgInputColor">#23272E</Color>         <!-- Champs, badges, pistes -->
+    <Color x:Key="BgSurfaceColor">#23272E</Color>
 
-    <!-- Accent principal -->
-    <Color x:Key="AccentColor">#6366F1</Color>
-    <Color x:Key="AccentHoverColor">#818CF8</Color>
-    <Color x:Key="AccentDimColor">#3730A3</Color>
+    <!-- ─── Bordures ─── -->
+    <Color x:Key="BorderColor">#2A2E36</Color>
+    <Color x:Key="BorderStrongColor">#3A3F48</Color>
+    <Color x:Key="BorderAccentColor">#3B82F6</Color>
 
-    <!-- Sémantique -->
-    <Color x:Key="SuccessColor">#10B981</Color>
-    <Color x:Key="WarningColor">#F59E0B</Color>
-    <Color x:Key="DangerColor">#EF4444</Color>
+    <!-- ─── Accent (une seule couleur de marque) ─── -->
+    <Color x:Key="AccentColor">#3B82F6</Color>
+    <Color x:Key="AccentHoverColor">#5B95F8</Color>
+    <Color x:Key="AccentPressedColor">#2F6FD8</Color>
+    <Color x:Key="AccentDimColor">#263B82F6</Color>     <!-- Fond accent atténué (15 %) -->
+    <Color x:Key="AccentTextColor">#7EB0FF</Color>      <!-- Texte accent lisible sur surface -->
+    <Color x:Key="OnAccentColor">#FFFFFF</Color>        <!-- Texte sur fond accent / coloré -->
+
+    <!-- ─── Sémantique ─── -->
+    <Color x:Key="SuccessColor">#2EA043</Color>
+    <Color x:Key="SuccessTextColor">#56D364</Color>
+    <Color x:Key="SuccessBgColor">#262EA043</Color>
+    <Color x:Key="WarningColor">#BB8009</Color>
+    <Color x:Key="WarningTextColor">#E3B341</Color>
+    <Color x:Key="WarningBgColor">#26BB8009</Color>
+    <Color x:Key="DangerColor">#DA3633</Color>
+    <Color x:Key="DangerTextColor">#FF7B72</Color>
+    <Color x:Key="DangerBgColor">#26DA3633</Color>
     <Color x:Key="InfoColor">#3B82F6</Color>
 
-    <!-- Texte -->
-    <Color x:Key="TextPrimaryColor">#F9FAFB</Color>
-    <Color x:Key="TextSecondaryColor">#9CA3AF</Color>
-    <Color x:Key="TextMutedColor">#6B7280</Color>
+    <!-- ─── Texte ─── -->
+    <Color x:Key="TextPrimaryColor">#E6E8EB</Color>
+    <Color x:Key="TextSecondaryColor">#A0A6AF</Color>
+    <Color x:Key="TextMutedColor">#6E7681</Color>
 
-    <!-- Borders -->
-    <Color x:Key="BorderColor">#2D3748</Color>
-    <Color x:Key="BorderAccentColor">#4F46E5</Color>
+    <!-- ─── Console ─── -->
+    <Color x:Key="TerminalBgColor">#0B0D10</Color>
+    <Color x:Key="TerminalTextColor">#D4D9DF</Color>
 
-    <!-- ─── SolidColorBrush ─── -->
+    <!-- ─── Brushes ─── -->
     <SolidColorBrush x:Key="BgDeep"        Color="{StaticResource BgDeepColor}" />
     <SolidColorBrush x:Key="BgSidebar"     Color="{StaticResource BgSidebarColor}" />
     <SolidColorBrush x:Key="BgCard"        Color="{StaticResource BgCardColor}" />
     <SolidColorBrush x:Key="BgCardHover"   Color="{StaticResource BgCardHoverColor}" />
+    <SolidColorBrush x:Key="BgInput"       Color="{StaticResource BgInputColor}" />
     <SolidColorBrush x:Key="BgSurface"     Color="{StaticResource BgSurfaceColor}" />
+    <SolidColorBrush x:Key="Border"        Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="BorderStrong"  Color="{StaticResource BorderStrongColor}" />
+    <SolidColorBrush x:Key="BorderAccent"  Color="{StaticResource BorderAccentColor}" />
     <SolidColorBrush x:Key="Accent"        Color="{StaticResource AccentColor}" />
     <SolidColorBrush x:Key="AccentHover"   Color="{StaticResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="AccentPressed" Color="{StaticResource AccentPressedColor}" />
     <SolidColorBrush x:Key="AccentDim"     Color="{StaticResource AccentDimColor}" />
+    <SolidColorBrush x:Key="AccentText"    Color="{StaticResource AccentTextColor}" />
+    <SolidColorBrush x:Key="OnAccent"      Color="{StaticResource OnAccentColor}" />
     <SolidColorBrush x:Key="Success"       Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="SuccessText"   Color="{StaticResource SuccessTextColor}" />
+    <SolidColorBrush x:Key="SuccessBg"     Color="{StaticResource SuccessBgColor}" />
     <SolidColorBrush x:Key="Warning"       Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="WarningText"   Color="{StaticResource WarningTextColor}" />
+    <SolidColorBrush x:Key="WarningBg"     Color="{StaticResource WarningBgColor}" />
     <SolidColorBrush x:Key="Danger"        Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="DangerText"    Color="{StaticResource DangerTextColor}" />
+    <SolidColorBrush x:Key="DangerBg"      Color="{StaticResource DangerBgColor}" />
     <SolidColorBrush x:Key="Info"          Color="{StaticResource InfoColor}" />
     <SolidColorBrush x:Key="TextPrimary"   Color="{StaticResource TextPrimaryColor}" />
     <SolidColorBrush x:Key="TextSecondary" Color="{StaticResource TextSecondaryColor}" />
     <SolidColorBrush x:Key="TextMuted"     Color="{StaticResource TextMutedColor}" />
-    <SolidColorBrush x:Key="Border"        Color="{StaticResource BorderColor}" />
-    <SolidColorBrush x:Key="BorderAccent"  Color="{StaticResource BorderAccentColor}" />
+    <SolidColorBrush x:Key="TerminalBg"    Color="{StaticResource TerminalBgColor}" />
+    <SolidColorBrush x:Key="TerminalText"  Color="{StaticResource TerminalTextColor}" />
 
-    <!-- ─── Gradients ─── -->
-    <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#6366F1" Offset="0" />
-        <GradientStop Color="#8B5CF6" Offset="1" />
-    </LinearGradientBrush>
+    <!-- Clés historiques conservées (désormais à plat : pas de dégradés décoratifs) -->
+    <SolidColorBrush x:Key="WindowGradientBrush" Color="{StaticResource BgDeepColor}" />
+    <SolidColorBrush x:Key="HeaderGradient"      Color="{StaticResource BgDeepColor}" />
+    <SolidColorBrush x:Key="AccentGradient"      Color="{StaticResource AccentColor}" />
 
-    <LinearGradientBrush x:Key="HeaderGradient" StartPoint="0,0" EndPoint="1,0">
-        <GradientStop Color="#111827" Offset="0" />
-        <GradientStop Color="#1F2937" Offset="1" />
-    </LinearGradientBrush>
+    <!-- Ombre des cartes : discrète, neutre -->
+    <Color x:Key="CardShadowColor">#000000</Color>
+    <sys:Double x:Key="CardShadowOpacity">0.25</sys:Double>
+    <sys:Double x:Key="CardShadowBlur">8</sys:Double>
+    <Thickness x:Key="CardBorderThickness">1</Thickness>
 
-    <!-- Fond immersif avec dégradé atmosphérique -->
-    <LinearGradientBrush x:Key="WindowGradientBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#0A0E1A" Offset="0" />
-        <GradientStop Color="#181E38" Offset="1" />
-    </LinearGradientBrush>
-
-    <!-- Effets visuels cartes (Glassmorphism & Lueur Néon) -->
-    <Color x:Key="CardShadowColor">#6366F1</Color>
-    <sys:Double x:Key="CardShadowOpacity">0.35</sys:Double>
-    <sys:Double x:Key="CardShadowBlur">18</sys:Double>
-    <Thickness x:Key="CardBorderThickness">1.2</Thickness>
-    <SolidColorBrush x:Key="TerminalBg" Color="#080A12" />
-    <SolidColorBrush x:Key="TerminalText" Color="#E2E8F0" />
-
-    <!-- Gradient par catégorie -->
-    <LinearGradientBrush x:Key="DiagnosticGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#3B82F6" Offset="0" />
-        <GradientStop Color="#1D4ED8" Offset="1" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ReparationGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#F59E0B" Offset="0" />
-        <GradientStop Color="#D97706" Offset="1" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="NettoyageGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#10B981" Offset="0" />
-        <GradientStop Color="#059669" Offset="1" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ReseauGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#6366F1" Offset="0" />
-        <GradientStop Color="#4F46E5" Offset="1" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="SecuriteGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#EF4444" Offset="0" />
-        <GradientStop Color="#DC2626" Offset="1" />
-    </LinearGradientBrush>
-
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                      TYPOGRAPHIE                                -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <FontFamily x:Key="FontMain">Segoe UI Variable, Segoe UI, Sans-Serif</FontFamily>
-    <FontFamily x:Key="FontMono">Cascadia Code, Consolas, Courier New</FontFamily>
+    <!-- ═══════════════════════════════════════════════════════════════════
+         TYPOGRAPHIE
+         ═══════════════════════════════════════════════════════════════════ -->
+    <FontFamily x:Key="FontMain">Segoe UI Variable Text, Segoe UI, Sans-Serif</FontFamily>
+    <FontFamily x:Key="FontDisplay">Segoe UI Variable Display, Segoe UI, Sans-Serif</FontFamily>
+    <FontFamily x:Key="FontMono">Cascadia Mono, Cascadia Code, Consolas, Courier New</FontFamily>
+    <FontFamily x:Key="FontIcon">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
     <FontFamily x:Key="FontEmoji">Segoe UI Emoji, Segoe MDL2 Assets, Segoe UI Symbol, Segoe UI</FontFamily>
 
     <sys:Double x:Key="FontSizeXS">11</sys:Double>
     <sys:Double x:Key="FontSizeSM">12</sys:Double>
-    <sys:Double x:Key="FontSizeMD">14</sys:Double>
-    <sys:Double x:Key="FontSizeLG">16</sys:Double>
+    <sys:Double x:Key="FontSizeMD">13</sys:Double>
+    <sys:Double x:Key="FontSizeLG">15</sys:Double>
     <sys:Double x:Key="FontSizeXL">20</sys:Double>
     <sys:Double x:Key="FontSize2XL">24</sys:Double>
-    <sys:Double x:Key="FontSize3XL">30</sys:Double>
+    <sys:Double x:Key="FontSize3XL">28</sys:Double>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                       ESPACEMENT                               -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════════
+         ESPACEMENT (grille de 4 px) & RAYONS
+         ═══════════════════════════════════════════════════════════════════ -->
     <Thickness x:Key="PaddingXS">4</Thickness>
     <Thickness x:Key="PaddingSM">8</Thickness>
     <Thickness x:Key="PaddingMD">12,8,12,8</Thickness>
     <Thickness x:Key="PaddingLG">16</Thickness>
     <Thickness x:Key="PaddingXL">24</Thickness>
-    <Thickness x:Key="CardPadding">16,14,16,14</Thickness>
+    <Thickness x:Key="CardPadding">16</Thickness>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--                    CORNER RADIUS                               -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <CornerRadius x:Key="RadiusSM">6</CornerRadius>
-    <CornerRadius x:Key="RadiusMD">10</CornerRadius>
-    <CornerRadius x:Key="RadiusLG">14</CornerRadius>
-    <CornerRadius x:Key="RadiusXL">20</CornerRadius>
+    <CornerRadius x:Key="RadiusSM">4</CornerRadius>
+    <CornerRadius x:Key="RadiusMD">6</CornerRadius>
+    <CornerRadius x:Key="RadiusLG">8</CornerRadius>
+    <CornerRadius x:Key="RadiusXL">12</CornerRadius>
     <CornerRadius x:Key="RadiusFull">9999</CornerRadius>
 
 </ResourceDictionary>

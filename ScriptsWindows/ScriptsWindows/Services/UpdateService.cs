@@ -41,7 +41,7 @@ public static class UpdateService
 
     static UpdateService()
     {
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("AlexToolkit-Updater/4.1.0 (Windows NT 10.0; Win64; x64)");
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"AlexToolkit-Updater/{GetCurrentVersion()} (Windows NT 10.0; Win64; x64)");
         _httpClient.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github.v3+json");
     }
 
@@ -113,7 +113,8 @@ public static class UpdateService
                 foreach (var el in doc.RootElement.EnumerateArray())
                 {
                     bool isDraft = el.TryGetProperty("draft", out var draftProp) && draftProp.GetBoolean();
-                    if (isDraft) continue;
+                    bool isPrerelease = el.TryGetProperty("prerelease", out var preProp) && preProp.GetBoolean();
+                    if (isDraft || isPrerelease) continue; // seules les versions publiées et stables sont proposées
 
                     string tagName = el.TryGetProperty("tag_name", out var tagProp) ? tagProp.GetString() ?? "" : "";
                     if (string.IsNullOrWhiteSpace(tagName)) continue;
@@ -152,11 +153,8 @@ public static class UpdateService
                         }
                     }
 
-                    // Fallback URL directe si non listé explicitement
-                    if (string.IsNullOrEmpty(downloadUrl))
-                    {
-                        downloadUrl = $"https://github.com/aleex-le-dev/ProToolbox-Window/releases/download/{tagName}/AlexToolkit.exe";
-                    }
+                    // Pas d'exécutable joint : la version reste visible dans l'historique
+                    // mais ne sera jamais proposée comme mise à jour (aucune URL devinée).
 
                     var parsedVersion = ParseVersion(tagName);
                     bool isNewer = parsedVersion != null && parsedVersion > currentVersion;
@@ -185,7 +183,9 @@ public static class UpdateService
                         .ThenByDescending(r => r.PublishedAt)
                         .ToList();
 
-                    var latest = sortedReleases.FirstOrDefault();
+                    // Dernière version réellement installable (avec un .exe joint)
+                    var latest = sortedReleases.FirstOrDefault(r => !string.IsNullOrEmpty(r.DownloadUrl))
+                                 ?? sortedReleases.FirstOrDefault();
 
                     // Mise à jour des paramètres de dernière vérification
                     var settings = LoadSettings();
@@ -245,38 +245,77 @@ public static class UpdateService
         string downloadUrl,
         string? targetPath = null,
         IProgress<(long bytesDownloaded, long totalBytes, double percent)>? progress = null,
-        CancellationToken ct = default)
+        CancellationToken ct = default,
+        long expectedSize = 0)
     {
+        if (string.IsNullOrWhiteSpace(downloadUrl))
+            throw new InvalidOperationException("Cette version ne contient pas d'exécutable téléchargeable.");
+
         string destinationFile = targetPath ?? Path.Combine(
             Path.GetTempPath(),
             $"AlexToolkit_Update_{Guid.NewGuid():N}.exe"
         );
 
-        using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-
-        long totalBytes = response.Content.Headers.ContentLength ?? -1;
-
-        await using var contentStream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        await using var fileStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true);
-
-        var buffer = new byte[81920];
-        long totalRead = 0;
-        int read;
-
-        while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length, ct).ConfigureAwait(false)) > 0)
+        try
         {
-            await fileStream.WriteAsync(buffer, 0, read, ct).ConfigureAwait(false);
-            totalRead += read;
+            using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
 
-            if (totalBytes > 0 && progress != null)
+            long totalBytes = response.Content.Headers.ContentLength ?? -1;
+            long totalRead = 0;
+
+            await using (var contentStream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false))
+            await using (var fileStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true))
             {
-                double percent = (double)totalRead / totalBytes * 100.0;
-                progress.Report((totalRead, totalBytes, percent));
-            }
-        }
+                var buffer = new byte[81920];
+                int read;
 
-        return destinationFile;
+                while ((read = await contentStream.ReadAsync(buffer.AsMemory(0, buffer.Length), ct).ConfigureAwait(false)) > 0)
+                {
+                    await fileStream.WriteAsync(buffer.AsMemory(0, read), ct).ConfigureAwait(false);
+                    totalRead += read;
+
+                    if (totalBytes > 0 && progress != null)
+                    {
+                        double percent = (double)totalRead / totalBytes * 100.0;
+                        progress.Report((totalRead, totalBytes, percent));
+                    }
+                }
+            }
+
+            // ── Contrôles d'intégrité avant toute installation ──
+            if (totalBytes > 0 && totalRead != totalBytes)
+                throw new IOException($"Téléchargement incomplet ({totalRead} octets reçus sur {totalBytes}).");
+            if (expectedSize > 0 && totalRead != expectedSize)
+                throw new IOException($"Taille inattendue ({totalRead} octets, {expectedSize} annoncés par GitHub).");
+            if (!IsWindowsExecutable(destinationFile))
+                throw new InvalidDataException("Le fichier téléchargé n'est pas un exécutable Windows valide.");
+
+            return destinationFile;
+        }
+        catch
+        {
+            // Ne jamais laisser un fichier partiel ou corrompu derrière soi
+            try { if (File.Exists(destinationFile)) File.Delete(destinationFile); } catch { }
+            throw;
+        }
+    }
+
+    /// <summary>Vérifie la signature « MZ » + « PE\0\0 » d'un exécutable Windows.</summary>
+    public static bool IsWindowsExecutable(string path)
+    {
+        try
+        {
+            using var fs = File.OpenRead(path);
+            using var br = new BinaryReader(fs);
+            if (fs.Length < 0x40 || br.ReadUInt16() != 0x5A4D) return false; // "MZ"
+            fs.Position = 0x3C;
+            int peOffset = br.ReadInt32();
+            if (peOffset <= 0 || peOffset > fs.Length - 4) return false;
+            fs.Position = peOffset;
+            return br.ReadUInt32() == 0x00004550; // "PE\0\0"
+        }
+        catch { return false; }
     }
 
     /// <summary>
@@ -290,6 +329,10 @@ public static class UpdateService
         if (string.IsNullOrEmpty(currentExePath) || !File.Exists(tempDownloadedExePath))
         {
             throw new InvalidOperationException("Fichiers de mise à jour introuvables ou chemin d'exécution non résolu.");
+        }
+        if (!IsWindowsExecutable(tempDownloadedExePath))
+        {
+            throw new InvalidDataException("Le fichier de mise à jour n'est pas un exécutable Windows valide : installation annulée.");
         }
 
         string currentDir = Path.GetDirectoryName(currentExePath) ?? "";
@@ -382,7 +425,9 @@ if ($success -and (Test-Path $newTarget)) {{
     ""Demarrage de la nouvelle version : $newTarget"" | Out-File $log -Append
     Start-Process -FilePath $newTarget
 }} else {{
-    ""ECHEC CRITIQUE : Impossible de remplacer le binaire."" | Out-File $log -Append
+    ""ECHEC CRITIQUE : Impossible de remplacer le binaire. Relance de l'ancienne version."" | Out-File $log -Append
+    # Filet de sécurité : l'utilisateur retrouve toujours une application fonctionnelle
+    if (Test-Path $target) {{ Start-Process -FilePath $target }}
 }}
 
 # Auto-nettoyage du script

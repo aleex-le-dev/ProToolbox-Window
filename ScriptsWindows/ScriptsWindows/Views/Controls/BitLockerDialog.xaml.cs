@@ -172,7 +172,7 @@ if ($v) {{
                            item.ProtectionStatus.Contains("On", StringComparison.OrdinalIgnoreCase);
 
         TxtProtectionStatus.Text = isProtected ? "ACTIVÉ (Protégé)" : "DÉSACTIVÉ (Non protégé)";
-        BadgeProtection.Background = isProtected ? new SolidColorBrush(Color.FromRgb(16, 185, 129)) : new SolidColorBrush(Color.FromRgb(239, 68, 68));
+        BadgeProtection.Background = isProtected ? (SolidColorBrush)ThemeManager.GetBrush("Success") : (SolidColorBrush)ThemeManager.GetBrush("Danger");
 
         TxtEncryptionMethod.Text = item.EncryptionMethod;
         TxtPercentEncrypted.Text = item.PercentEncrypted;

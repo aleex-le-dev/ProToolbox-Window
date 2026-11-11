@@ -32,13 +32,13 @@ public partial class SecurityCenterDialog : Window
     private readonly Action<string> _onOutput;
     private readonly CancellationToken _ct;
 
-    private readonly SolidColorBrush _brushTabActive = new(Color.FromRgb(79, 70, 229));    // #4F46E5
+    private readonly SolidColorBrush _brushTabActive = (SolidColorBrush)ThemeManager.GetBrush("Accent");    // #4F46E5
     private readonly SolidColorBrush _brushTabInactive = new(Colors.Transparent);
-    private readonly SolidColorBrush _brushTextActive = new(Color.FromRgb(249, 250, 251));  // #F9FAFB
-    private readonly SolidColorBrush _brushTextInactive = new(Color.FromRgb(156, 163, 175)); // #9CA3AF
+    private readonly SolidColorBrush _brushTextActive = (SolidColorBrush)ThemeManager.GetBrush("OnAccent");  // #F9FAFB
+    private readonly SolidColorBrush _brushTextInactive = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary"); // #9CA3AF
 
-    private readonly SolidColorBrush _brushSuccess = new(Color.FromRgb(16, 185, 129));      // #10B981
-    private readonly SolidColorBrush _brushError = new(Color.FromRgb(239, 68, 68));          // #EF4444
+    private readonly SolidColorBrush _brushSuccess = (SolidColorBrush)ThemeManager.GetBrush("Success");      // #10B981
+    private readonly SolidColorBrush _brushError = (SolidColorBrush)ThemeManager.GetBrush("Danger");          // #EF4444
 
     private readonly ObservableCollection<CriticalEventItem> _events = new();
     private readonly ObservableCollection<RamProcessItem> _ramProcesses = new();
@@ -97,7 +97,7 @@ public partial class SecurityCenterDialog : Window
     {
         TxtFeedback.Text = "Interrogation de Windows Defender...";
         TxtRealtimeStatus.Text = "Vérification...";
-        BadgeRealtime.Background = new SolidColorBrush(Color.FromRgb(55, 65, 81));
+        BadgeRealtime.Background = (SolidColorBrush)ThemeManager.GetBrush("TextMuted");
         TxtSignaturesDate.Text = "Lecture...";
         TxtEngineVersion.Text = "Lecture...";
         TxtScanStatus.Text = "Lecture...";

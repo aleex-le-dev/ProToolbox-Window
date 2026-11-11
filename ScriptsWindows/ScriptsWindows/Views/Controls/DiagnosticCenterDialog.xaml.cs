@@ -46,27 +46,29 @@ public partial class DiagnosticCenterDialog : Window
         PanelPowerNet.Visibility = tag == "TabPowerNet" ? Visibility.Visible : Visibility.Collapsed;
         PanelTools.Visibility    = tag == "TabTools"    ? Visibility.Visible : Visibility.Collapsed;
 
-        BtnTabSystem.Background   = tag == "TabSystem"   ? new SolidColorBrush(Color.FromRgb(0x4F, 0x46, 0xE5)) : Brushes.Transparent;
-        BtnTabSystem.Foreground   = tag == "TabSystem"   ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+        BtnTabSystem.Background   = tag == "TabSystem"   ? (SolidColorBrush)ThemeManager.GetBrush("Accent") : Brushes.Transparent;
+        BtnTabSystem.Foreground   = tag == "TabSystem"   ? (SolidColorBrush)ThemeManager.GetBrush("OnAccent") : (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
 
-        BtnTabCpuRam.Background   = tag == "TabCpuRam"   ? new SolidColorBrush(Color.FromRgb(0x4F, 0x46, 0xE5)) : Brushes.Transparent;
-        BtnTabCpuRam.Foreground   = tag == "TabCpuRam"   ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+        BtnTabCpuRam.Background   = tag == "TabCpuRam"   ? (SolidColorBrush)ThemeManager.GetBrush("Accent") : Brushes.Transparent;
+        BtnTabCpuRam.Foreground   = tag == "TabCpuRam"   ? (SolidColorBrush)ThemeManager.GetBrush("OnAccent") : (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
 
-        BtnTabStorage.Background  = tag == "TabStorage"  ? new SolidColorBrush(Color.FromRgb(0x4F, 0x46, 0xE5)) : Brushes.Transparent;
-        BtnTabStorage.Foreground  = tag == "TabStorage"  ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+        BtnTabStorage.Background  = tag == "TabStorage"  ? (SolidColorBrush)ThemeManager.GetBrush("Accent") : Brushes.Transparent;
+        BtnTabStorage.Foreground  = tag == "TabStorage"  ? (SolidColorBrush)ThemeManager.GetBrush("OnAccent") : (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
 
-        BtnTabPowerNet.Background = tag == "TabPowerNet" ? new SolidColorBrush(Color.FromRgb(0x4F, 0x46, 0xE5)) : Brushes.Transparent;
-        BtnTabPowerNet.Foreground = tag == "TabPowerNet" ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+        BtnTabPowerNet.Background = tag == "TabPowerNet" ? (SolidColorBrush)ThemeManager.GetBrush("Accent") : Brushes.Transparent;
+        BtnTabPowerNet.Foreground = tag == "TabPowerNet" ? (SolidColorBrush)ThemeManager.GetBrush("OnAccent") : (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
 
-        BtnTabTools.Background    = tag == "TabTools"    ? new SolidColorBrush(Color.FromRgb(0x4F, 0x46, 0xE5)) : Brushes.Transparent;
-        BtnTabTools.Foreground    = tag == "TabTools"    ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+        BtnTabTools.Background    = tag == "TabTools"    ? (SolidColorBrush)ThemeManager.GetBrush("Accent") : Brushes.Transparent;
+        BtnTabTools.Foreground    = tag == "TabTools"    ? (SolidColorBrush)ThemeManager.GetBrush("OnAccent") : (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
     }
 
     private async Task LoadDiagnosticDataAsync()
     {
         TxtFeedback.Text = "Collecte des données de diagnostic système...";
 
-        await Task.Run(async () =>
+        // Les 4 groupes de collecte sont indépendants : ils s'exécutent en parallèle
+        // (chaque lancement de powershell.exe coûte ~0,5-1 s, en série cela faisait 4-6 s d'attente).
+        async Task LoadSystemAsync()
         {
             // 1. Système & Carte Mère
             try
@@ -92,7 +94,10 @@ $bios = Get-CimInstance Win32_BIOS
                 await Dispatcher.InvokeAsync(() => ParseSystemJson(jsonSys));
             }
             catch { }
+        }
 
+        async Task LoadCpuRamAsync()
+        {
             // 2. CPU & RAM
             try
             {
@@ -104,7 +109,7 @@ $cpu = Get-CimInstance Win32_Processor
     Speed = ""$($cpu.MaxClockSpeed) MHz""
 } | ConvertTo-Json -Compress
 ";
-                string jsonCpu = await PowerShellRunner.RunAsync(psCpu, _ct);
+                var cpuTask = PowerShellRunner.RunAsync(psCpu, _ct);
 
                 string psTemp = @"
 try {
@@ -113,7 +118,7 @@ try {
     $vals -join ' °C, ' + ' °C'
 } catch { 'Non mesurable via sondes ACPI standard' }
 ";
-                string tempStr = (await PowerShellRunner.RunAsync(psTemp, _ct)).Trim();
+                var tempTask = PowerShellRunner.RunAsync(psTemp, _ct);
 
                 string psRam = @"
 $mem = Get-CimInstance Win32_PhysicalMemory
@@ -137,22 +142,45 @@ $total = [math]::Round(($mem | Measure-Object -Property Capacity -Sum).Sum / 1GB
     Sticks = $sticks
 } | ConvertTo-Json -Compress
 ";
-                string jsonRam = await PowerShellRunner.RunAsync(psRam, _ct);
+                var ramTask = PowerShellRunner.RunAsync(psRam, _ct);
+
+                await Task.WhenAll(cpuTask, tempTask, ramTask);
+                string jsonCpu = cpuTask.Result;
+                string tempStr = tempTask.Result.Trim();
+                string jsonRam = ramTask.Result;
                 await Dispatcher.InvokeAsync(() => ParseCpuRamJson(jsonCpu, tempStr, jsonRam));
             }
             catch { }
+        }
 
+        async Task LoadStorageAsync()
+        {
             // 3. Disques & Stockage
             try
             {
                 string psDisks = @"
 $disks = @(Get-PhysicalDisk | ForEach-Object {
+    # Compteurs S.M.A.R.T. (nécessite les droits administrateur ; certains contrôleurs ne les exposent pas)
+    $rc = try { $_ | Get-StorageReliabilityCounter -ErrorAction Stop } catch { $null }
+    $parts = @()
+    $alert = $false
+    if ($rc) {
+        if ($rc.Wear -ne $null)          { $parts += ""Usure $($rc.Wear) %"";            if ($rc.Wear -ge 80) { $alert = $true } }
+        if ($rc.Temperature -gt 0)       { $parts += ""$($rc.Temperature) °C"";          if ($rc.Temperature -ge 60) { $alert = $true } }
+        if ($rc.PowerOnHours -gt 0)      { $parts += ""$($rc.PowerOnHours) h de fonctionnement"" }
+        $errs = [int]$rc.ReadErrorsUncorrected + [int]$rc.WriteErrorsUncorrected
+        if ($rc.ReadErrorsUncorrected -ne $null -or $rc.WriteErrorsUncorrected -ne $null) {
+            $parts += ""$errs erreur(s) non corrigée(s)""; if ($errs -gt 0) { $alert = $true }
+        }
+    }
     [PSCustomObject]@{
         Name = $_.FriendlyName
-        BusType = $_.BusType
-        MediaType = $_.MediaType
+        BusType = ""$($_.BusType)""
+        MediaType = ""$($_.MediaType)""
         Size = ""$([math]::Round($_.Size / 1GB, 1)) GB""
-        Health = $_.HealthStatus
+        Health = ""$($_.HealthStatus)""
+        Smart = if ($parts.Count) { $parts -join ' • ' } else { 'Compteurs S.M.A.R.T. non exposés par ce contrôleur' }
+        SmartAlert = $alert
     }
 })
 $vols = @(Get-Volume | Where-Object { $_.DriveLetter -ne $null } | ForEach-Object {
@@ -176,7 +204,10 @@ $vols = @(Get-Volume | Where-Object { $_.DriveLetter -ne $null } | ForEach-Objec
                 await Dispatcher.InvokeAsync(() => ParseStorageJson(jsonStorage));
             }
             catch { }
+        }
 
+        async Task LoadPowerNetAsync()
+        {
             // 4. Batterie & Réseau
             try
             {
@@ -215,7 +246,14 @@ $nets = @(Get-NetIPConfiguration | Where-Object { $_.IPv4Address } | ForEach-Obj
                 await Dispatcher.InvokeAsync(() => ParsePowerNetJson(jsonPowerNet));
             }
             catch { }
-        });
+        }
+
+        // Task.Run : le démarrage des processus (Process.Start) se fait hors du thread UI
+        await Task.WhenAll(
+            Task.Run(() => LoadSystemAsync()),
+            Task.Run(() => LoadCpuRamAsync()),
+            Task.Run(() => LoadStorageAsync()),
+            Task.Run(() => LoadPowerNetAsync()));
 
         TxtFeedback.Text = "Diagnostic système et matériel à jour.";
     }
@@ -301,10 +339,14 @@ $nets = @(Get-NetIPConfiguration | Where-Object { $_.IPv4Address } | ForEach-Obj
                     string media = d.GetProperty("MediaType").GetString() ?? "Disque";
                     string size = d.GetProperty("Size").GetString() ?? "";
                     string health = d.GetProperty("Health").GetString() ?? "Healthy";
+                    string smart = d.TryGetProperty("Smart", out var sm) ? sm.GetString() ?? "" : "";
+                    bool smartAlert = d.TryGetProperty("SmartAlert", out var sa) && sa.ValueKind == System.Text.Json.JsonValueKind.True;
 
-                    var color = health.Equals("Healthy", StringComparison.OrdinalIgnoreCase) || health.Equals("Sain", StringComparison.OrdinalIgnoreCase)
-                        ? new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99))
-                        : new SolidColorBrush(Color.FromRgb(0xF8, 0x71, 0x71));
+                    bool healthy = health.Equals("Healthy", StringComparison.OrdinalIgnoreCase) || health.Equals("Sain", StringComparison.OrdinalIgnoreCase);
+                    var color = !healthy ? (SolidColorBrush)ThemeManager.GetBrush("DangerText")
+                              : smartAlert ? (SolidColorBrush)ThemeManager.GetBrush("WarningText")
+                              : (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
+                    if (healthy) health = smartAlert ? "À surveiller" : "Sain";
 
                     PhysicalDisks.Add(new PhysicalDiskItem
                     {
@@ -313,7 +355,8 @@ $nets = @(Get-NetIPConfiguration | Where-Object { $_.IPv4Address } | ForEach-Obj
                         MediaType = media,
                         SizeText = size,
                         HealthStatus = health,
-                        HealthColor = color
+                        HealthColor = color,
+                        SmartDetails = smart
                     });
                 }
             }
@@ -328,9 +371,9 @@ $nets = @(Get-NetIPConfiguration | Where-Object { $_.IPv4Address } | ForEach-Obj
                     string space = v.GetProperty("Space").GetString() ?? "";
                     double used = v.GetProperty("UsedPct").GetDouble();
 
-                    var barColor = used > 90 ? new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44))
-                                : used > 75 ? new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B))
-                                : new SolidColorBrush(Color.FromRgb(0x3B, 0x82, 0xF6));
+                    var barColor = used > 90 ? (SolidColorBrush)ThemeManager.GetBrush("Danger")
+                                : used > 75 ? (SolidColorBrush)ThemeManager.GetBrush("Warning")
+                                : (SolidColorBrush)ThemeManager.GetBrush("Accent");
 
                     Volumes.Add(new VolumeItem
                     {
@@ -439,9 +482,41 @@ $nets = @(Get-NetIPConfiguration | Where-Object { $_.IPv4Address } | ForEach-Obj
 
     private async void BtnFullAudit_Click(object sender, RoutedEventArgs e)
     {
-        TxtFeedback.Text = "Génération de l'audit complet du système...";
-        await DiagnosticService.GetMotherboardBiosInfo(_onOutput, _ct);
-        TxtFeedback.Text = "Audit complet terminé.";
+        // Audit complet en lecture seule : chaque volet est écrit dans la console, un échec n'interrompt pas les suivants
+        var steps = new (string Label, Func<Task> Run)[]
+        {
+            ("Carte mère, BIOS, processeur et système", () => DiagnosticService.GetMotherboardBiosInfo(_onOutput, _ct)),
+            ("Mémoire vive",                             () => DiagnosticService.GetRamUsage(_onOutput, _ct)),
+            ("Disques : santé S.M.A.R.T. et espace",     () => DiskService.GetDisksHealthAndStorage(_onOutput, _ct)),
+            ("Alertes disque du journal Windows",        () => DiagnosticService.GetDiskWarnings(_onOutput, _ct)),
+            ("Batterie",                                 () => DiagnosticService.GetBatteryStatus(_onOutput, _ct)),
+            ("Températures",                             () => DiagnosticService.GetTemperatureReport(_onOutput, _ct)),
+            ("Protection antivirus",                     () => DiagnosticService.GetDefenderStatus(_onOutput, _ct)),
+        };
+
+        if (sender is Button btn) btn.IsEnabled = false;
+        try
+        {
+            for (int i = 0; i < steps.Length; i++)
+            {
+                _ct.ThrowIfCancellationRequested();
+                TxtFeedback.Text = $"Audit complet : {steps[i].Label} ({i + 1}/{steps.Length})...";
+                _onOutput($"\n[i] ── {steps[i].Label} ──");
+                try { await steps[i].Run(); }
+                catch (OperationCanceledException) { throw; }
+                catch (Exception ex) { _onOutput($"[!] {steps[i].Label} : {ex.Message}"); }
+            }
+            TxtFeedback.Text = "Audit complet terminé : résultats dans la console.";
+            _onOutput("[OK] Audit complet terminé.");
+        }
+        catch (OperationCanceledException)
+        {
+            TxtFeedback.Text = "Audit interrompu.";
+        }
+        finally
+        {
+            if (sender is Button b) b.IsEnabled = true;
+        }
     }
 
     private async void BtnRefreshAll_Click(object sender, RoutedEventArgs e)
@@ -469,6 +544,7 @@ public class PhysicalDiskItem
     public string SizeText { get; set; } = "";
     public string HealthStatus { get; set; } = "";
     public Brush HealthColor { get; set; } = Brushes.LightGreen;
+    public string SmartDetails { get; set; } = "";
 }
 
 public class VolumeItem

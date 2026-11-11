@@ -10,6 +10,8 @@ using Microsoft.Win32;
 using ScriptsWindows.Models;
 using ScriptsWindows.Services;
 
+using ScriptsWindows.Core;
+
 namespace ScriptsWindows.Views.Controls;
 
 public partial class UpdateDialog : Window
@@ -99,25 +101,33 @@ public partial class UpdateDialog : Window
         // Remplir l'historique des versions
         ListReleases.ItemsSource = result.AllReleases;
 
-        if (latest.IsNewer)
+        bool installable = !string.IsNullOrEmpty(latest.DownloadUrl);
+
+        if (latest.IsNewer && installable)
         {
             SetStatusUpdateAvailable(latest);
             BtnApplyUpdate.IsEnabled = true;
             BtnDownloadAs.IsEnabled = true;
         }
+        else if (latest.IsNewer)
+        {
+            SetStatusError($"La version {latest.TagName} est publiée mais ne contient pas encore d'exécutable. Réessayez plus tard ou consultez GitHub.");
+            BtnApplyUpdate.IsEnabled = false;
+            BtnDownloadAs.IsEnabled = false;
+        }
         else
         {
             SetStatusUpToDate(result.CurrentVersion);
             BtnApplyUpdate.IsEnabled = false;
-            BtnDownloadAs.IsEnabled = true; // Permet de télécharger le binaire pour une clé USB
+            BtnDownloadAs.IsEnabled = installable; // Permet de télécharger le binaire pour une clé USB
         }
     }
 
     // ─── États visuels de la bannière ──────────────────────────────────
     private void SetStatusSearching()
     {
-        BannerStatus.Background = new SolidColorBrush(Color.FromRgb(30, 41, 59));
-        BannerStatus.BorderBrush = new SolidColorBrush(Color.FromRgb(51, 65, 85));
+        BannerStatus.Background = (SolidColorBrush)ThemeManager.GetBrush("BgCard");
+        BannerStatus.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Border");
         TxtBannerIcon.Text = "🔄";
         TxtBannerTitle.Text = "Recherche des mises à jour...";
         TxtBannerSubtitle.Text = "Connexion aux serveurs GitHub & Miroir d'Alex Toolkit...";
@@ -128,9 +138,8 @@ public partial class UpdateDialog : Window
 
     private void SetStatusUpToDate(Version current)
     {
-        BannerStatus.Background = new SolidColorBrush(Color.FromRgb(16, 185, 129));
-        BannerStatus.Background.Opacity = 0.15;
-        BannerStatus.BorderBrush = new SolidColorBrush(Color.FromRgb(16, 185, 129));
+        BannerStatus.Background = (SolidColorBrush)ThemeManager.GetBrush("SuccessBg");
+        BannerStatus.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Success");
         TxtBannerIcon.Text = "✅";
         TxtBannerTitle.Text = "Alex Toolkit est parfaitement à jour !";
         TxtBannerSubtitle.Text = $"Vous utilisez déjà la version la plus récente (v{current.Major}.{current.Minor}.{current.Build}).";
@@ -138,9 +147,8 @@ public partial class UpdateDialog : Window
 
     private void SetStatusUpdateAvailable(ReleaseInfo latest)
     {
-        BannerStatus.Background = new SolidColorBrush(Color.FromRgb(99, 102, 241));
-        BannerStatus.Background.Opacity = 0.20;
-        BannerStatus.BorderBrush = new SolidColorBrush(Color.FromRgb(129, 140, 248));
+        BannerStatus.Background = (SolidColorBrush)ThemeManager.GetBrush("AccentDim");
+        BannerStatus.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Accent");
         TxtBannerIcon.Text = "🚀";
         TxtBannerTitle.Text = $"Une nouvelle version est disponible ({latest.TagName}) !";
         TxtBannerSubtitle.Text = "Cliquez sur 'Mettre à jour et redémarrer' pour l'installer instantanément sans perte de données.";
@@ -148,9 +156,8 @@ public partial class UpdateDialog : Window
 
     private void SetStatusError(string msg)
     {
-        BannerStatus.Background = new SolidColorBrush(Color.FromRgb(239, 68, 68));
-        BannerStatus.Background.Opacity = 0.15;
-        BannerStatus.BorderBrush = new SolidColorBrush(Color.FromRgb(239, 68, 68));
+        BannerStatus.Background = (SolidColorBrush)ThemeManager.GetBrush("DangerBg");
+        BannerStatus.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Danger");
         TxtBannerIcon.Text = "⚠️";
         TxtBannerTitle.Text = "Échec de vérification des mises à jour";
         TxtBannerSubtitle.Text = msg;
@@ -202,7 +209,8 @@ public partial class UpdateDialog : Window
                 release.DownloadUrl,
                 null,
                 progress,
-                _downloadCts.Token
+                _downloadCts.Token,
+                release.FileSizeBytes
             );
 
             TxtDownloadProgressStatus.Text = "Téléchargement terminé ! Remplacement et redémarrage...";
@@ -232,8 +240,8 @@ public partial class UpdateDialog : Window
         finally
         {
             _isUpdating = false;
-            BtnApplyUpdate.IsEnabled = true;
-            BtnDownloadAs.IsEnabled = true;
+            BtnApplyUpdate.IsEnabled = release.IsNewer && !string.IsNullOrEmpty(release.DownloadUrl);
+            BtnDownloadAs.IsEnabled = !string.IsNullOrEmpty(release.DownloadUrl);
             BtnRefresh.IsEnabled = true;
         }
     }
@@ -247,13 +255,13 @@ public partial class UpdateDialog : Window
         var sfd = new SaveFileDialog
         {
             Title = "Enregistrer la nouvelle version d'Alex Toolkit",
-            FileName = "AlexToolkit.exe",
+            FileName = $"AlexToolkit_{release.TagName}.exe",
             Filter = "Exécutable Windows (*.exe)|*.exe"
         };
 
         if (sfd.ShowDialog() != true) return;
 
-        await DownloadToPathAsync(release.DownloadUrl, sfd.FileName);
+        await DownloadToPathAsync(release.DownloadUrl, sfd.FileName, release.FileSizeBytes);
     }
 
     private async void BtnDownloadMirrorItem_Click(object sender, RoutedEventArgs e)
@@ -271,11 +279,11 @@ public partial class UpdateDialog : Window
 
             // Basculer sur la vue principale pour visualiser la progression
             SwitchToDirectUpdateTab();
-            await DownloadToPathAsync(release.DownloadUrl, sfd.FileName);
+            await DownloadToPathAsync(release.DownloadUrl, sfd.FileName, release.FileSizeBytes);
         }
     }
 
-    private async Task DownloadToPathAsync(string url, string targetPath)
+    private async Task DownloadToPathAsync(string url, string targetPath, long expectedSize = 0)
     {
         _isUpdating = true;
         _downloadCts = new CancellationTokenSource();
@@ -297,7 +305,7 @@ public partial class UpdateDialog : Window
 
         try
         {
-            await UpdateService.DownloadUpdateAsync(url, targetPath, progress, _downloadCts.Token);
+            await UpdateService.DownloadUpdateAsync(url, targetPath, progress, _downloadCts.Token, expectedSize);
             TxtDownloadProgressStatus.Text = "Téléchargement terminé avec succès !";
             ProgDownload.Value = 100;
             TxtDownloadProgressPct.Text = "100%";
@@ -344,11 +352,11 @@ public partial class UpdateDialog : Window
         ViewDirectUpdate.Visibility = Visibility.Visible;
         ViewMirror.Visibility = Visibility.Collapsed;
 
-        TabBtnDirectUpdate.Background = new SolidColorBrush(Color.FromRgb(55, 65, 81));
-        TabBtnDirectUpdate.Foreground = Brushes.White;
+        TabBtnDirectUpdate.Background = (SolidColorBrush)ThemeManager.GetBrush("BgCard");
+        TabBtnDirectUpdate.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextPrimary");
 
         TabBtnMirror.Background = Brushes.Transparent;
-        TabBtnMirror.Foreground = new SolidColorBrush(Color.FromRgb(156, 163, 175));
+        TabBtnMirror.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
     }
 
     private void SwitchToMirrorTab()
@@ -356,11 +364,11 @@ public partial class UpdateDialog : Window
         ViewDirectUpdate.Visibility = Visibility.Collapsed;
         ViewMirror.Visibility = Visibility.Visible;
 
-        TabBtnMirror.Background = new SolidColorBrush(Color.FromRgb(55, 65, 81));
-        TabBtnMirror.Foreground = Brushes.White;
+        TabBtnMirror.Background = (SolidColorBrush)ThemeManager.GetBrush("BgCard");
+        TabBtnMirror.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextPrimary");
 
         TabBtnDirectUpdate.Background = Brushes.Transparent;
-        TabBtnDirectUpdate.Foreground = new SolidColorBrush(Color.FromRgb(156, 163, 175));
+        TabBtnDirectUpdate.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
     }
 
     // ─── Autres boutons & Préférences ─────────────────────────────────

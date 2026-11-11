@@ -18,6 +18,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
 
+using ScriptsWindows.Core;
+
 namespace ScriptsWindows.Views.Controls;
 
 public enum CheckState
@@ -41,9 +43,9 @@ public class WebsiteCheckItem
     public Visibility HasRecommendationVisibility =>
         string.IsNullOrWhiteSpace(Recommendation) ? Visibility.Collapsed : Visibility.Visible;
 
-    public Brush BorderColor { get; set; } = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51));
-    public Brush StatusBg { get; set; } = new SolidColorBrush(Color.FromRgb(0x1E, 0x29, 0x3B));
-    public Brush StatusFg { get; set; } = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8));
+    public Brush BorderColor { get; set; } = (SolidColorBrush)ThemeManager.GetBrush("Border");
+    public Brush StatusBg { get; set; } = (SolidColorBrush)ThemeManager.GetBrush("BgCard");
+    public Brush StatusFg { get; set; } = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
 }
 
 public class HeadingTreeItem
@@ -74,7 +76,7 @@ public class HttpHeaderItem
 public class InspectedLinkItem
 {
     public string StatusBadge { get; set; } = "";
-    public Brush StatusFg { get; set; } = Brushes.LightGray;
+    public Brush StatusFg { get; set; } = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
     public string Scope { get; set; } = "";
     public string LatencyText { get; set; } = "";
     public string Url { get; set; } = "";
@@ -106,17 +108,17 @@ public partial class WebsiteAnalyzerDialog : Window
     private bool _suppressTextChanged;
     private string _lastAnalyzedUrl = "";
 
-    private static readonly SolidColorBrush PassBorder = new(Color.FromRgb(0x05, 0x96, 0x69));
-    private static readonly SolidColorBrush PassBg = new(Color.FromRgb(0x06, 0x4E, 0x3B));
-    private static readonly SolidColorBrush PassFg = new(Color.FromRgb(0x34, 0xD3, 0x99));
+    private static readonly SolidColorBrush PassBorder = (SolidColorBrush)ThemeManager.GetBrush("Success");
+    private static readonly SolidColorBrush PassBg = (SolidColorBrush)ThemeManager.GetBrush("SuccessBg");
+    private static readonly SolidColorBrush PassFg = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
 
-    private static readonly SolidColorBrush WarnBorder = new(Color.FromRgb(0xD9, 0x77, 0x06));
-    private static readonly SolidColorBrush WarnBg = new(Color.FromRgb(0x45, 0x1A, 0x03));
-    private static readonly SolidColorBrush WarnFg = new(Color.FromRgb(0xFB, 0xBF, 0x24));
+    private static readonly SolidColorBrush WarnBorder = (SolidColorBrush)ThemeManager.GetBrush("Warning");
+    private static readonly SolidColorBrush WarnBg = (SolidColorBrush)ThemeManager.GetBrush("WarningBg");
+    private static readonly SolidColorBrush WarnFg = (SolidColorBrush)ThemeManager.GetBrush("WarningText");
 
-    private static readonly SolidColorBrush FailBorder = new(Color.FromRgb(0xDC, 0x26, 0x26));
-    private static readonly SolidColorBrush FailBg = new(Color.FromRgb(0x45, 0x0A, 0x0A));
-    private static readonly SolidColorBrush FailFg = new(Color.FromRgb(0xF8, 0x71, 0x71));
+    private static readonly SolidColorBrush FailBorder = (SolidColorBrush)ThemeManager.GetBrush("Danger");
+    private static readonly SolidColorBrush FailBg = (SolidColorBrush)ThemeManager.GetBrush("DangerBg");
+    private static readonly SolidColorBrush FailFg = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
 
     static WebsiteAnalyzerDialog()
     {
@@ -229,8 +231,8 @@ public partial class WebsiteAnalyzerDialog : Window
                 Title = "Aucun audit lancé pour le moment",
                 StatusText = "ℹ️ Prêt",
                 Recommendation = "Entrez votre nom de domaine (ex: salutalex.fr) en haut et cliquez sur « 🚀 Lancer l'analyse complète » pour générer le diagnostic complet.",
-                BorderColor = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
-                StatusFg = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8))
+                BorderColor = (SolidColorBrush)ThemeManager.GetBrush("Border"),
+                StatusFg = (SolidColorBrush)ThemeManager.GetBrush("AccentText")
             }
         };
     }
@@ -1072,11 +1074,11 @@ public partial class WebsiteAnalyzerDialog : Window
 
                 Brush badgeBrush = level switch
                 {
-                    1 => new SolidColorBrush(Color.FromRgb(0x25, 0x63, 0xEB)),
-                    2 => new SolidColorBrush(Color.FromRgb(0x05, 0x96, 0x69)),
-                    3 => new SolidColorBrush(Color.FromRgb(0x7C, 0x3A, 0xED)),
-                    4 => new SolidColorBrush(Color.FromRgb(0xD9, 0x77, 0x06)),
-                    _ => new SolidColorBrush(Color.FromRgb(0x4B, 0x55, 0x63))
+                    1 => (SolidColorBrush)ThemeManager.GetBrush("Accent"),
+                    2 => (SolidColorBrush)ThemeManager.GetBrush("Success"),
+                    3 => (SolidColorBrush)ThemeManager.GetBrush("Accent"),
+                    4 => (SolidColorBrush)ThemeManager.GetBrush("Warning"),
+                    _ => (SolidColorBrush)ThemeManager.GetBrush("TextMuted")
                 };
 
                 headingItems.Add(new HeadingTreeItem
@@ -1307,7 +1309,7 @@ public partial class WebsiteAnalyzerDialog : Window
                     Tag = "INFO",
                     Text = "Aucune balise H1 à H6 statique trouvée dans le DOM initial (ou rendu 100% client JS).",
                     IndentMargin = new Thickness(0),
-                    BadgeBg = new SolidColorBrush(Color.FromRgb(0x4B, 0x55, 0x63))
+                    BadgeBg = (SolidColorBrush)ThemeManager.GetBrush("TextMuted")
                 });
             }
             ItemsHeadings.ItemsSource = headingItems;

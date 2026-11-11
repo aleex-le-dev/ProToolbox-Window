@@ -7,7 +7,9 @@ if (-not (Test-Path $csprojPath)) {
     exit 1
 }
 
-$content = Get-Content -Path $csprojPath -Raw
+# -Encoding UTF8 obligatoire : sous Windows PowerShell 5.1, sans BOM le fichier serait lu en ANSI
+# et les accents du csproj seraient corrompus à chaque build (Ã© → ÃƒÂ© …)
+$content = Get-Content -Path $csprojPath -Raw -Encoding UTF8
 
 $currentVersion = "4.2.2"
 if ($content -match '<Version>(.*?)</Version>') {

@@ -1,9 +1,12 @@
+using System.Windows.Media;
 using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using ScriptsWindows.Services;
+
+using ScriptsWindows.Core;
 
 namespace ScriptsWindows.Views.Controls;
 
@@ -48,22 +51,22 @@ public partial class BootRecoveryDialog : Window
             {
                 case SafeModeType.Minimal:
                     TxtSafeModeStatus.Text = "Mode sans échec (Minimal) ACTIF";
-                    TxtSafeModeStatus.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#F59E0B")!;
+                    TxtSafeModeStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("WarningText");
                     break;
                 case SafeModeType.Network:
                     TxtSafeModeStatus.Text = "Mode sans échec (Réseau) ACTIF";
-                    TxtSafeModeStatus.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#F59E0B")!;
+                    TxtSafeModeStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("WarningText");
                     break;
                 default:
                     TxtSafeModeStatus.Text = "Mode normal (Aucun sans échec)";
-                    TxtSafeModeStatus.Foreground = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#10B981")!;
+                    TxtSafeModeStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
                     break;
             }
 
             TxtFirmwareStatus.Text = isUefi ? "UEFI (Recommandé)" : "BIOS Hérité (Legacy)";
             TxtFirmwareStatus.Foreground = isUefi
-                ? (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#34D399")!
-                : (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#F87171")!;
+                ? (SolidColorBrush)ThemeManager.GetBrush("SuccessText")
+                : (SolidColorBrush)ThemeManager.GetBrush("DangerText");
         });
     }
 

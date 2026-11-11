@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Media;
 using ScriptsWindows.Services;
 
+using ScriptsWindows.Core;
+
 namespace ScriptsWindows.Views.Controls;
 
 public partial class ContextMenuItemsDialog : Window
@@ -29,20 +31,20 @@ public partial class ContextMenuItemsDialog : Window
         // 1. Statut Menu Classique Windows 10
         if (isClassic)
         {
-            BadgeClassicStatus.Background = new SolidColorBrush(Color.FromRgb(0x1E, 0x1B, 0x4B)); // Indigo foncé
-            BadgeClassicStatus.BorderBrush = new SolidColorBrush(Color.FromRgb(0x63, 0x66, 0xF1));
+            BadgeClassicStatus.Background = (SolidColorBrush)ThemeManager.GetBrush("AccentDim"); // Indigo foncé
+            BadgeClassicStatus.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Accent");
             TxtClassicStatus.Text = "● Windows 10 Classique Actif";
-            TxtClassicStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x81, 0x8C, 0xF8));
+            TxtClassicStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("AccentText");
 
             BtnToggleClassicMenu.Content = "↩ Rétablir menu Win 11";
             BtnToggleClassicMenu.Style = (Style)FindResource("DangerActionButton");
         }
         else
         {
-            BadgeClassicStatus.Background = new SolidColorBrush(Color.FromRgb(0x11, 0x18, 0x27));
-            BadgeClassicStatus.BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51));
+            BadgeClassicStatus.Background = (SolidColorBrush)ThemeManager.GetBrush("BgInput");
+            BadgeClassicStatus.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Border");
             TxtClassicStatus.Text = "○ Windows 11 Moderne (Par défaut)";
-            TxtClassicStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+            TxtClassicStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
 
             BtnToggleClassicMenu.Content = "✓ Passer au menu Win 10";
             BtnToggleClassicMenu.Style = (Style)FindResource("IndigoActionButton");
@@ -147,17 +149,17 @@ public partial class ContextMenuItemsDialog : Window
     {
         if (exists)
         {
-            badge.Background = new SolidColorBrush(Color.FromRgb(0x06, 0x5F, 0x46)); // Vert foncé
-            badge.BorderBrush = new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81)); // Vert
+            badge.Background = (SolidColorBrush)ThemeManager.GetBrush("SuccessBg"); // Vert foncé
+            badge.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Success"); // Vert
             textBlock.Text = "● Actif dans le menu";
-            textBlock.Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+            textBlock.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
         }
         else
         {
-            badge.Background = new SolidColorBrush(Color.FromRgb(0x11, 0x18, 0x27)); // Gris foncé
-            badge.BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51));
+            badge.Background = (SolidColorBrush)ThemeManager.GetBrush("BgInput"); // Gris foncé
+            badge.BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Border");
             textBlock.Text = "○ Non actif";
-            textBlock.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+            textBlock.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
         }
     }
 
@@ -174,13 +176,13 @@ public partial class ContextMenuItemsDialog : Window
                 if (removed)
                 {
                     TxtStatus.Text = "« Ouvrir CMD (Admin) » a été retiré de votre menu contextuel avec succès.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
                     _onOutput("[INFO] « Ouvrir CMD (Admin) » retiré du menu contextuel (Bureau, dossiers, disques et bibliothèques).");
                 }
                 else
                 {
                     TxtStatus.Text = "Opération incomplète : certaines clés nécessitent les droits administrateur.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
                     _onOutput("[WARN] Échec du retrait de certaines clés du menu contextuel.");
                 }
             }
@@ -188,20 +190,20 @@ public partial class ContextMenuItemsDialog : Window
             {
                 // Création du fichier .reg, ouverture via regedit pour confirmation, puis suppression automatique
                 TxtStatus.Text = "Ouverture du fichier .reg dans l'Éditeur du Registre... Veuillez valider la fusion.";
-                TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8));
+                TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("AccentText");
 
                 bool success = PersonalizationService.InstallCmdAdminViaRegFile();
 
                 if (success)
                 {
                     TxtStatus.Text = "✓ Fichier .reg validé et supprimé ! « Ouvrir CMD (Admin) » est actif au clic droit.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
                     _onOutput("[SUCCÈS] Fichier .reg importé et supprimé. « Ouvrir CMD (Admin) » configuré sur le Bureau et tous les dossiers.");
                 }
                 else
                 {
                     TxtStatus.Text = "Opération annulée ou non validée dans l'Éditeur du Registre.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
                 }
             }
 
@@ -227,13 +229,13 @@ public partial class ContextMenuItemsDialog : Window
                 if (removed)
                 {
                     TxtStatus.Text = "« Ouvrir PowerShell (Admin) » a été retiré de votre menu contextuel avec succès.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
                     _onOutput("[INFO] « Ouvrir PowerShell (Admin) » retiré du menu contextuel (Bureau, dossiers, disques et bibliothèques).");
                 }
                 else
                 {
                     TxtStatus.Text = "Opération incomplète : certaines clés nécessitent les droits administrateur.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
                     _onOutput("[WARN] Échec du retrait de certaines clés du menu contextuel.");
                 }
             }
@@ -241,20 +243,20 @@ public partial class ContextMenuItemsDialog : Window
             {
                 // Création du fichier .reg, ouverture via regedit pour confirmation, puis suppression automatique
                 TxtStatus.Text = "Ouverture du fichier .reg dans l'Éditeur du Registre... Veuillez valider la fusion.";
-                TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8));
+                TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("AccentText");
 
                 bool success = PersonalizationService.InstallPowerShellAdminViaRegFile();
 
                 if (success)
                 {
                     TxtStatus.Text = "✓ Fichier .reg validé et supprimé ! « Ouvrir PowerShell (Admin) » est actif au clic droit.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
                     _onOutput("[SUCCÈS] Fichier .reg importé et supprimé. « Ouvrir PowerShell (Admin) » configuré sur le Bureau et tous les dossiers.");
                 }
                 else
                 {
                     TxtStatus.Text = "Opération annulée ou non validée dans l'Éditeur du Registre.";
-                    TxtStatus.Foreground = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+                    TxtStatus.Foreground = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
                 }
             }
 

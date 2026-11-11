@@ -25,8 +25,8 @@ public partial class NouveautePage : Page, ISectionPage
 
             var emptyBorder = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(0x1F, 0x29, 0x37)),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51)),
+                Background = (SolidColorBrush)ThemeManager.GetBrush("BgCard"),
+                BorderBrush = (SolidColorBrush)ThemeManager.GetBrush("Border"),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(12),
                 Padding = new Thickness(32),
@@ -52,7 +52,7 @@ public partial class NouveautePage : Page, ISectionPage
                 Text = "Catégorie Nouveautés prête",
                 FontSize = 18,
                 FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush(Color.FromRgb(0xF9, 0xFA, 0xFB)),
+                Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextPrimary"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 8)
             };
@@ -61,7 +61,7 @@ public partial class NouveautePage : Page, ISectionPage
             {
                 Text = "Les 4 premiers scripts ont été intégrés dans leurs catégories permanentes (Sécurité, Matériel, Diagnostic et Réseau).\nLes futurs scripts et outils innovants apparaîtront automatiquement ici dès leur ajout !",
                 FontSize = 13,
-                Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF)),
+                Foreground = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary"),
                 TextAlignment = TextAlignment.Center,
                 TextWrapping = TextWrapping.Wrap,
                 MaxWidth = 550,

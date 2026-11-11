@@ -1,5 +1,7 @@
 using System;
+using System.Buffers;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -18,11 +20,11 @@ public partial class MainWindow : Window
     private Button? _activeNavBtn;
 
     // ── Brushes statiques (Freeze = zéro GC pressure sur chaque ligne de log) ──
-    private static readonly SolidColorBrush BrushError   = Freeze(Color.FromRgb(239, 68,  68));
-    private static readonly SolidColorBrush BrushSuccess = Freeze(Color.FromRgb(16,  185, 129));
-    private static readonly SolidColorBrush BrushWarning = Freeze(Color.FromRgb(245, 158, 11));
-    private static readonly SolidColorBrush BrushInfo    = Freeze(Color.FromRgb(129, 140, 248));
-    private static readonly SolidColorBrush BrushDefault = Freeze(Color.FromRgb(209, 213, 219));
+    private static readonly SolidColorBrush BrushError   = Freeze(Color.FromRgb(0xFF, 0x7B, 0x72));
+    private static readonly SolidColorBrush BrushSuccess = Freeze(Color.FromRgb(0x56, 0xD3, 0x64));
+    private static readonly SolidColorBrush BrushWarning = Freeze(Color.FromRgb(0xE3, 0xB3, 0x41));
+    private static readonly SolidColorBrush BrushInfo    = Freeze(Color.FromRgb(0x7E, 0xB0, 0xFF));
+    private static readonly SolidColorBrush BrushDefault = Freeze(Color.FromRgb(0xD4, 0xD9, 0xDF));
 
     private static SolidColorBrush Freeze(Color c) { var b = new SolidColorBrush(c); b.Freeze(); return b; }
 
@@ -48,7 +50,7 @@ public partial class MainWindow : Window
         };
 
         // Démarrer sur la page Favoris
-        NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "Mes favoris", "Vos outils préférés accessibles rapidement");
+        NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "Favoris", "Vos outils préférés accessibles rapidement");
 
         // Préchauffage asynchrone de toutes les pages (0 ms de délai au clic)
         Dispatcher.InvokeAsync(WarmupPages, DispatcherPriority.Background);
@@ -81,22 +83,30 @@ public partial class MainWindow : Window
         Badge_FAVORIS.Text = ToolRegistry.GetFavorites().Count().ToString();
     }
 
-    private void WarmupPages()
+    private static readonly string[] WarmupCategories =
     {
-        try
-        {
-            string[] categories =
-            {
-                "APPLICATIONS", "DEMARRAGE", "DIAGNOSTIC", "DISQUE", "MATERIEL", "MISES_A_JOUR",
-                "NETTOYAGE", "NOUVEAUTE", "PERSONNALISATION", "REPARATION", "RESEAU", "SECRETS", "SECURITE", "PARAMETRES"
-            };
-            foreach (var cat in categories)
-            {
-                if (!_pageCache.ContainsKey(cat))
-                    GetOrCreatePage(cat);
-            }
-        }
+        "APPLICATIONS", "DEMARRAGE", "DIAGNOSTIC", "DISQUE", "MATERIEL", "MISES_A_JOUR",
+        "NETTOYAGE", "NOUVEAUTE", "PERSONNALISATION", "REPARATION", "RESEAU", "SECRETS", "SECURITE", "PARAMETRES"
+    };
+
+    /// <summary>
+    /// Préchauffe UNE page par passage du Dispatcher (priorité ApplicationIdle) puis se replanifie :
+    /// l'UI reste réactive entre deux pages au lieu de geler le temps de construire les 14 d'un coup.
+    /// </summary>
+    private void WarmupPages() => WarmupNextPage(0);
+
+    private void WarmupNextPage(int index)
+    {
+        while (index < WarmupCategories.Length && _pageCache.ContainsKey(WarmupCategories[index]))
+            index++;
+
+        if (index >= WarmupCategories.Length) return;
+
+        try { GetOrCreatePage(WarmupCategories[index]); }
         catch { }
+
+        int next = index + 1;
+        Dispatcher.InvokeAsync(() => WarmupNextPage(next), DispatcherPriority.ApplicationIdle);
     }
 
     // ─── Console Terminal Latéral ────────────────────────────────────
@@ -129,6 +139,14 @@ public partial class MainWindow : Window
         OutputPanel.Visibility = Visibility.Collapsed;
     }
 
+
+    private void BtnClearOutput_Click(object sender, RoutedEventArgs e)
+    {
+        OutputBox.Document.Blocks.Clear();
+        _consoleBlockCount = 0;
+        _lastProgressPara  = null;
+        _lastProgressKey   = null;
+    }
 
     private void BtnZoomIn_Click(object sender, RoutedEventArgs e)
         => AdjustOutputFontSize(1);
@@ -195,12 +213,9 @@ public partial class MainWindow : Window
 
     private Page GetOrCreatePage(string tag)
     {
+        // FavorisPage se met à jour seule (Loaded + FavoriteChanged), seulement si nécessaire
         if (_pageCache.TryGetValue(tag, out var cachedPage))
-        {
-            if (cachedPage is FavorisPage fav)
-                fav.RefreshFavoris();
             return cachedPage;
-        }
 
         Page newPage = tag switch
         {
@@ -306,31 +321,31 @@ public partial class MainWindow : Window
         // 1. En-tête / Logo
         HeaderExpanded.Visibility   = isCollapsed ? Visibility.Collapsed : Visibility.Visible;
         HeaderCollapsed.Visibility  = isCollapsed ? Visibility.Visible : Visibility.Collapsed;
-        SidebarHeaderBorder.Padding = isCollapsed ? new Thickness(0, 18, 0, 18) : new Thickness(16, 20, 16, 16);
+        SidebarHeaderBorder.Padding = isCollapsed ? new Thickness(0, 18, 0, 14) : new Thickness(16, 18, 16, 14);
 
         // 2. Recherche
         if (isCollapsed)
         {
             SearchExpandedGrid.Visibility       = Visibility.Collapsed;
             SearchIconCollapsed.Visibility      = Visibility.Visible;
-            SidebarSearchBorder.Padding         = new Thickness(8, 10, 8, 10);
+            SidebarSearchBorder.Padding         = new Thickness(8, 0, 8, 10);
             SearchBoxBorder.Width               = 48;
-            SearchBoxBorder.Height              = 36;
+            SearchBoxBorder.Height              = 34;
             SearchBoxBorder.HorizontalAlignment = HorizontalAlignment.Center;
         }
         else
         {
             SearchExpandedGrid.Visibility       = Visibility.Visible;
             SearchIconCollapsed.Visibility      = Visibility.Collapsed;
-            SidebarSearchBorder.Padding         = new Thickness(12, 10, 12, 10);
+            SidebarSearchBorder.Padding         = new Thickness(12, 0, 12, 10);
             SearchBoxBorder.Width               = double.NaN;
-            SearchBoxBorder.Height              = double.NaN;
+            SearchBoxBorder.Height              = 34;
             SearchBoxBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
         }
 
         // 3. Séparateur et titre "CATÉGORIES"
         CategoriesHeader.Visibility = isCollapsed ? Visibility.Collapsed : Visibility.Visible;
-        CategoriesSeparator.Margin  = isCollapsed ? new Thickness(4, 6, 4, 6) : new Thickness(4, 8, 4, 8);
+        CategoriesSeparator.Margin  = isCollapsed ? new Thickness(4, 4, 4, 4) : new Thickness(4, 8, 4, 4);
 
         // 4. Boutons de navigation (Favoris, Paramètres, et 13 catégories)
         UpdateButtonCollapsedState(NavFavoris, isCollapsed);
@@ -365,7 +380,7 @@ public partial class MainWindow : Window
 
     private void UpdateButtonCollapsedState(Button btn, bool isCollapsed)
     {
-        btn.Padding = isCollapsed ? new Thickness(0, 8, 0, 8) : new Thickness(10, 8, 10, 8);
+        btn.Padding = isCollapsed ? new Thickness(0, 7, 0, 7) : new Thickness(10, 7, 10, 7);
 
         if (btn.Content is DockPanel dock)
         {
@@ -382,7 +397,7 @@ public partial class MainWindow : Window
                     {
                         if (sp.Children[0] is TextBlock iconTb)
                         {
-                            iconTb.Margin = isCollapsed ? new Thickness(0) : new Thickness(0, 0, 10, 0);
+                            iconTb.Margin = isCollapsed ? new Thickness(0) : new Thickness(0, 0, 12, 0);
                         }
                         if (sp.Children[1] is TextBlock labelTb)
                         {
@@ -401,7 +416,7 @@ public partial class MainWindow : Window
 
         if (btn == NavFavoris)
         {
-            NavigateTo(btn, GetOrCreatePage("FAVORIS"), "Mes favoris", "Vos outils préférés accessibles rapidement");
+            NavigateTo(btn, GetOrCreatePage("FAVORIS"), "Favoris", "Vos outils préférés accessibles rapidement");
         }
         else if (btn == NavParametres)
         {
@@ -412,7 +427,7 @@ public partial class MainWindow : Window
             var tag = btn.Tag?.ToString() ?? "";
             var page = GetOrCreatePage(tag);
             var (icon, name) = SectionViewBuilder.GetCategoryMeta(tag);
-            string title = $"{icon} {name}";
+            string title = name;
             string subtitle = SectionViewBuilder.GetCategorySubtitle(tag);
             NavigateTo(btn, page, title, subtitle);
         }
@@ -488,7 +503,10 @@ public partial class MainWindow : Window
         while (child != null)
         {
             if (child == parent) return true;
-            child = VisualTreeHelper.GetParent(child);
+            // Le texte d'un RichTextBox (Paragraph, Run…) n'est pas un Visual : VisualTreeHelper lèverait une exception
+            child = child is Visual or System.Windows.Media.Media3D.Visual3D
+                ? VisualTreeHelper.GetParent(child)
+                : LogicalTreeHelper.GetParent(child);
         }
         return false;
     }
@@ -558,7 +576,7 @@ public partial class MainWindow : Window
             else
             {
                 MainFrame.Navigate(new SearchResultsPage(query));
-                PageTitle.Text    = "🔍 Recherche";
+                PageTitle.Text    = "Recherche";
                 PageSubtitle.Text = $"Résultats pour \"{query}\"";
             }
         }
@@ -567,39 +585,111 @@ public partial class MainWindow : Window
             if (_activeNavBtn != null)
                 TriggerCategoryNavigation(_activeNavBtn, force: true);
             else
-                NavigateTo(NavFavoris, new FavorisPage(), "Mes Favoris", "Vos outils préférés accessibles rapidement");
+                NavigateTo(NavFavoris, GetOrCreatePage("FAVORIS"), "Favoris", "Vos outils préférés accessibles rapidement");
         }
     }
 
     // ─── Terminal Output ─────────────────────────────────────────────
 
-    /// <summary>Affiche une ligne dans le terminal output avec coloration (non-bloquant).</summary>
+    // Tampon de sortie : les lignes arrivent de n'importe quel thread et sont rendues par lots
+    // (1 dispatch + 1 ScrollToEnd par lot au lieu d'1 par ligne → UI fluide même avec SFC/DISM/winget).
+    private const int MaxConsoleBlocks   = 3000; // au-delà, les plus anciennes lignes sont supprimées
+    private const int MaxLinesPerFlush   = 400;  // borne le travail par frame, le reste est replanifié
+
+    private readonly System.Collections.Concurrent.ConcurrentQueue<string> _pendingOutput = new();
+    private int _outputFlushScheduled;           // 0/1, manipulé via Interlocked
+    private int _consoleBlockCount;
+    private Paragraph? _lastProgressPara;         // dernière ligne de progression (remplaçable)
+    private string?    _lastProgressKey;
+
+    private static readonly SearchValues<char> ProgressNoiseChars =
+        SearchValues.Create("0123456789.,%= []()|/\\-#>*█▓▒░■□▌▐ \t");
+
+    private static readonly SearchValues<char> ProgressBarChars = SearchValues.Create("█▓▒░■");
+
+    /// <summary>Affiche une ligne dans le terminal output avec coloration (non-bloquant, thread-safe).</summary>
     public void AppendOutput(string line)
     {
-        // InvokeAsync = non-bloquant, ne gèle pas le thread appelant
-        Dispatcher.InvokeAsync(() =>
+        _pendingOutput.Enqueue(line);
+
+        if (Interlocked.Exchange(ref _outputFlushScheduled, 1) == 0)
+            Dispatcher.InvokeAsync(FlushOutput, DispatcherPriority.Background);
+    }
+
+    private void FlushOutput()
+    {
+        // Relâcher le drapeau AVANT de vider : une ligne arrivée pendant le flush replanifie un passage
+        Interlocked.Exchange(ref _outputFlushScheduled, 0);
+
+        if (_pendingOutput.IsEmpty) return;
+
+        if (OutputPanel.Visibility != Visibility.Visible)
         {
-            if (OutputPanel.Visibility != Visibility.Visible)
+            AdjustConsoleWidth();
+            OutputPanel.Visibility = Visibility.Visible;
+        }
+
+        var blocks = OutputBox.Document.Blocks;
+        int processed = 0;
+
+        while (processed < MaxLinesPerFlush && _pendingOutput.TryDequeue(out var line))
+        {
+            processed++;
+
+            // Barres de progression (SFC « 12 % », DISM « [=== 12.3% ] », winget « ███▒▒ 1.2 MB ») :
+            // on met à jour la ligne précédente au lieu d'en empiler des milliers.
+            string? progressKey = GetProgressKey(line);
+            if (progressKey != null && progressKey == _lastProgressKey && _lastProgressPara != null)
             {
-                AdjustConsoleWidth();
-                OutputPanel.Visibility = Visibility.Visible;
+                if (_lastProgressPara.Inlines.FirstInline is Run run)
+                    run.Text = line;
+                continue;
             }
 
-            var brush = (line.StartsWith("[ERR]") || line.Contains("[ERREUR]") || line.Contains("❌"))
-                      ? BrushError
-                      : (line.StartsWith("[OK]") || line.Contains("✅"))
-                      ? BrushSuccess
-                      : (line.StartsWith("[!]") || line.Contains("⚠️"))
-                      ? BrushWarning
-                      : (line.StartsWith("[i]") || line.Contains("🚀") || line.Contains("🎨"))
-                      ? BrushInfo
-                      : BrushDefault;
+            var para = new Paragraph { Margin = new Thickness(0, 0, 0, 2) };
+            para.Inlines.Add(new Run(line) { Foreground = GetLineBrush(line) });
+            blocks.Add(para);
+            _consoleBlockCount++;
 
-            var para = new Paragraph { Margin = new Thickness(0, 1, 0, 1) };
-            para.Inlines.Add(new Run(line) { Foreground = brush });
-            OutputBox.Document.Blocks.Add(para);
-            OutputBox.ScrollToEnd();
-        }, DispatcherPriority.Normal);
+            _lastProgressPara = progressKey != null ? para : null;
+            _lastProgressKey  = progressKey;
+        }
+
+        while (_consoleBlockCount > MaxConsoleBlocks && blocks.FirstBlock != null)
+        {
+            if (blocks.FirstBlock == _lastProgressPara) { _lastProgressPara = null; _lastProgressKey = null; }
+            blocks.Remove(blocks.FirstBlock);
+            _consoleBlockCount--;
+        }
+
+        OutputBox.ScrollToEnd();
+
+        // Encore des lignes en attente (rafale) → nouveau passage après le rendu de cette frame
+        if (!_pendingOutput.IsEmpty && Interlocked.Exchange(ref _outputFlushScheduled, 1) == 0)
+            Dispatcher.InvokeAsync(FlushOutput, DispatcherPriority.Background);
+    }
+
+    private static SolidColorBrush GetLineBrush(string line) =>
+        (line.StartsWith("[ERR]") || line.Contains("[ERREUR]") || line.Contains("❌")) ? BrushError
+      : (line.StartsWith("[OK]")  || line.Contains("✅"))                              ? BrushSuccess
+      : (line.StartsWith("[!]")   || line.Contains("⚠️"))                              ? BrushWarning
+      : (line.StartsWith("[i]")   || line.Contains("🚀") || line.Contains("🎨"))       ? BrushInfo
+      : BrushDefault;
+
+    /// <summary>
+    /// Retourne une « signature » de ligne de progression (texte sans chiffres ni caractères de barre),
+    /// ou null si la ligne n'est pas une progression. Deux lignes de même signature se remplacent.
+    /// </summary>
+    private static string? GetProgressKey(string line)
+    {
+        if (line.Length > 300) return null;
+        if (!line.Contains('%') && line.AsSpan().IndexOfAny(ProgressBarChars) < 0) return null;
+
+        var sb = new System.Text.StringBuilder(line.Length);
+        foreach (char c in line)
+            if (!ProgressNoiseChars.Contains(c)) sb.Append(c);
+
+        return sb.ToString();
     }
 
     private async System.Threading.Tasks.Task CheckForUpdatesSilentlyAsync()
@@ -623,10 +713,6 @@ public partial class MainWindow : Window
     private async void BtnUpdateNotification_Click(object sender, RoutedEventArgs e)
     {
         await Services.UpdateService.OpenUpdateDialog();
-    }
-
-    public void SetRunning(bool isRunning)
-    {
     }
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

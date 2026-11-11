@@ -522,7 +522,7 @@ Write-Output '[OK] Visionneuse de photos Windows activée'
 ""Position""=""Top""
 
 [HKEY_CURRENT_USER\Software\Classes\DesktopBackground\shell\OpenPowerShellAdmin\command]
-@=""powershell.exe -windowstyle hidden -command \""$d = '%V'; if (-not $d) { $d = [Environment]::GetFolderPath('Desktop') }; Start-Process powershell.exe -ArgumentList '-NoExit', '-Command', (\\\""Set-Location -LiteralPath ''$d''\\\""') -Verb RunAs\""""
+@=""powershell.exe -windowstyle hidden -command \""$d = '%V'; if (-not $d) { $d = [Environment]::GetFolderPath('Desktop') }; Start-Process powershell.exe -ArgumentList '-NoExit', '-Command', ('Set-Location -LiteralPath ''{0}''' -f $d) -Verb RunAs\""""
 
 [HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\OpenPowerShellAdmin]
 @=""Ouvrir PowerShell (Admin)""

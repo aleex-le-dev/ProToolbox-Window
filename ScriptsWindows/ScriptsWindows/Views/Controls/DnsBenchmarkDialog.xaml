@@ -1,80 +1,21 @@
-<Window x:Class="ScriptsWindows.Views.Controls.DnsBenchmarkDialog"
+<Window xmlns:ui="http://schemas.modernwpf.com/2019" ui:WindowHelper.UseModernWindowStyle="True" x:Class="ScriptsWindows.Views.Controls.DnsBenchmarkDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Benchmark &amp; Test de Vitesse DNS en Temps Réel"
         Width="860" Height="640"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Background="#111827"
-        Foreground="#F9FAFB"
+        Background="{DynamicResource BgDeep}"
+        Foreground="{DynamicResource TextPrimary}"
         WindowStyle="SingleBorderWindow">
 
     <Window.Resources>
-        <Style x:Key="ActionButton" TargetType="Button">
-            <Setter Property="Background" Value="#1F2937"/>
-            <Setter Property="Foreground" Value="#F9FAFB"/>
-            <Setter Property="BorderBrush" Value="#374151"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#374151"/>
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#4B5563"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
-        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
-            <Setter Property="Background" Value="#2563EB"/>
-            <Setter Property="BorderBrush" Value="#3B82F6"/>
-            <Setter Property="Foreground" Value="#FFFFFF"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#1D4ED8"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <Style x:Key="ApplyDnsButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
-            <Setter Property="Background" Value="#059669"/>
-            <Setter Property="BorderBrush" Value="#10B981"/>
-            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Background" Value="{DynamicResource Success}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Success}"/>
+            <Setter Property="Foreground" Value="{DynamicResource OnAccent}"/>
             <Setter Property="Padding" Value="12,6"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="Template">
@@ -90,12 +31,12 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#10B981"/>
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource Success}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Border" Property="Background" Value="#1F2937"/>
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#374151"/>
-                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource BgCard}"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Border}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
                                 <Setter Property="Cursor" Value="Arrow"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -117,14 +58,14 @@
         <StackPanel Grid.Row="0" Margin="0,0,0,14">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="🌐" FontSize="26" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <TextBlock Text="Benchmark &amp; Testeur de Vitesse DNS" FontSize="20" FontWeight="Bold" Foreground="#F9FAFB" VerticalAlignment="Center"/>
+                <TextBlock Text="Benchmark &amp; Testeur de Vitesse DNS" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
             </StackPanel>
             <TextBlock Text="Mesurez le temps de ping et la latence réelle de résolution pour trouver le résolveur le plus rapide."
-                       Foreground="#9CA3AF" FontSize="12" Margin="36,4,0,0"/>
+                       Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="36,4,0,0"/>
         </StackPanel>
 
         <!-- Bandeau DNS ACTIF EN DIRECT -->
-        <Border Grid.Row="1" Background="#1E293B" BorderBrush="#059669" BorderThickness="1.5" CornerRadius="8" Padding="14,12" Margin="0,0,0,12">
+        <Border Grid.Row="1" Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource Success}" BorderThickness="1.5" CornerRadius="8" Padding="14,12" Margin="0,0,0,12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -132,20 +73,20 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="● DNS ACTIF SUR VOTRE PC :" FontSize="11" FontWeight="Bold" Foreground="#10B981" VerticalAlignment="Center"/>
-                        <Border x:Name="ActiveDnsBadgeBorder" Background="#065F46" CornerRadius="4" Padding="6,2" Margin="8,0,0,0">
-                            <TextBlock x:Name="TxtActiveDnsBadge" Text="EN SERVICE" FontSize="10" FontWeight="Bold" Foreground="#A7F3D0"/>
+                        <TextBlock Text="● DNS ACTIF SUR VOTRE PC :" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SuccessText}" VerticalAlignment="Center"/>
+                        <Border x:Name="ActiveDnsBadgeBorder" Background="{DynamicResource SuccessBg}" CornerRadius="4" Padding="6,2" Margin="8,0,0,0">
+                            <TextBlock x:Name="TxtActiveDnsBadge" Text="EN SERVICE" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource SuccessText}"/>
                         </Border>
                     </StackPanel>
-                    <TextBlock x:Name="TxtActiveDnsName" Text="Détection du DNS actif..." FontSize="15" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,3,0,1"/>
-                    <TextBlock x:Name="TxtActiveDnsDetails" Text="Adresses IP configurées : ..." FontSize="11" Foreground="#94A3B8"/>
+                    <TextBlock x:Name="TxtActiveDnsName" Text="Détection du DNS actif..." FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,3,0,1"/>
+                    <TextBlock x:Name="TxtActiveDnsDetails" Text="Adresses IP configurées : ..." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
                 </StackPanel>
                 <Button Grid.Column="1" x:Name="BtnRunBenchmark" Content="🚀 Lancer le test" Style="{StaticResource PrimaryActionButton}" Padding="16,8" VerticalAlignment="Center" Click="BtnRunBenchmark_Click"/>
             </Grid>
         </Border>
 
         <!-- Liste des résultats avec marge anti-ascenseur -->
-        <Border Grid.Row="2" Background="#1F2937" BorderBrush="#374151" BorderThickness="1" CornerRadius="8" Padding="8">
+        <Border Grid.Row="2" Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource Border}" BorderThickness="1" CornerRadius="8" Padding="8">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,14,0">
                 <ItemsControl x:Name="DnsItemsControl">
                     <ItemsControl.ItemTemplate>
@@ -162,25 +103,25 @@
                                     <!-- Nom & Serveur -->
                                     <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13" Foreground="#F9FAFB"/>
-                                            <Border Background="#065F46" BorderBrush="#10B981" BorderThickness="1" CornerRadius="4" Padding="5,1" Margin="8,0,0,0" Visibility="{Binding ActiveBadgeVisibility}" VerticalAlignment="Center">
-                                                <TextBlock Text="● ACTIF SUR CE PC" FontSize="10" FontWeight="Bold" Foreground="#6EE7B7"/>
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimary}"/>
+                                            <Border Background="{DynamicResource SuccessBg}" BorderBrush="{DynamicResource Success}" BorderThickness="1" CornerRadius="4" Padding="5,1" Margin="8,0,0,0" Visibility="{Binding ActiveBadgeVisibility}" VerticalAlignment="Center">
+                                                <TextBlock Text="● ACTIF SUR CE PC" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource SuccessText}"/>
                                             </Border>
-                                            <TextBlock Text="{Binding WinnerBadgeText}" Foreground="#FBBF24" FontWeight="Bold" FontSize="11" Margin="8,0,0,0" Visibility="{Binding WinnerBadgeVisibility}" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding WinnerBadgeText}" Foreground="{DynamicResource WarningText}" FontWeight="Bold" FontSize="11" Margin="8,0,0,0" Visibility="{Binding WinnerBadgeVisibility}" VerticalAlignment="Center"/>
                                         </StackPanel>
-                                        <TextBlock Text="{Binding Description}" FontSize="11" Foreground="#9CA3AF" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                                     </StackPanel>
 
                                     <!-- Ping ICMP -->
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="Ping" FontSize="10" Foreground="#9CA3AF"/>
-                                        <TextBlock Text="{Binding PingText}" FontWeight="Bold" FontSize="13" Foreground="#38BDF8"/>
+                                        <TextBlock Text="Ping" FontSize="10" Foreground="{DynamicResource TextSecondary}"/>
+                                        <TextBlock Text="{Binding PingText}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource AccentText}"/>
                                     </StackPanel>
 
                                     <!-- Résolution -->
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Résolution" FontSize="10" Foreground="#9CA3AF"/>
-                                        <TextBlock Text="{Binding ResolveText}" FontWeight="Bold" FontSize="13" Foreground="#A78BFA"/>
+                                        <TextBlock Text="Résolution" FontSize="10" Foreground="{DynamicResource TextSecondary}"/>
+                                        <TextBlock Text="{Binding ResolveText}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource AccentText}"/>
                                     </StackPanel>
 
                                     <!-- Bouton Appliquer -->

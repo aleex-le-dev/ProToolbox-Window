@@ -74,20 +74,20 @@ public partial class AppInstallerDialog : Window
         btn.IsEnabled = false;
 
         app.StatusText = "Installation...";
-        app.StatusColor = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B));
+        app.StatusColor = (SolidColorBrush)ThemeManager.GetBrush("WarningText");
         TxtFeedback.Text = $"Traitement de {app.Name}...";
 
         bool ok = await InstallAppAsync(app);
         if (ok)
         {
             app.StatusText = "Installé ✅";
-            app.StatusColor = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+            app.StatusColor = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
             TxtFeedback.Text = $"{app.Name} traité avec succès.";
         }
         else
         {
             app.StatusText = "Échoué ❌";
-            app.StatusColor = new SolidColorBrush(Color.FromRgb(0xF8, 0x71, 0x71));
+            app.StatusColor = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
             TxtFeedback.Text = $"Échec pour {app.Name}.";
         }
 
@@ -118,7 +118,7 @@ public partial class AppInstallerDialog : Window
             done++;
             ProgressBatch.Value = done;
             app.StatusText = "Installation...";
-            app.StatusColor = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B));
+            app.StatusColor = (SolidColorBrush)ThemeManager.GetBrush("WarningText");
             TxtFeedback.Text = $"[{done}/{selected.Count}] Traitement de {app.Name}...";
 
             bool ok = await InstallAppAsync(app);
@@ -126,12 +126,12 @@ public partial class AppInstallerDialog : Window
             {
                 success++;
                 app.StatusText = "Installé ✅";
-                app.StatusColor = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99));
+                app.StatusColor = (SolidColorBrush)ThemeManager.GetBrush("SuccessText");
             }
             else
             {
                 app.StatusText = "Échoué ❌";
-                app.StatusColor = new SolidColorBrush(Color.FromRgb(0xF8, 0x71, 0x71));
+                app.StatusColor = (SolidColorBrush)ThemeManager.GetBrush("DangerText");
             }
         }
 
@@ -217,7 +217,7 @@ public class AppItemModel : INotifyPropertyChanged
         set { _statusText = value; OnPropertyChanged(); }
     }
 
-    private Brush _statusColor = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
+    private Brush _statusColor = (SolidColorBrush)ThemeManager.GetBrush("TextSecondary");
     public Brush StatusColor
     {
         get => _statusColor;
